@@ -23,9 +23,11 @@ const shown = projects.filter((p) => p.slug !== exclude);
           )}
         </div>
         <p class="card__title">
-          <span class="card__name">{p.name}</span>
-          <span class="card__sep" aria-hidden="true">/</span>
-          {p.title}
+          <span class="card__hl">
+            <span class="card__name">{p.name}</span>
+            <span class="card__sep" aria-hidden="true">/</span>
+            {p.title}
+          </span>
         </p>
         <p class="card__meta">
           {p.role}
@@ -95,11 +97,19 @@ const shown = projects.filter((p) => p.slug !== exclude);
     color: var(--ink);
     font-weight: 600;
   }
-  .card:hover .card__title {
-    text-decoration: underline;
-    text-decoration-color: var(--accent);
-    text-decoration-thickness: 2px;
-    text-underline-offset: 4px;
+  /* Highlighter pen: a light-orange band sweeps across the lower part of each line on hover. */
+  .card__hl {
+    background-image: linear-gradient(var(--accent-soft), var(--accent-soft));
+    background-repeat: no-repeat;
+    background-position: 0 88%;
+    background-size: 0% 55%;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    transition: background-size 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .card:hover .card__hl,
+  .card:focus-visible .card__hl {
+    background-size: 100% 55%;
   }
   @media (max-width: 800px) {
     .cards--2,

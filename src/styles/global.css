@@ -13,6 +13,8 @@
      and for UI graphics. Never use it for small text. Button labels on it are dark (#111, 6.20:1). */
   --accent: #f26b1d;
   --accent-ink: #111111;
+  /* Light orange for highlighter backgrounds behind #111 text (16:1). */
+  --accent-soft: #ffd3b5;
   --success: #34c759;
 
   /* Manrope for headings, titles and display numbers; Inter for everything else. */
