@@ -5,6 +5,7 @@
  * The brief lists two known conflicts that must be resolved before launch:
  *   1. Revenue: "$540K" vs. $177K + $366K = $543K.
  *   2. "26.61% conversion rate" reads as an absolute rate; it is probably a lift.
+ * The Canadian Tire case study's Summary section also quotes $177K, $366K and 26.61%: update it too.
  * Do not "fix" these by guessing. Pull the real figure, update `value`/`label`,
  * set `verified: true`, and note the source in `source`.
  *

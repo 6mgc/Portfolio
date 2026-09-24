@@ -5,26 +5,73 @@ import Placeholder from '../../components/Placeholder.astro';
 import ProjectCards from '../../components/ProjectCards.astro';
 
 /*
+ * Copy is transcribed from a low-resolution screenshot of the Framer case study: proofread before launch.
  * Content marked [bracketed] in a Placeholder or a .todo paragraph still needs Megan's real material.
  * Nothing here should be filled in with invented research findings, team details, or numbers.
  */
 
 const meta = [
-  { label: 'Role', value: 'Lead UI Designer' },
-  { label: 'Focus', value: 'Conversion Rate Optimization · 1:1 Personalization · Loyalty' },
-  { label: 'Mission', value: 'Ship measurable personalization impact before the AI infrastructure existed' },
+  { label: 'Role', value: 'Product Designer (Lead UI)' },
+  { label: 'Focus', value: 'Conversion Rate Optimization, 1:1 Personalization, and Loyalty Integration' },
+  { label: 'Mission', value: 'To make large-scale retail feel personal by delivering 1:1 value at every touchpoint' },
 ];
 
 const challenges = [
-  { title: 'Revenue leakage', body: '[Describe where revenue was being lost and how you knew.]' },
-  { title: 'Personalization gap', body: '[Describe the gap between the AI roadmap and what the stack could do today.]' },
-  { title: 'Loyalty blind spot', body: '[Describe what loyalty members were missing on the site.]' },
+  {
+    title: 'Revenue leakage',
+    body: 'This friction accounted for "lost sales" that could have been easily converted if the right promo was surfaced at the right moment.',
+  },
+  {
+    title: 'The personalization gap',
+    body: 'There were no active elements on the Weekly Deals page to notify users when a wishlisted or previously viewed item went on sale.',
+  },
+  {
+    title: 'Loyalty blind spot',
+    body: 'Triangle Rewards offers were obscure and disconnected from the shopping flow, leading to checkout confusion and abandoned carts.',
+  },
 ];
 
 const components = [
-  { name: 'Price-drop alerts', why: '[1–2 sentences: the problem this solved and why this design.]' },
-  { name: 'Compact loyalty offers', why: '[1–2 sentences: the problem this solved and why this design.]' },
-  { name: 'Urgency modules', why: '[1–2 sentences: the problem this solved and why this design.]' },
+  {
+    name: '"Price Drop" reminders',
+    what: 'I created a carousel that targets logged-in users with items they previously interacted with (Add to Cart, Wishlist, or PDP view) that have now gone on sale.',
+    why: 'This recovers "lost sales" by surfacing relevant discounts at the exact moment of user intent.',
+  },
+  {
+    name: 'Frictionless loyalty via 1:1 Triangle Offers',
+    what: 'I integrated obscure 1:1 loyalty offers into a compact design directly on the Weekly Deals page.',
+    why: 'This reduced decision-making friction, allowing users to shop their personalized offers in a single view, which improved NPS and Loyalty Activation.',
+  },
+  {
+    name: 'Driving urgency with the "30% Club"',
+    what: 'I designed a personalized "Biggest Savings" component featuring products at 30% off or more.',
+    why: '"Limited time" messaging created a sense of urgency, and drove more clicks and engagement.',
+  },
+  {
+    name: 'Personalized category quick-selection',
+    what: 'A selection tool that provides one-tap access to "Trending Categories" tailored to the user\'s profile.',
+    why: 'This quick-selection component guides users directly to high-intent sections, letting them bypass the traditional navigation menu.',
+  },
+];
+
+// Participant quotes from usability testing. Transcribed from a blurry screenshot: check each against the source.
+const quotes = [
+  {
+    theme: 'Personalization',
+    quote: 'I think I prefer the [proposed page]. I just felt like it had more to offer. There were more features… like it was tailored and made for me.',
+  },
+  {
+    theme: 'Convenience',
+    quote: "It's good to be able to quickly click into my particular categories and not have to go into the category section here.",
+  },
+  {
+    theme: 'Utility',
+    quote: "Cause you typically have a list of things you're sort of looking at, um, and it's kind of cool to see when they pop on sale.",
+  },
+  {
+    theme: 'Urgency',
+    quote: "I really want to know about the products where I can save some money. And this section clearly stands out and it's clear that its intention is to help me identify those products that are discounted for limited time.",
+  },
 ];
 ---
 
@@ -61,15 +108,20 @@ const components = [
       <p class="eyebrow">01 · The challenges</p>
       <div>
         <p class="lead">
-          The roadmap pointed toward full AI-driven personalization, but the infrastructure wasn't there yet. Three
-          problems couldn't wait for it.
+          The retail market is shifting toward AI-driven personalization, and Canadian Tire has a vision to fully
+          automate the user journey. However, the current reality involves technical constraints that make a full AI
+          rollout a long-term goal.
+        </p>
+        <p class="sub">
+          Instead of waiting for perfect infrastructure, my mission was to maximize design impact within existing
+          resources.
         </p>
         <div class="cols">
           {
             challenges.map((c) => (
               <div class="col">
                 <h3>{c.title}</h3>
-                <p class="todo">{c.body}</p>
+                <p>{c.body}</p>
               </div>
             ))
           }
@@ -82,11 +134,18 @@ const components = [
   <section class="section">
     <div class="container split">
       <p class="eyebrow">02 · The results</p>
-      <div class="results">
-        <Metric id="conversionLift" size="lg" />
-        <Metric id="omniChannelLift" size="lg" />
-        <Metric id="pdpViewRate" size="lg" />
-        <Metric id="attributedRevenue" size="lg" />
+      <div class="stack">
+        <div class="results">
+          <Metric id="conversionLift" size="lg" />
+          <Metric id="omniChannelLift" size="lg" />
+          <Metric id="pdpViewRate" size="lg" />
+          <Metric id="attributedRevenue" size="lg" />
+        </div>
+        <p class="sub">
+          Successfully reduced the "Discovery Gap" by delivering a personalized and relevant shopping experience for
+          Canadians, increasing 1:1 weekly offer awareness and Triangle Rewards sign-ups.
+        </p>
+        <p class="todo">[Number of activated sessions the page drove: unreadable in the screenshot (9k+?).]</p>
       </div>
     </div>
   </section>
@@ -120,9 +179,10 @@ const components = [
     <div class="container split">
       <p class="eyebrow">05 · The strategy</p>
       <div class="stack">
-        <p class="lead">
-          A suite of rule-based <strong>smart components</strong> to close the personalization gap within existing
-          constraints.
+        <p class="lead">Architecting a <strong>1:1 personalized</strong> shopping journey.</p>
+        <p class="sub">
+          I designed a suite of "Smart Components" based on business epics, specifically engineered to create a
+          tailored, intuitive experience for every authenticated user.
         </p>
         {
           components.map((c, i) => (
@@ -130,7 +190,8 @@ const components = [
               <div class="component__text">
                 <span class="eyebrow">0{i + 1}</span>
                 <h3>{c.name}</h3>
-                <p class="todo">{c.why}</p>
+                <p>{c.what}</p>
+                <p class="sub">{c.why}</p>
               </div>
               <Placeholder label={`${c.name}: annotated before/after`} ratio="4 / 3" />
             </article>
@@ -146,7 +207,22 @@ const components = [
       <!-- Brief: move before the strategy section if testing shaped the final designs; otherwise keep as validation. -->
       <p class="eyebrow">06 · Validation</p>
       <div class="stack">
-        <p class="todo">[Usability testing: method, participants, what you learned, what changed as a result.]</p>
+        <p class="lead">
+          Usability testing confirmed that personalization <strong>reduced friction</strong> and increased perceived
+          value.
+        </p>
+        <h3>What did the users think?</h3>
+        <div class="quotes">
+          {
+            quotes.map((q) => (
+              <figure class="quote">
+                <figcaption class="eyebrow">{q.theme}</figcaption>
+                <blockquote>"{q.quote}"</blockquote>
+              </figure>
+            ))
+          }
+        </div>
+        <p class="todo">[Method and participants: how many people, what they were asked to do.]</p>
       </div>
     </div>
   </section>
@@ -154,10 +230,19 @@ const components = [
   <!-- 8. Summary + next steps -->
   <section class="section">
     <div class="container split">
-      <p class="eyebrow">07 · What's next</p>
+      <p class="eyebrow">07 · Summary</p>
       <div class="stack">
-        <p class="lead">From rule-based to <strong>full AI automation</strong>.</p>
-        <p class="todo">[Summary, how the rule-based components lead into AI automation, and what you learned.]</p>
+        <!-- These figures repeat the unreconciled numbers in src/data/metrics.ts: update both together. -->
+        <p>
+          This personalized approach directly drove $177k in online revenue and a $366k omni-channel revenue impact
+          within a single quarter. The strategy achieved an exceptional 26.61% online conversion rate
+          by <strong>surfacing the right deal to the right user at the right time.</strong>
+        </p>
+        <h3>Next steps: scaling for vision</h3>
+        <p>
+          With Phase 1 driving strong performance, the next priority is to leverage the data gathered to transition
+          from rule-based logic to <strong>full AI automation</strong>, scaling the carousels across different banners.
+        </p>
       </div>
     </div>
   </section>
@@ -228,6 +313,29 @@ const components = [
     font-weight: 700;
     letter-spacing: -0.01em;
   }
+  .sub {
+    color: var(--ink-muted);
+    max-width: 62ch;
+  }
+  .quotes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .quote {
+    margin: 0;
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .quote blockquote {
+    margin: 0;
+    font-style: italic;
+    color: var(--ink-muted);
+  }
   .todo {
     color: var(--ink-muted);
     background: var(--placeholder);
@@ -276,7 +384,8 @@ const components = [
     .split,
     .cols,
     .results,
-    .component {
+    .component,
+    .quotes {
       grid-template-columns: 1fr;
     }
   }

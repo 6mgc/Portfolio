@@ -29,7 +29,7 @@ export interface Project {
 }
 
 export const projects: Project[] = [
-  { slug: 'canadian-tire', name: 'Canadian Tire', role: 'Lead UI Designer' },
+  { slug: 'canadian-tire', name: 'Canadian Tire', role: 'Product Designer (Lead UI)' },
   { slug: 'chatalog-ai', name: 'chatalog.ai', role: 'UX/UI Designer' },
   { slug: 'flavorbyte', name: 'FlavorByte', role: 'Product Designer' },
   { slug: 'toronto-zoo', name: 'Toronto Zoo', role: 'UI Designer' },
