@@ -48,6 +48,7 @@ export const projects: Project[] = [
     title: 'Simplified chatbot creation for a B2B platform',
     role: 'UX/UI Designer',
     impact: '40% fewer support calls',
+    thumb: '/images/thumb-chatalog.webp',
   },
   {
     slug: 'flavorbyte',
