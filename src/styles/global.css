@@ -9,9 +9,9 @@
   --line-strong: #111111;
   --placeholder: #f5f5f5;
   /* Cosmic Orange. Only for: status dot, key numbers, hover underlines, primary CTA, one word per heading.
-     WCAG AA: 3.39:1 on white and 5.57:1 on #111, so it passes only as large text (24px+, or 18.66px+ bold)
-     and for UI graphics. Never use it for small text. Button labels on it are dark (#111, 5.57:1). */
-  --accent: #e8621a;
+     WCAG AA: 3.05:1 on white and 6.20:1 on #111, so it passes only as large text (24px+, or 18.66px+ bold)
+     and for UI graphics. Never use it for small text. Button labels on it are dark (#111, 6.20:1). */
+  --accent: #f26b1d;
   --accent-ink: #111111;
   --success: #34c759;
 
@@ -122,7 +122,7 @@ p {
 }
 
 /* Call to action: a pill that fills with the accent from the left on hover, arrow nudging right.
-   Label on the accent is --accent-ink (#111, 5.57:1). */
+   Label on the accent is --accent-ink (#111, 6.20:1). */
 .cta {
   position: relative;
   isolation: isolate;
