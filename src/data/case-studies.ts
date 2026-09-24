@@ -3,10 +3,13 @@
  * Copy is transcribed from screenshots of the current Framer site. Parts the screenshots cut off
  * are left as `todo` so they show as placeholders; don't fill them in by guessing.
  */
-// Rendered as "<strong>lead.</strong> text".
+// Rendered as "<strong>lead.</strong> text". An item can instead be an inline image (`image`),
+// or a placeholder slot for one (`shot`), so images can sit between paragraphs.
 export interface Item {
   lead?: string;
   text?: string;
+  image?: Img;
+  shot?: string;
 }
 
 export interface Section {
@@ -173,8 +176,21 @@ export const caseStudies: Record<string, CaseStudy> = {
     },
   },
 
-  // Transcribed from a low-resolution screenshot: proofread before launch, especially the numbers and duration.
+  // Follows the flow of the Framer case study. Transcribed from a low-resolution screenshot: proofread.
   flavorbyte: {
+    hero: {
+      src: '/images/flavorbyte/hero.webp',
+      alt: 'FlavorByte app screens on a yellow background: restaurant detail, home with Near Me and Popular, and sushi search results',
+      width: 1600,
+      height: 851,
+    },
+    flow: [
+      { key: 'problem', title: 'Challenges' },
+      { key: 'outcome', title: 'Results', shot: 'FlavorByte: final app screens' },
+      { key: 'research', title: 'Discovery phase' },
+      { key: 'design', title: 'Design and development' },
+      { key: 'reflection', title: 'Conclusion' },
+    ],
     headline: 'Personalized dining experiences with faster restaurant discovery.',
     meta: [
       {
@@ -189,8 +205,11 @@ export const caseStudies: Record<string, CaseStudy> = {
       { value: '40%', label: 'More accurate restaurant recommendations' },
     ],
     problem: {
-      todo: ['[The first problem(s) were cut off in the screenshot. Paste them here.]'],
       items: [
+        {
+          lead: 'Decision fatigue',
+          text: 'Addressing the "paradox of choice" where an overwhelming number of restaurant options leads to user frustration and drop-off.',
+        },
         {
           lead: 'Group coordination',
           text: 'Streamlining the friction-filled process of collective decision-making, where varying dietary preferences and schedules often lead to "decision paralysis."',
@@ -209,21 +228,26 @@ export const caseStudies: Record<string, CaseStudy> = {
       ],
     },
     research: {
-      todo: [
-        '[The start of this section was cut off. Paste it here.]',
-        '[Competitor notes on Yelp, OpenTable and Google Maps: too small to read in the screenshot.]',
-      ],
       items: [
         {
-          text: 'The main pain points identified were the overwhelming number of restaurant options, the challenge of making group decisions, and the desire for personalized recommendations.',
+          lead: 'Competitor analysis',
+          text: 'Conducted in-depth research on leading restaurant search apps like Yelp, OpenTable, and Google Maps to understand key features, identify market gaps, and recognize areas for potential enhancement.',
         },
+        {
+          lead: 'Quantitative survey & user interviews',
+          text: "Launched an online survey with 10 participants and held four one-on-one interviews. This provided valuable insights into users' needs, challenges, and opinions about AI's role in restaurant search. The main pain points identified were the overwhelming number of restaurant options, the challenge of making group decisions, and the desire for personalized recommendations.",
+        },
+        { shot: 'FlavorByte: competitor analysis (Yelp, OpenTable, Google Maps)' },
       ],
-    },
-    team: {
-      items: [{ text: 'Solo project: I owned research, synthesis, and design end-to-end.' }],
     },
     design: {
       items: [
+        {
+          lead: 'Affinity mapping & user journey mapping',
+          text: 'Analyzed user data using affinity mapping, identifying common themes such as the paradox of choice and decision fatigue. The user journey map highlighted key pain points, which informed the design strategy.',
+        },
+        { shot: 'FlavorByte: affinity map' },
+        { shot: 'FlavorByte: user journey map' },
         {
           lead: 'AI-driven recommendations',
           text: "Designed AI-powered features to deliver personalized restaurant recommendations based on users' past preferences, making the search process faster and more accurate.",
@@ -233,14 +257,11 @@ export const caseStudies: Record<string, CaseStudy> = {
           text: 'Developed functionality to streamline group decision-making by allowing users to easily share restaurant options and vote, reducing the time and effort required to finalize decisions.',
         },
         {
-          lead: 'Wireframes & prototypes',
+          lead: 'Wireframes & prototyping',
           text: 'Created wireframes and prototypes that incorporated AI chatbot recommendations and a user-friendly interface. The design included map integration for easy navigation and restaurant discovery.',
         },
+        { shot: 'FlavorByte: wireframes' },
       ],
-      todo: ['[Options considered and why each was rejected.]'],
-    },
-    validation: {
-      todo: ['[How the design was tested, and how the 30% / 40% figures were measured.]'],
     },
     reflection: {
       items: [

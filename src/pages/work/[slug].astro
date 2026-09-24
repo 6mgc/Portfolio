@@ -105,11 +105,17 @@ const sections = cs?.flow
                 ))}
               </div>
             )}
-            {s.body.items?.map((it) => (
-              <p class="item">
-                {it.lead && <strong>{it.lead}.</strong>} {it.text}
-              </p>
-            ))}
+            {s.body.items?.map((it) =>
+              it.image ? (
+                <img class="shot" src={it.image.src} alt={it.image.alt} width={it.image.width} height={it.image.height} loading="lazy" decoding="async" />
+              ) : it.shot ? (
+                <Placeholder label={it.shot} ratio="16 / 9" />
+              ) : (
+                <p class="item">
+                  {it.lead && <strong>{it.lead}.</strong>} {it.text}
+                </p>
+              ),
+            )}
             {s.body.todo?.map((t) => (
               <p class="todo">{t}</p>
             ))}
