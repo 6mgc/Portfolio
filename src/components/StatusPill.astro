@@ -1,9 +1,5 @@
----
-import { site } from '../data/site';
----
-
 <span class="pill">
-  Open to work <span class="dot" aria-hidden="true"></span> {site.openToYear}
+  <span class="dot" aria-hidden="true"></span> Open to work
 </span>
 
 <style>
@@ -21,6 +17,7 @@ import { site } from '../data/site';
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: var(--accent);
+    /* Apple system green (light mode). Decorative: the label carries the meaning. */
+    background: var(--success);
   }
 </style>
