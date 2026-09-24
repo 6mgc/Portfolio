@@ -27,6 +27,8 @@ for (const file of walk('src/pages')) {
   const placeholders = (src.match(/<Placeholder\b/g) || []).length;
   const todos = (src.match(/class="todo"/g) || []).length;
   if (placeholders || todos) problems.push(`${file}: ${placeholders} image placeholder(s), ${todos} copy placeholder(s)`);
+  const emptyUrls = (src.match(/url: ''/g) || []).length;
+  if (emptyUrls) problems.push(`${file}: ${emptyUrls} empty link(s)`);
 }
 
 if (problems.length) {

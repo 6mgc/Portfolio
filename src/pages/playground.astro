@@ -1,38 +1,158 @@
 ---
 import Base from '../layouts/Base.astro';
+import Placeholder from '../components/Placeholder.astro';
+
+interface Experiment {
+  name: string;
+  description: string;
+  highlights?: { heading: string; items: { label: string; text: string }[] };
+  // TODO: add the live app URLs.
+  url: string;
+  shots: { label: string; ratio: string }[];
+}
+
+const experiments: Experiment[] = [
+  {
+    name: 'Daily YES! Card: TVB Edition',
+    description:
+      'Daily YES! Card is a digital revival of a beloved Hong Kong childhood ritual. It\'s a "Just for Fun" web app that combines the nostalgia of Yes! Card vending machines with the legendary, often meme-worthy phrases (金句) from classic TVB dramas.',
+    highlights: {
+      heading: 'The HK Soul',
+      items: [
+        { label: 'Virtual Gashapon', text: 'Recreates the childhood thrill of "pulling" a collectible card from a stationery shop machine.' },
+        { label: 'Prime-Time Wisdom', text: 'Features the iconic dialogue we all grew up hearing during the 8:30 PM dinner slot.' },
+        { label: 'Tech meets Canto-pop', text: 'A playful bridge between 90s/00s nostalgia and modern AI.' },
+      ],
+    },
+    url: '',
+    shots: [
+      { label: 'Daily YES! Card: vending machine', ratio: '1 / 1' },
+      { label: 'Daily YES! Card: card reveal', ratio: '1 / 1' },
+    ],
+  },
+  {
+    name: 'Moody Pod',
+    description:
+      'A nostalgic, iPod-inspired web app that recommends songs based on your current mood. Users type how they\'re feeling, and the app uses AI to suggest a song that matches their emotional state. It\'s a simple two-page experience designed to feel like using a classic Apple iPod.',
+    url: '',
+    shots: [{ label: 'Moody Pod: iPod interface', ratio: '16 / 9' }],
+  },
+];
 ---
 
-<Base title="AI Playground" description="Experiments with AI product design. Coming soon.">
-  <section class="soon">
+<Base title="AI Playground" description="Small AI experiments by Megan Cheng: Daily YES! Card and Moody Pod.">
+  <section class="intro">
     <div class="container">
       <p class="eyebrow">AI Playground</p>
-      <h1>Experiments, <strong>coming <span class="accent">soon</span></strong>.</h1>
-      <div class="card">
-        <p class="eyebrow">In progress</p>
-        <p class="name">chatalog.ai</p>
-      </div>
+      <h1>Welcome to my AI <strong class="accent">playground</strong></h1>
     </div>
   </section>
+
+  {
+    experiments.map((x, i) => (
+      <section class="section">
+        <div class="container exp">
+          <div class="exp__head">
+            <p class="eyebrow">0{i + 1} / 0{experiments.length}</p>
+            <h2>{x.name}</h2>
+          </div>
+          <div class="exp__body">
+            <p class="exp__desc">{x.description}</p>
+            {x.highlights && (
+              <div class="exp__hl">
+                <p class="eyebrow">{x.highlights.heading}</p>
+                <ul>
+                  {x.highlights.items.map((h) => (
+                    <li>
+                      <strong>{h.label}.</strong> {h.text}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {x.url ? (
+              <a class="btn" href={x.url} target="_blank" rel="noopener">
+                Try it out <span aria-hidden="true">↗</span>
+              </a>
+            ) : (
+              <span class="btn btn--pending">
+                Try it out [add link]
+              </span>
+            )}
+          </div>
+          <div class:list={['exp__shots', { 'exp__shots--two': x.shots.length > 1 }]}>
+            {x.shots.map((s) => (
+              <Placeholder label={s.label} ratio={s.ratio} />
+            ))}
+          </div>
+        </div>
+      </section>
+    ))
+  }
 </Base>
 
 <style>
-  .soon {
-    padding: clamp(64px, 12vw, 160px) 0;
+  .intro {
+    padding: clamp(64px, 12vw, 160px) 0 clamp(48px, 8vw, 96px);
   }
   h1 {
     font-size: clamp(44px, 8vw, 96px);
     letter-spacing: -0.03em;
-    margin: 20px 0 48px;
+    margin: 20px 0 0;
     max-width: 14ch;
   }
-  .card {
-    border: 1px dashed #bdbdbd;
-    border-radius: var(--radius);
-    padding: 28px;
-    max-width: 420px;
+
+  .exp {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 32px 48px;
   }
-  .name {
-    font-size: 24px;
+  .exp__head h2 {
+    font-size: clamp(28px, 3.4vw, 40px);
     margin-top: 12px;
+  }
+  .exp__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 28px;
+  }
+  .exp__desc {
+    max-width: 62ch;
+  }
+  .exp__hl ul {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: var(--ink-muted);
+  }
+  .exp__hl strong {
+    color: var(--ink);
+  }
+  .btn:not(.btn--pending):hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .btn--pending {
+    color: var(--ink-muted);
+    border-style: dashed;
+  }
+  .exp__shots {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 16px;
+  }
+  .exp__shots--two {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (max-width: 800px) {
+    .exp,
+    .exp__shots--two {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
