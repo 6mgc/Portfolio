@@ -1,8 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 import StatusPill from '../components/StatusPill.astro';
-import Metric from '../components/Metric.astro';
-import Placeholder from '../components/Placeholder.astro';
 import ProjectCards from '../components/ProjectCards.astro';
 import { metrics } from '../data/metrics';
 import { projects } from '../data/site';
@@ -53,29 +51,7 @@ const principles = [
         <p class="eyebrow">{String(projects.length).padStart(2, '0')} projects</p>
       </div>
 
-      <article class="case">
-        <div class="case__top">
-          <div>
-            <p class="eyebrow">Canadian Tire · Product Designer (Lead UI)</p>
-            <h2 class="case__title">Boosting retail engagement through <strong>personalized deals</strong></h2>
-          </div>
-          <Metric id="conversionLift" size="lg" />
-        </div>
-
-        <div class="case__metrics">
-          <Metric id="omniChannelLift" />
-          <Metric id="pdpViewRate" />
-          <Metric id="attributedRevenue" />
-        </div>
-
-        <Placeholder label="Case study screenshot" ratio="16 / 8" />
-
-        <a class="cta cta--primary case__link" href="/work/canadian-tire">
-          Read case study <span class="cta__arrow" aria-hidden="true">→</span>
-        </a>
-      </article>
-
-      <ProjectCards exclude="canadian-tire" />
+      <ProjectCards />
     </div>
   </section>
 
@@ -159,36 +135,6 @@ const principles = [
     margin-bottom: 32px;
   }
 
-  .case {
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius);
-    padding: clamp(24px, 4vw, 48px);
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-  }
-  .case__top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 32px;
-    flex-wrap: wrap;
-  }
-  .case__title {
-    font-size: clamp(28px, 4vw, 44px);
-    margin: 12px 0 0;
-    max-width: 18ch;
-  }
-  .case__metrics {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    padding-top: 32px;
-    border-top: 1px solid var(--line);
-  }
-  .case__link {
-    align-self: flex-start;
-  }
 
   .principles {
     list-style: none;
@@ -235,7 +181,6 @@ const principles = [
   }
 
   @media (max-width: 800px) {
-    .case__metrics,
     .principles,
     .about {
       grid-template-columns: 1fr;

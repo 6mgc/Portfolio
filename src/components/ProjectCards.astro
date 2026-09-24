@@ -1,24 +1,37 @@
 ---
+import Placeholder from './Placeholder.astro';
 import { projects } from '../data/site';
 
 interface Props {
-  // Slug of the project to leave out (the featured card on the homepage, or the current case study).
-  exclude: string;
+  // Slug of the project to leave out (the case study you're on).
+  exclude?: string;
+  columns?: 2 | 3;
 }
-const { exclude } = Astro.props;
-const shown = projects.map((p, i) => ({ ...p, num: String(i + 1).padStart(2, '0') })).filter((p) => p.slug !== exclude);
+const { exclude, columns = 2 } = Astro.props;
+const shown = projects.filter((p) => p.slug !== exclude);
 ---
 
-<div class="cards">
+<div class:list={['cards', `cards--${columns}`]}>
   {
     shown.map((p) => (
       <a class="card" href={`/work/${p.slug}`}>
-        <p class="card__top">
-          <span class="eyebrow">{p.num}</span>
-          <span class="card__arrow" aria-hidden="true">→</span>
+        <div class="card__thumb">
+          {p.thumb ? (
+            <img src={p.thumb} alt="" loading="lazy" decoding="async" />
+          ) : (
+            <Placeholder label={`${p.name} thumbnail`} ratio="4 / 3" />
+          )}
+        </div>
+        <p class="card__title">
+          <span class="card__name">{p.name}</span>
+          <span class="card__sep" aria-hidden="true">/</span>
+          {p.title}
         </p>
-        <p class="card__name">{p.name}</p>
-        <p class="card__role">{p.role}</p>
+        <p class="card__meta">
+          {p.role}
+          <span class="card__sep" aria-hidden="true">/</span>
+          <strong>{p.impact}</strong>
+        </p>
       </a>
     ))
   }
@@ -27,44 +40,70 @@ const shown = projects.map((p, i) => ({ ...p, num: String(i + 1).padStart(2, '0'
 <style>
   .cards {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+    gap: 48px 32px;
     margin-top: 24px;
+  }
+  .cards--2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .cards--3 {
+    grid-template-columns: repeat(3, 1fr);
   }
   .card {
     display: flex;
     flex-direction: column;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 28px;
+    gap: 10px;
     text-decoration: none;
-    transition: border-color 0.15s;
   }
-  .card:hover {
-    border-color: var(--accent);
+  .card__thumb {
+    overflow: hidden;
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+  }
+  .card__thumb img {
+    display: block;
+  }
+  .card__thumb img,
+  .card__thumb :global(.placeholder) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .card:hover .card__thumb img,
+  .card:hover .card__thumb :global(.placeholder) {
+    transform: scale(1.03);
+  }
+  .card__title {
+    font-family: var(--font-display);
+    font-size: clamp(20px, 2vw, 24px);
+    line-height: 1.25;
+    letter-spacing: -0.01em;
   }
   .card__name {
-    font-family: var(--font-display);
-    font-size: 24px;
-    margin: 12px 0 4px;
+    font-weight: 700;
   }
-  .card__role {
-    font-size: 14px;
+  .card__sep {
+    color: var(--ink-muted);
+    margin: 0 0.4em;
+  }
+  .card__meta {
+    font-size: 15px;
     color: var(--ink-muted);
   }
-  .card__top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .card__meta strong {
+    color: var(--ink);
+    font-weight: 600;
   }
-  .card__arrow {
-    transition: transform 0.35s ease;
-  }
-  .card:hover .card__arrow {
-    transform: translateX(4px);
+  .card:hover .card__title {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
   }
   @media (max-width: 800px) {
-    .cards {
+    .cards--2,
+    .cards--3 {
       grid-template-columns: 1fr;
     }
   }

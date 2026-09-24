@@ -1,3 +1,5 @@
+import { metrics } from './metrics';
+
 export const site = {
   name: 'Megan Cheng',
   shortName: 'Megan.',
@@ -20,17 +22,45 @@ export const nav = [
   { href: '/playground', label: 'AI Playground' },
 ];
 
-// All case studies, in display order. The first is the featured one on the homepage.
-// Each slug maps to /work/<slug>.
+// All case studies, in display order. Each slug maps to /work/<slug>.
+// `impact` is the one headline result shown on the card; `thumb` is a path under public/ (placeholder until set).
 export interface Project {
   slug: string;
   name: string;
+  title: string;
   role: string;
+  impact: string;
+  thumb?: string;
 }
 
 export const projects: Project[] = [
-  { slug: 'canadian-tire', name: 'Canadian Tire', role: 'Product Designer (Lead UI)' },
-  { slug: 'chatalog-ai', name: 'chatalog.ai', role: 'UX/UI Designer' },
-  { slug: 'flavorbyte', name: 'FlavorByte', role: 'Product Designer' },
-  { slug: 'toronto-zoo', name: 'Toronto Zoo', role: 'UI Designer' },
+  {
+    slug: 'canadian-tire',
+    name: 'Canadian Tire',
+    title: 'Boosting retail engagement through personalized deals',
+    role: 'Product Designer (Lead UI)',
+    // Unverified: see src/data/metrics.ts.
+    impact: `${metrics.conversionLift.value} online conversion`,
+  },
+  {
+    slug: 'chatalog-ai',
+    name: 'chatalog.ai',
+    title: 'Simplified chatbot creation for a B2B platform',
+    role: 'UX/UI Designer',
+    impact: '40% fewer support calls',
+  },
+  {
+    slug: 'flavorbyte',
+    name: 'FlavorByte',
+    title: 'Personalized dining with faster restaurant discovery',
+    role: 'Product Designer',
+    impact: '30% less time searching',
+  },
+  {
+    slug: 'toronto-zoo',
+    name: 'Toronto Zoo',
+    title: 'Redesigning the ticket purchase flow',
+    role: 'UI Designer',
+    impact: '70% more completed ticket purchases',
+  },
 ];
