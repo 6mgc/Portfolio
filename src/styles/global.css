@@ -7,9 +7,12 @@
   --line: #e4e4e4;
   --line-strong: #111111;
   --placeholder: #f5f5f5;
-  /* Cosmic Orange. Only for: status dot, key numbers, hover underlines, primary CTA, one word per heading. */
-  --accent: #c9611f;
-  --accent-ink: #ffffff;
+  /* Cosmic Orange. Only for: status dot, key numbers, hover underlines, primary CTA, one word per heading.
+     WCAG AA: 3.39:1 on white and 5.57:1 on #111, so it passes only as large text (24px+, or 18.66px+ bold)
+     and for UI graphics. Never use it for small text. Button labels on it are dark (#111, 5.57:1). */
+  --accent: #e8621a;
+  --accent-hover: #d4571a;
+  --accent-ink: #111111;
 
   --font: 'Manrope Variable', 'Manrope', system-ui, sans-serif;
   --frame: 56px;
@@ -147,8 +150,8 @@ p {
   color: var(--accent-ink);
 }
 .btn--primary:hover {
-  background: #b0541a;
-  border-color: #b0541a;
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
 }
 
 .visually-hidden {
