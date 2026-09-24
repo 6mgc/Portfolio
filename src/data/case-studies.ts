@@ -186,7 +186,7 @@ export const caseStudies: Record<string, CaseStudy> = {
     },
     flow: [
       { key: 'problem', title: 'Challenges' },
-      { key: 'outcome', title: 'Results', shot: 'FlavorByte: final app screens' },
+      { key: 'outcome', title: 'Results' },
       { key: 'research', title: 'Discovery phase' },
       { key: 'design', title: 'Design and development' },
       { key: 'reflection', title: 'Conclusion' },
@@ -225,6 +225,8 @@ export const caseStudies: Record<string, CaseStudy> = {
         {
           text: 'The final app design helped users find restaurants more efficiently and make collective decisions faster. The AI-driven features reduced the time spent searching for options by 30% and improved the accuracy of restaurant recommendations by 40%, leading to a better overall user experience.',
         },
+        { image: { src: '/images/flavorbyte/bytey-chat.webp', alt: "Asking Bytey, FlavorByte's AI assistant: from 'Help me decide' to sushi recommendations in four chat screens", width: 1024, height: 560 } },
+        { image: { src: '/images/flavorbyte/restaurant-reviews.webp', alt: 'Sushi Ron restaurant page with a Best Match tag, and its Reviews tab with rating breakdown and tags', width: 1024, height: 908 } },
       ],
     },
     research: {
@@ -246,16 +248,18 @@ export const caseStudies: Record<string, CaseStudy> = {
           lead: 'Affinity mapping & user journey mapping',
           text: 'Analyzed user data using affinity mapping, identifying common themes such as the paradox of choice and decision fatigue. The user journey map highlighted key pain points, which informed the design strategy.',
         },
-        { shot: 'FlavorByte: affinity map' },
+        { image: { src: '/images/flavorbyte/affinity-map.webp', alt: 'Affinity map of interview notes grouped into themes such as outdated info, price, too many or too few options, reviews and personal preferences', width: 1600, height: 659 } },
         { shot: 'FlavorByte: user journey map' },
         {
           lead: 'AI-driven recommendations',
           text: "Designed AI-powered features to deliver personalized restaurant recommendations based on users' past preferences, making the search process faster and more accurate.",
         },
+        { image: { src: '/images/flavorbyte/best-match.webp', alt: "Sushi search results with a 'Best Match' tag on the top restaurant", width: 1024, height: 726 } },
         {
           lead: 'Collective decision-making features',
           text: 'Developed functionality to streamline group decision-making by allowing users to easily share restaurant options and vote, reducing the time and effort required to finalize decisions.',
         },
+        { image: { src: '/images/flavorbyte/share-with-friends.webp', alt: 'Share sheet for picking restaurants to send to friends: Sushi Ron, Sushi Ninja and KAI Sushi', width: 1024, height: 712 } },
         {
           lead: 'Wireframes & prototyping',
           text: 'Created wireframes and prototypes that incorporated AI chatbot recommendations and a user-friendly interface. The design included map integration for easy navigation and restaurant discovery.',
