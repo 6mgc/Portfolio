@@ -5,7 +5,7 @@ import { projects, caseStudyProjects } from '../data/site';
 interface Props {
   // Slug of the project to leave out (the case study you're on).
   exclude?: string;
-  // 'featured': homepage, two cards then three per row. 3: More work rows, case studies only.
+  // 'featured': homepage, two per row. 3: More work rows, case studies only.
   layout?: 'featured' | 3;
 }
 const { exclude, layout = 'featured' } = Astro.props;
@@ -59,15 +59,9 @@ const shown = (layout === 'featured' ? projects : caseStudyProjects).filter((p) 
     gap: 48px 32px;
     margin-top: 24px;
   }
-  /* Homepage: first two cards share a row, the rest sit three to a row (6-column grid). */
+  /* Homepage: two cards per row. */
   .cards--featured {
-    grid-template-columns: repeat(6, 1fr);
-  }
-  .cards--featured > :global(*) {
-    grid-column: span 2;
-  }
-  .cards--featured > :global(:nth-child(-n + 2)) {
-    grid-column: span 3;
+    grid-template-columns: repeat(2, 1fr);
   }
   .cards--3 {
     grid-template-columns: repeat(3, 1fr);
@@ -153,10 +147,6 @@ const shown = (layout === 'featured' ? projects : caseStudyProjects).filter((p) 
     .cards--featured,
     .cards--3 {
       grid-template-columns: 1fr;
-    }
-    .cards--featured > :global(*),
-    .cards--featured > :global(:nth-child(-n + 2)) {
-      grid-column: auto;
     }
   }
 </style>

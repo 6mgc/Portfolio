@@ -43,6 +43,12 @@ export const projects: Project[] = [
     thumb: '/images/thumb-canadian-tire.webp',
   },
   {
+    slug: 'nurture-seed',
+    name: 'Nurture Seed',
+    title: 'Self-paced learning with AI-generated practice questions',
+    comingSoon: true,
+  },
+  {
     slug: 'chatalog-ai',
     name: 'chatalog.ai',
     title: 'Simplified chatbot creation for a B2B platform',
@@ -65,12 +71,6 @@ export const projects: Project[] = [
     role: 'UI Designer',
     impact: '70% more completed ticket purchases',
     thumb: '/images/thumb-toronto-zoo.webp',
-  },
-  {
-    slug: 'nurture-seed',
-    name: 'Nurture Seed',
-    title: 'Self-paced learning with AI-generated practice questions',
-    comingSoon: true,
   },
 ];
 
