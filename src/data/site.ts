@@ -55,6 +55,7 @@ export const projects: Project[] = [
     title: 'Personalized dining with faster restaurant discovery',
     role: 'Product Designer',
     impact: '30% less time searching',
+    thumb: '/images/thumb-flavorbyte.webp',
   },
   {
     slug: 'toronto-zoo',

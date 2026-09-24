@@ -17,7 +17,7 @@ const shown = projects.filter((p) => p.slug !== exclude);
       <a class="card" href={`/work/${p.slug}`}>
         <div class="card__thumb">
           {p.thumb ? (
-            <img src={p.thumb} alt="" loading="lazy" decoding="async" />
+            <img src={p.thumb} alt="" width="1200" height="900" loading="lazy" decoding="async" />
           ) : (
             <Placeholder label={`${p.name} thumbnail`} ratio="4 / 3" />
           )}
@@ -64,6 +64,7 @@ const shown = projects.filter((p) => p.slug !== exclude);
   }
   .card__thumb img {
     display: block;
+    height: auto;
   }
   .card__thumb img,
   .card__thumb :global(.placeholder) {
