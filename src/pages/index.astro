@@ -50,7 +50,7 @@ const principles = [
     <div class="container">
       <div class="section-head">
         <p class="eyebrow">Selected work</p>
-        <p class="eyebrow">{String(projects.length + 1).padStart(2, '0')} projects</p>
+        <p class="eyebrow">{String(projects.length).padStart(2, '0')} projects</p>
       </div>
 
       <article class="case">
@@ -84,7 +84,7 @@ const principles = [
         </a>
       </article>
 
-      <ProjectCards />
+      <ProjectCards exclude="canadian-tire" />
     </div>
   </section>
 

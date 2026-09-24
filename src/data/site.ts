@@ -20,10 +20,17 @@ export const nav = [
   { href: '/playground', label: 'AI Playground' },
 ];
 
-// Secondary projects shown after the featured Canadian Tire case study.
-// Set `href` once a case study page exists; until then the card reads "Case study coming soon".
-export const projects: { name: string; role: string; href?: string }[] = [
-  { name: 'chatalog.ai', role: 'UX/UI Designer' },
-  { name: 'FlavorByte', role: 'Product Designer' },
-  { name: 'Toronto Zoo', role: 'UI Designer' },
+// All case studies, in display order. The first is the featured one on the homepage.
+// Each slug maps to /work/<slug>.
+export interface Project {
+  slug: string;
+  name: string;
+  role: string;
+}
+
+export const projects: Project[] = [
+  { slug: 'canadian-tire', name: 'Canadian Tire', role: 'Lead UI Designer' },
+  { slug: 'chatalog-ai', name: 'chatalog.ai', role: 'UX/UI Designer' },
+  { slug: 'flavorbyte', name: 'FlavorByte', role: 'Product Designer' },
+  { slug: 'toronto-zoo', name: 'Toronto Zoo', role: 'UI Designer' },
 ];

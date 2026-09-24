@@ -1,20 +1,24 @@
 ---
 import { projects } from '../data/site';
+
+interface Props {
+  // Slug of the project to leave out (the featured card on the homepage, or the current case study).
+  exclude: string;
+}
+const { exclude } = Astro.props;
+const shown = projects.map((p, i) => ({ ...p, num: String(i + 1).padStart(2, '0') })).filter((p) => p.slug !== exclude);
 ---
 
 <div class="cards">
   {
-    projects.map((p, i) => {
-      const Tag = p.href ? 'a' : 'div';
-      return (
-        <Tag class:list={['card', { 'card--link': p.href }]} href={p.href}>
-          <p class="eyebrow">0{i + 2}</p>
-          <p class="card__name">{p.name}</p>
-          <p class="card__role">{p.role}</p>
-          <p class="card__status">{p.href ? '→ Read the case study' : 'Case study coming soon'}</p>
-        </Tag>
-      );
-    })
+    shown.map((p) => (
+      <a class="card" href={`/work/${p.slug}`}>
+        <p class="eyebrow">{p.num}</p>
+        <p class="card__name">{p.name}</p>
+        <p class="card__role">{p.role}</p>
+        <p class="card__status">→ Read the case study</p>
+      </a>
+    ))
   }
 </div>
 
@@ -28,17 +32,13 @@ import { projects } from '../data/site';
   .card {
     display: flex;
     flex-direction: column;
-    border: 1px dashed #bdbdbd;
+    border: 1px solid var(--line);
     border-radius: var(--radius);
     padding: 28px;
     text-decoration: none;
-  }
-  .card--link {
-    border-style: solid;
-    border-color: var(--line-strong);
     transition: border-color 0.15s;
   }
-  .card--link:hover {
+  .card:hover {
     border-color: var(--accent);
   }
   .card__name {

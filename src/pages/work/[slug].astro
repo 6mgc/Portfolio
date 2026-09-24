@@ -1,0 +1,144 @@
+---
+import Base from '../../layouts/Base.astro';
+import Placeholder from '../../components/Placeholder.astro';
+import ProjectCards from '../../components/ProjectCards.astro';
+import { projects, type Project } from '../../data/site';
+
+/*
+ * Case study pages for the secondary projects. Canadian Tire has its own page (canadian-tire.astro).
+ * Everything in a .todo box or Placeholder is waiting on Megan's real material; don't invent it.
+ */
+export function getStaticPaths() {
+  return projects
+    .filter((p) => p.slug !== 'canadian-tire')
+    .map((project) => ({ params: { slug: project.slug }, props: { project } }));
+}
+
+const { project } = Astro.props as { project: Project };
+
+const sections = [
+  { title: 'The problem', todo: ['[Who the users were, what wasn\'t working, and why it mattered to the business.]'] },
+  {
+    title: 'Research & discovery',
+    todo: ['[How you found the problem: interviews, analytics, competitive review.]'],
+    shot: 'Research artefact',
+  },
+  { title: 'Team & role', todo: ['[Team size and makeup.]', '[What you owned end-to-end vs. contributed to.]'] },
+  {
+    title: 'The design',
+    todo: ['[Key design decisions and the reasoning behind each.]', '[Options considered and why each was rejected.]'],
+    shot: `${project.name}: final designs`,
+  },
+  { title: 'Validation', todo: ['[Testing method, what you learned, what changed as a result.]'] },
+  { title: 'Outcome', todo: ['[Results. Only numbers you can source.]'] },
+  { title: 'Reflection', todo: ['[What you learned and what you would do next.]'] },
+];
+---
+
+<Base title={project.name} description={`Case study: ${project.name}, ${project.role}.`}>
+  <section class="head">
+    <div class="container">
+      <a class="back" href="/#work">← All work</a>
+      <p class="eyebrow">Case study · {project.name}</p>
+      <h1>{project.name}</h1>
+      <p class="todo">[One-line headline: what you did and the impact.]</p>
+      <dl class="meta">
+        <div>
+          <dt class="eyebrow">Role</dt>
+          <dd>{project.role}</dd>
+        </div>
+        <div>
+          <dt class="eyebrow">Focus</dt>
+          <dd class="todo">[Focus areas]</dd>
+        </div>
+        <div>
+          <dt class="eyebrow">Timeline</dt>
+          <dd class="todo">[Dates]</dd>
+        </div>
+      </dl>
+      <Placeholder label={`${project.name}: hero screenshot`} ratio="16 / 8" />
+    </div>
+  </section>
+
+  {
+    sections.map((s, i) => (
+      <section class="section">
+        <div class="container split">
+          <p class="eyebrow">
+            0{i + 1} · {s.title}
+          </p>
+          <div class="stack">
+            {s.todo.map((t) => (
+              <p class="todo">{t}</p>
+            ))}
+            {s.shot && <Placeholder label={s.shot} ratio="16 / 7" />}
+          </div>
+        </div>
+      </section>
+    ))
+  }
+
+  <section class="section">
+    <div class="container">
+      <p class="eyebrow">More work</p>
+      <ProjectCards exclude={project.slug} />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .head {
+    padding: clamp(48px, 8vw, 96px) 0 clamp(64px, 8vw, 96px);
+  }
+  .back {
+    display: inline-block;
+    font-size: 14px;
+    text-decoration: none;
+    color: var(--ink-muted);
+    margin-bottom: 40px;
+  }
+  .back:hover {
+    color: var(--ink);
+  }
+  h1 {
+    font-size: clamp(40px, 7vw, 88px);
+    letter-spacing: -0.03em;
+    margin: 20px 0 24px;
+  }
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin: 40px 0 48px;
+    padding: 24px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  dd {
+    margin: 8px 0 0;
+  }
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 32px;
+  }
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .todo {
+    color: var(--ink-muted);
+    background: var(--placeholder);
+    border: 1px dashed #c8c8c8;
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-size: 15px;
+  }
+  @media (max-width: 800px) {
+    .meta,
+    .split {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
