@@ -19,3 +19,11 @@ export const nav = [
   { href: '/about', label: 'About' },
   { href: '/playground', label: 'AI Playground' },
 ];
+
+// Secondary projects shown after the featured Canadian Tire case study.
+// Set `href` once a case study page exists; until then the card reads "Case study coming soon".
+export const projects: { name: string; role: string; href?: string }[] = [
+  { name: 'chatalog.ai', role: 'UX/UI Designer' },
+  { name: 'FlavorByte', role: 'Product Designer' },
+  { name: 'Toronto Zoo', role: 'UI Designer' },
+];

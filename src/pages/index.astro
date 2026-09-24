@@ -3,7 +3,9 @@ import Base from '../layouts/Base.astro';
 import StatusPill from '../components/StatusPill.astro';
 import Metric from '../components/Metric.astro';
 import Placeholder from '../components/Placeholder.astro';
+import ProjectCards from '../components/ProjectCards.astro';
 import { metrics } from '../data/metrics';
+import { projects } from '../data/site';
 
 const principles = [
   {
@@ -19,11 +21,6 @@ const principles = [
     body: 'I measure impact the way the business does.',
   },
 ];
-
-const upcoming = [
-  { name: 'chatalog.ai', tag: 'AI product' },
-  { name: 'Freelance project', tag: 'Non-retail · TBD' },
-];
 ---
 
 <Base>
@@ -31,7 +28,10 @@ const upcoming = [
   <section class="hero">
     <div class="container">
       <StatusPill />
-      <h1 class="hero__title">Product design <strong>that ships <span class="accent">revenue</span></strong></h1>
+      <h1 class="hero__title">
+        Product designer driving <strong>measurable <span class="accent">revenue</span></strong> through better retail
+        experiences
+      </h1>
       <div class="hero__foot">
         <p class="hero__sub">
           Product Designer at Canadian Tire. <strong>{metrics.attributedRevenue.value}+</strong> in attributed revenue
@@ -50,7 +50,7 @@ const upcoming = [
     <div class="container">
       <div class="section-head">
         <p class="eyebrow">Selected work</p>
-        <p class="eyebrow">01 / 03</p>
+        <p class="eyebrow">{String(projects.length + 1).padStart(2, '0')} projects</p>
       </div>
 
       <article class="case">
@@ -84,17 +84,7 @@ const upcoming = [
         </a>
       </article>
 
-      <div class="upcoming">
-        {
-          upcoming.map((p) => (
-            <div class="upcoming__card">
-              <p class="eyebrow">Coming soon</p>
-              <p class="upcoming__name">{p.name}</p>
-              <p class="upcoming__tag">{p.tag}</p>
-            </div>
-          ))
-        }
-      </div>
+      <ProjectCards />
     </div>
   </section>
 
@@ -137,11 +127,11 @@ const upcoming = [
     padding: clamp(64px, 12vw, 160px) 0 clamp(64px, 10vw, 120px);
   }
   .hero__title {
-    font-size: clamp(48px, 10vw, 128px);
+    font-size: clamp(40px, 7vw, 96px);
     letter-spacing: -0.045em;
     line-height: 0.95;
     margin: 32px 0 56px;
-    max-width: 11ch;
+    max-width: 18ch;
   }
   .hero__foot {
     display: flex;
@@ -214,26 +204,6 @@ const upcoming = [
     align-self: flex-start;
   }
 
-  .upcoming {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
-    margin-top: 24px;
-  }
-  .upcoming__card {
-    border: 1px dashed #bdbdbd;
-    border-radius: var(--radius);
-    padding: 28px;
-  }
-  .upcoming__name {
-    font-size: 24px;
-    margin: 12px 0 4px;
-  }
-  .upcoming__tag {
-    font-size: 14px;
-    color: var(--ink-muted);
-  }
-
   .principles {
     list-style: none;
     padding: 0;
@@ -281,7 +251,6 @@ const upcoming = [
   @media (max-width: 800px) {
     .case__metrics,
     .principles,
-    .upcoming,
     .about {
       grid-template-columns: 1fr;
     }

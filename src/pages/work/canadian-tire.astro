@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import Metric from '../../components/Metric.astro';
 import Placeholder from '../../components/Placeholder.astro';
+import ProjectCards from '../../components/ProjectCards.astro';
 
 /*
  * Content marked [bracketed] in a Placeholder or a .todo paragraph still needs Megan's real material.
@@ -162,10 +163,7 @@ const components = [
   <section class="section">
     <div class="container">
       <p class="eyebrow">More work</p>
-      <div class="more">
-        <div class="more__card"><p class="eyebrow">Coming soon</p><p class="more__name">chatalog.ai</p></div>
-        <div class="more__card"><p class="eyebrow">Coming soon</p><p class="more__name">Freelance project</p></div>
-      </div>
+      <ProjectCards />
     </div>
   </section>
 </Base>
@@ -267,29 +265,12 @@ const components = [
     gap: 12px;
   }
 
-  .more {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
-    margin-top: 24px;
-  }
-  .more__card {
-    border: 1px dashed #bdbdbd;
-    border-radius: var(--radius);
-    padding: 28px;
-  }
-  .more__name {
-    font-size: 24px;
-    margin-top: 12px;
-  }
-
   @media (max-width: 800px) {
     .meta,
     .split,
     .cols,
     .results,
-    .component,
-    .more {
+    .component {
       grid-template-columns: 1fr;
     }
   }
