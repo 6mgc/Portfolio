@@ -285,7 +285,7 @@ export const caseStudies: Record<string, CaseStudy> = {
     },
     flow: [
       { key: 'problem', title: 'The challenges' },
-      { key: 'outcome', title: 'The results', shot: 'Toronto Zoo: redesigned screens' },
+      { key: 'outcome', title: 'The results' },
       { key: 'research', title: 'Research & discovery' },
       { key: 'design', title: 'Design & development' },
       { key: 'reflection', title: 'Conclusion' },
@@ -313,6 +313,12 @@ export const caseStudies: Record<string, CaseStudy> = {
           lead: 'Outdated website design',
           text: 'The old website lacked an intuitive flow and the navigation was confusing, leading to a negative user experience and difficulty finding key sections.',
         },
+        { image: { src: '/images/toronto-zoo/checkout-before-after.webp', alt: 'Before and after: the old single-column checkout form beside the redesigned Check Out page with progress bar and order summary', width: 1024, height: 582 } },
+      ],
+    },
+    outcome: {
+      items: [
+        { image: { src: '/images/toronto-zoo/redesigned-screens.webp', alt: 'Redesigned Toronto Zoo screens on desktop and mobile: Daily Tickets, account page, checkout and guest checkout options', width: 1024, height: 698 } },
       ],
     },
     research: {
@@ -324,7 +330,7 @@ export const caseStudies: Record<string, CaseStudy> = {
         {
           text: 'I then mapped out the streamlined ticket purchasing task flow, allowing users to save their personal and payment information in accounts for quicker future transactions.',
         },
-        { shot: 'Toronto Zoo: ticket purchase task flow' },
+        { image: { src: '/images/toronto-zoo/task-flow.webp', alt: 'Ticket purchase task flow: landing page, log in, select single, group or membership tickets, select date, add quantity, checkout, review, pay, confirmation', width: 1962, height: 250 } },
       ],
     },
     design: {
@@ -336,6 +342,7 @@ export const caseStudies: Record<string, CaseStudy> = {
         {
           text: "The UI style guide focused on improving accessibility and creating a fresh, cohesive design that aligns with the zoo's goals, establishing a cohesive visual identity.",
         },
+        { image: { src: '/images/toronto-zoo/style-guide.webp', alt: 'UI style guide: Poppins typography scale, color palette, buttons, text fields, icons and quantity input', width: 1024, height: 711 } },
       ],
     },
     reflection: {
