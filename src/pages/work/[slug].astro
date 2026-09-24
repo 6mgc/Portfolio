@@ -19,7 +19,7 @@ const { project } = Astro.props as { project: Project };
 const cs = caseStudies[project.slug];
 const empty = (todo: string): Section => ({ todo: [todo] });
 
-const sections: { title: string; body: Section; shot?: string; metrics?: boolean }[] = [
+const defaultFlow: { title: string; body: Section; shot?: string; metrics?: boolean }[] = [
   { title: 'The problem', body: cs?.problem ?? empty("[Who the users were, what wasn't working, and why it mattered.]") },
   { title: 'Outcome', body: cs ? (cs.outcome ?? {}) : empty('[Results. Only numbers you can source.]'), metrics: true },
   {
@@ -36,6 +36,15 @@ const sections: { title: string; body: Section; shot?: string; metrics?: boolean
   { title: 'Validation', body: cs?.validation ?? empty('[Testing method, what you learned, what changed.]') },
   { title: 'Reflection', body: cs?.reflection ?? empty('[What you learned and what you would do next.]') },
 ];
+
+const sections = cs?.flow
+  ? cs.flow.map((f) => ({
+      title: f.title,
+      body: cs[f.key] ?? empty(`[${f.title}]`),
+      shot: f.shot,
+      metrics: f.key === 'outcome',
+    }))
+  : defaultFlow;
 ---
 
 <Base title={project.name} description={`Case study: ${project.name}, ${project.role}.`}>

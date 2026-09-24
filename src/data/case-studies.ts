@@ -14,7 +14,11 @@ export interface Section {
   todo?: string[];
 }
 
+export type SectionKey = 'problem' | 'outcome' | 'research' | 'team' | 'design' | 'validation' | 'reflection';
+
 export interface CaseStudy {
+  // Section order, titles and image slots for this page. Without it the default flow is used.
+  flow?: { key: SectionKey; title: string; shot?: string }[];
   headline?: string;
   subhead?: string;
   meta: { label: string; value: string }[];
@@ -23,14 +27,22 @@ export interface CaseStudy {
   // Optional when the metrics say it all.
   outcome?: Section;
   research: Section;
-  team: Section;
+  team?: Section;
   design: Section;
-  validation: Section;
+  validation?: Section;
   reflection: Section;
 }
 
 export const caseStudies: Record<string, CaseStudy> = {
+  // Follows the flow of the Framer case study: challenges, result, research, solutions, key takeaways.
   'chatalog-ai': {
+    flow: [
+      { key: 'problem', title: 'Challenges' },
+      { key: 'outcome', title: 'Result', shot: 'chatalog.ai: redesigned screens' },
+      { key: 'research', title: 'Research' },
+      { key: 'design', title: 'Solutions' },
+      { key: 'reflection', title: 'Key takeaways' },
+    ],
     headline: 'Simplified chatbot creation, reducing user confusion and inquiries.',
     subhead: 'Enhancing the user experience for a B2B chatbot platform.',
     meta: [
@@ -44,8 +56,15 @@ export const caseStudies: Record<string, CaseStudy> = {
       { value: '25%', label: 'Faster chatbot setup' },
     ],
     problem: {
-      todo: ['[The first problem(s) and the start of the media-upload problem were cut off in the screenshot. Paste them here.]'],
       items: [
+        {
+          lead: 'Tracking active chatbot rules',
+          text: 'Users had difficulty identifying which chatbot rules were applied after setup, leading to confusion.',
+        },
+        {
+          lead: 'Media upload confusion',
+          text: 'When uploading media in the message creation process, it often replaced text unintentionally, causing frustration.',
+        },
         {
           lead: 'Widget installation failure',
           text: 'Users frequently missed the domain URL input during web chat widget setup, leading to installation failures and a complex user experience.',
@@ -59,16 +78,14 @@ export const caseStudies: Record<string, CaseStudy> = {
       ],
     },
     research: {
-      todo: ['[The start of this section (market / competitor research and the roadmap) was cut off. Paste it here.]'],
       items: [
+        {
+          text: 'I conducted a comprehensive UX audit of the product, methodically identifying usability challenges and design opportunities. Through collaborative sessions with key stakeholders, I prioritized critical issues and developed an actionable roadmap for improvements.',
+        },
         {
           text: 'Then I did user interviews and analyzed interview data to uncover core pain points and user needs. This insight-driven approach helped identify high-impact features for development, ensuring our efforts would deliver maximum value to users.',
         },
       ],
-    },
-    team: {
-      items: [{ text: 'UX/UI Designer on a team of 7, over 12 weeks.' }],
-      todo: ['[Who else was on the team, and what you owned vs. contributed to.]'],
     },
     design: {
       items: [
@@ -85,10 +102,6 @@ export const caseStudies: Record<string, CaseStudy> = {
           text: 'The layout was reorganized to group settings logically, ensuring the domain URL input was placed above the Save button. A pop-up reminder was also added to prevent missed steps during installation.',
         },
       ],
-      todo: ['[Options considered and why each was rejected.]'],
-    },
-    validation: {
-      todo: ['[How the changes were tested before or after launch, and how the results above were measured.]'],
     },
     reflection: {
       items: [
