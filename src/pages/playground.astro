@@ -6,6 +6,7 @@ interface Experiment {
   name: string;
   description: string;
   highlights?: { heading: string; items: { label: string; text: string }[] };
+  inspiration?: { src: string; alt: string; caption: string };
   url: string;
   // `src` is a path under public/; without it the shot renders as a placeholder.
   shots: { label: string; ratio: string; src?: string }[];
@@ -23,6 +24,11 @@ const experiments: Experiment[] = [
         { label: 'Prime-Time Wisdom', text: 'Features the iconic dialogue we all grew up hearing during the 8:30 PM dinner slot.' },
         { label: 'Tech meets Canto-pop', text: 'A playful bridge between 90s/00s nostalgia and modern AI.' },
       ],
+    },
+    inspiration: {
+      src: '/images/yes-card-machine.webp',
+      alt: 'An orange YES! Card vending machine in a Hong Kong shop, with a coin slot, a white turning knob, and a big yellow pointing hand.',
+      caption: 'The inspiration: an original YES! Card machine.',
     },
     url: 'https://dailyyescard.vercel.app/',
     shots: [
@@ -61,6 +67,12 @@ const experiments: Experiment[] = [
           <div class="exp__head">
             <p class="eyebrow">0{i + 1} / 0{experiments.length}</p>
             <h2>{x.name}</h2>
+            {x.inspiration && (
+              <figure class="inspo">
+                <img src={x.inspiration.src} alt={x.inspiration.alt} width="360" height="480" loading="lazy" decoding="async" />
+                <figcaption>{x.inspiration.caption}</figcaption>
+              </figure>
+            )}
           </div>
           <div class="exp__body">
             <p class="exp__desc">{x.description}</p>
@@ -121,6 +133,22 @@ const experiments: Experiment[] = [
     font-size: clamp(28px, 3.4vw, 40px);
     margin-top: 12px;
   }
+  .inspo {
+    margin: 32px 0 0;
+    max-width: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .inspo img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+  }
+  .inspo figcaption {
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
   .exp__body {
     display: flex;
     flex-direction: column;
@@ -159,13 +187,7 @@ const experiments: Experiment[] = [
 
   @media (max-width: 800px) {
     .exp,
-    .shot {
-    width: 100%;
-    object-fit: cover;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-  }
-  .exp__shots--two {
+    .exp__shots--two {
       grid-template-columns: 1fr;
     }
   }
