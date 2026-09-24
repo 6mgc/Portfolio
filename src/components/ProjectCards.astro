@@ -13,10 +13,12 @@ const shown = projects.map((p, i) => ({ ...p, num: String(i + 1).padStart(2, '0'
   {
     shown.map((p) => (
       <a class="card" href={`/work/${p.slug}`}>
-        <p class="eyebrow">{p.num}</p>
+        <p class="card__top">
+          <span class="eyebrow">{p.num}</span>
+          <span class="card__arrow" aria-hidden="true">→</span>
+        </p>
         <p class="card__name">{p.name}</p>
         <p class="card__role">{p.role}</p>
-        <p class="card__status">→ Read the case study</p>
       </a>
     ))
   }
@@ -50,10 +52,16 @@ const shown = projects.map((p, i) => ({ ...p, num: String(i + 1).padStart(2, '0'
     font-size: 14px;
     color: var(--ink-muted);
   }
-  .card__status {
-    margin-top: 32px;
-    font-size: 13px;
-    color: var(--ink-muted);
+  .card__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .card__arrow {
+    transition: transform 0.35s ease;
+  }
+  .card:hover .card__arrow {
+    transform: translateX(4px);
   }
   @media (max-width: 800px) {
     .cards {
