@@ -30,7 +30,7 @@ Images go in `public/` (e.g. `public/work/ct-hero.png`) and replace the `<Placeh
 
 `npm run check:launch` lists what's still open. It covers:
 
-- [ ] **Reconcile numbers** in `src/data/metrics.ts` against source data: $540K vs. $177K + $366K = $543K,
+- [ ] **Reconcile numbers** in `src/data/metrics.ts` against source data ($540K revenue is confirmed):
       and whether 26.61% is a relative *lift*. Set `verified: true` and fill in `source`.
       In dev, unverified numbers show a dashed orange outline.
 - [ ] Headshot, annotated before/after screenshots.
