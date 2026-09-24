@@ -77,11 +77,11 @@ const experiments: Experiment[] = [
               </div>
             )}
             {x.url ? (
-              <a class="btn" href={x.url} target="_blank" rel="noopener">
-                Try it out <span aria-hidden="true">↗</span>
+              <a class="cta" href={x.url} target="_blank" rel="noopener">
+                Try it out <span class="cta__arrow" aria-hidden="true">→</span>
               </a>
             ) : (
-              <span class="btn btn--pending">
+              <span class="cta cta--pending">
                 Try it out [add link]
               </span>
             )}
@@ -141,13 +141,6 @@ const experiments: Experiment[] = [
   }
   .exp__hl strong {
     color: var(--ink);
-  }
-  .btn:not(.btn--pending):hover {
-    border-color: var(--accent);
-  }
-  .btn--pending {
-    color: var(--ink-muted);
-    border-style: dashed;
   }
   .exp__shots {
     grid-column: 1 / -1;

@@ -7,13 +7,13 @@ import { site } from '../data/site';
     <p class="eyebrow footer__eyebrow">Let's talk</p>
     <p class="footer__headline">Open to <strong class="accent">{site.openToYear}</strong> roles.</p>
     <div class="footer__links">
-      <a class="link-arrow" href={`mailto:${site.email}`}>Email</a>
-      <a class="link-arrow" href={site.linkedin} rel="noopener" target="_blank">LinkedIn</a>
+      <a class="cta cta--on-dark" href={`mailto:${site.email}`}>Email <span class="cta__arrow" aria-hidden="true">→</span></a>
+      <a class="cta cta--on-dark" href={site.linkedin} rel="noopener" target="_blank">LinkedIn <span class="cta__arrow" aria-hidden="true">→</span></a>
       {
         site.resume ? (
-          <a class="btn btn--primary" href={site.resume} target="_blank" rel="noopener">Résumé</a>
+          <a class="cta cta--on-dark" href={site.resume} target="_blank" rel="noopener">Résumé <span class="cta__arrow" aria-hidden="true">→</span></a>
         ) : (
-          <span class="btn footer__pending" title="Résumé link not set yet">Résumé [add link]</span>
+          <span class="cta cta--pending footer__pending" title="Résumé link not set yet">Résumé [add link]</span>
         )
       }
     </div>
@@ -45,17 +45,11 @@ import { site } from '../data/site';
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 28px;
-  }
-  .footer .link-arrow {
-    border-color: #ffffff;
-  }
-  .footer .link-arrow:hover {
-    border-color: var(--accent);
+    gap: 16px;
   }
   .footer__pending {
     color: #9a9a9a;
-    border-style: dashed;
+    border-color: #9a9a9a;
   }
   .footer__meta {
     display: flex;

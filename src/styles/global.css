@@ -11,7 +11,6 @@
      WCAG AA: 3.39:1 on white and 5.57:1 on #111, so it passes only as large text (24px+, or 18.66px+ bold)
      and for UI graphics. Never use it for small text. Button labels on it are dark (#111, 5.57:1). */
   --accent: #e8621a;
-  --accent-hover: #d4571a;
   --accent-ink: #111111;
 
   --font: 'Manrope Variable', 'Manrope', system-ui, sans-serif;
@@ -117,41 +116,67 @@ p {
   color: var(--accent);
 }
 
-.link-arrow {
+/* Call to action: a pill that fills with the accent from the left on hover, arrow nudging right.
+   Label on the accent is --accent-ink (#111, 5.57:1). */
+.cta {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
-  gap: 0.5em;
-  font-weight: 500;
-  text-decoration: none;
-  border-bottom: 1px solid var(--ink);
-  padding-bottom: 2px;
-  transition: border-color 0.15s, color 0.15s;
-}
-.link-arrow:hover {
-  border-color: var(--accent);
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5em;
-  padding: 12px 20px;
-  border-radius: var(--radius);
+  gap: 0.6em;
+  padding: 12px 22px;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  color: var(--ink);
   font: inherit;
-  font-weight: 500;
   font-size: 15px;
+  font-weight: 500;
+  line-height: 1.2;
   text-decoration: none;
-  border: 1px solid currentColor;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  transition: color 0.35s ease, border-color 0.35s ease;
 }
-.btn--primary {
+.cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
   background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-ink);
+  transform: translateX(-101%);
+  transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-.btn--primary:hover {
-  background: var(--accent-hover);
-  border-color: var(--accent-hover);
+.cta__arrow {
+  display: inline-block;
+  transition: transform 0.35s ease;
+}
+a.cta:hover,
+a.cta:focus-visible {
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+a.cta:hover::before,
+a.cta:focus-visible::before {
+  transform: translateX(0);
+}
+a.cta:hover .cta__arrow,
+a.cta:focus-visible .cta__arrow {
+  transform: translateX(4px);
+}
+.cta--primary {
+  background: var(--ink);
+  color: var(--bg);
+}
+.cta--on-dark {
+  border-color: #ffffff;
+  color: #ffffff;
+}
+/* Not linked yet: no fill, dashed outline. */
+.cta--pending {
+  border-style: dashed;
+  color: var(--ink-muted);
+}
+.cta--pending::before {
+  content: none;
 }
 
 .visually-hidden {
@@ -174,7 +199,9 @@ p {
   html {
     scroll-behavior: auto;
   }
-  * {
+  *,
+  *::before,
+  *::after {
     transition: none !important;
   }
 }

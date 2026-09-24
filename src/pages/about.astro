@@ -37,8 +37,8 @@ const interests = [
         </p>
         <p>Open to product design roles in retail, banking, and AI product.</p>
         <div class="links">
-          <a class="btn btn--primary" href={`mailto:${site.email}`}>Get in touch</a>
-          <a class="link-arrow" href={site.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+          <a class="cta cta--primary" href={`mailto:${site.email}`}>Get in touch <span class="cta__arrow" aria-hidden="true">→</span></a>
+          <a class="cta" href={site.linkedin} target="_blank" rel="noopener">LinkedIn <span class="cta__arrow" aria-hidden="true">→</span></a>
         </div>
       </div>
       <Placeholder label="Headshot" ratio="4 / 5" />
@@ -56,8 +56,8 @@ const interests = [
               <h3>{it.name}</h3>
               <p>{it.text}</p>
               {it.href && (
-                <a class="link-arrow" href={it.href}>
-                  <span aria-hidden="true">→</span> See the playground
+                <a class="cta" href={it.href}>
+                  See the playground <span class="cta__arrow" aria-hidden="true">→</span>
                 </a>
               )}
             </li>
@@ -127,7 +127,8 @@ const interests = [
   .links {
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 12px;
+    flex-wrap: wrap;
     margin-top: 8px;
   }
   @media (max-width: 800px) {
