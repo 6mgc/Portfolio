@@ -14,11 +14,21 @@ export interface Section {
   todo?: string[];
 }
 
+export interface Img {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+}
+
 export type SectionKey = 'problem' | 'outcome' | 'research' | 'team' | 'design' | 'validation' | 'reflection';
 
 export interface CaseStudy {
-  // Section order, titles and image slots for this page. Without it the default flow is used.
-  flow?: { key: SectionKey; title: string; shot?: string }[];
+  hero?: Img;
+  // Section order, titles and images for this page. Without it the default flow is used.
+  // `images` is a list of rows shown after the section text; a row of two sits side by side.
+  // `shot` shows a placeholder slot instead when there is no image yet.
+  flow?: { key: SectionKey; title: string; shot?: string; images?: Img[][] }[];
   headline?: string;
   subhead?: string;
   meta: { label: string; value: string }[];
@@ -36,11 +46,57 @@ export interface CaseStudy {
 export const caseStudies: Record<string, CaseStudy> = {
   // Follows the flow of the Framer case study: challenges, result, research, solutions, key takeaways.
   'chatalog-ai': {
+    hero: {
+      src: '/images/chatalog/hero.webp',
+      alt: 'chatalog.ai dashboard screens, centred on "Create new bot for this IG post" with rules, labels and bot properties',
+      width: 1600,
+      height: 800,
+    },
     flow: [
       { key: 'problem', title: 'Challenges' },
-      { key: 'outcome', title: 'Result', shot: 'chatalog.ai: redesigned screens' },
+      {
+        key: 'outcome',
+        title: 'Result',
+        images: [
+          [
+            {
+              src: '/images/chatalog/contact-overview.webp',
+              alt: 'Contact Overview: a contacts table with channel filters, labels, membership and bulk actions',
+              width: 1400,
+              height: 868,
+            },
+          ],
+        ],
+      },
       { key: 'research', title: 'Research' },
-      { key: 'design', title: 'Solutions' },
+      {
+        key: 'design',
+        title: 'Solutions',
+        images: [
+          [
+            {
+              src: '/images/chatalog/broadcast-setting.webp',
+              alt: 'Broadcast Setting with separate Carousel, Single Image and Single Message options',
+              width: 1400,
+              height: 868,
+            },
+          ],
+          [
+            {
+              src: '/images/chatalog/label-field.webp',
+              alt: 'Label / Custom Field panel: adding a label, with the label dropdown open',
+              width: 888,
+              height: 647,
+            },
+            {
+              src: '/images/chatalog/custom-field.webp',
+              alt: 'Label / Custom Field panel on the Custom Field tab, with field name and value inputs',
+              width: 487,
+              height: 487,
+            },
+          ],
+        ],
+      },
       { key: 'reflection', title: 'Key takeaways' },
     ],
     headline: 'Simplified chatbot creation, reducing user confusion and inquiries.',

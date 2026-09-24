@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import Placeholder from '../../components/Placeholder.astro';
 import ProjectCards from '../../components/ProjectCards.astro';
 import { projects, type Project } from '../../data/site';
-import { caseStudies, type Section } from '../../data/case-studies';
+import { caseStudies, type Img, type Section } from '../../data/case-studies';
 
 /*
  * Case study pages for the secondary projects. Canadian Tire has its own page (canadian-tire.astro).
@@ -19,7 +19,7 @@ const { project } = Astro.props as { project: Project };
 const cs = caseStudies[project.slug];
 const empty = (todo: string): Section => ({ todo: [todo] });
 
-const defaultFlow: { title: string; body: Section; shot?: string; metrics?: boolean }[] = [
+const defaultFlow: { title: string; body: Section; shot?: string; images?: Img[][]; metrics?: boolean }[] = [
   { title: 'The problem', body: cs?.problem ?? empty("[Who the users were, what wasn't working, and why it mattered.]") },
   { title: 'Outcome', body: cs ? (cs.outcome ?? {}) : empty('[Results. Only numbers you can source.]'), metrics: true },
   {
@@ -42,6 +42,7 @@ const sections = cs?.flow
       title: f.title,
       body: cs[f.key] ?? empty(`[${f.title}]`),
       shot: f.shot,
+      images: f.images,
       metrics: f.key === 'outcome',
     }))
   : defaultFlow;
@@ -76,7 +77,13 @@ const sections = cs?.flow
           )
         }
       </dl>
-      <Placeholder label={`${project.name}: hero screenshot`} ratio="16 / 8" />
+      {
+        cs?.hero ? (
+          <img class="shot hero-shot" src={cs.hero.src} alt={cs.hero.alt} width={cs.hero.width} height={cs.hero.height} />
+        ) : (
+          <Placeholder label={`${project.name}: hero screenshot`} ratio="16 / 8" />
+        )
+      }
     </div>
   </section>
 
@@ -106,7 +113,17 @@ const sections = cs?.flow
             {s.body.todo?.map((t) => (
               <p class="todo">{t}</p>
             ))}
-            {s.shot && <Placeholder label={s.shot} ratio="16 / 7" />}
+            {s.images?.map((row) => (
+              <div
+                class:list={['shots', { 'shots--two': row.length > 1 }]}
+                style={row.length > 1 ? `--cols: ${row.map((i) => `${(i.width / i.height).toFixed(3)}fr`).join(' ')}` : undefined}
+              >
+                {row.map((img) => (
+                  <img class="shot" src={img.src} alt={img.alt} width={img.width} height={img.height} loading="lazy" decoding="async" />
+                ))}
+              </div>
+            ))}
+            {!s.images && s.shot && <Placeholder label={s.shot} ratio="16 / 7" />}
           </div>
         </div>
       </section>
@@ -198,6 +215,21 @@ const sections = cs?.flow
     font-size: 14px;
     color: var(--ink-muted);
   }
+  .shot {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+  }
+  .shots {
+    display: grid;
+    gap: 16px;
+  }
+  /* Columns sized by each image's aspect ratio so a row's images share one height. */
+  .shots--two {
+    grid-template-columns: var(--cols, 1fr 1fr);
+    align-items: start;
+  }
   .todo {
     color: var(--ink-muted);
     background: var(--placeholder);
@@ -209,7 +241,8 @@ const sections = cs?.flow
   @media (max-width: 800px) {
     .meta,
     .split,
-    .metrics {
+    .metrics,
+    .shots--two {
       grid-template-columns: 1fr;
     }
   }
