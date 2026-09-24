@@ -6,7 +6,6 @@ interface Experiment {
   name: string;
   description: string;
   highlights?: { heading: string; items: { label: string; text: string }[] };
-  // TODO: add the live app URLs.
   url: string;
   shots: { label: string; ratio: string }[];
 }
@@ -24,7 +23,7 @@ const experiments: Experiment[] = [
         { label: 'Tech meets Canto-pop', text: 'A playful bridge between 90s/00s nostalgia and modern AI.' },
       ],
     },
-    url: '',
+    url: 'https://dailyyescard.vercel.app/',
     shots: [
       { label: 'Daily YES! Card: vending machine', ratio: '1 / 1' },
       { label: 'Daily YES! Card: card reveal', ratio: '1 / 1' },
@@ -34,7 +33,7 @@ const experiments: Experiment[] = [
     name: 'Moody Pod',
     description:
       'A nostalgic, iPod-inspired web app that recommends songs based on your current mood. Users type how they\'re feeling, and the app uses AI to suggest a song that matches their emotional state. It\'s a simple two-page experience designed to feel like using a classic Apple iPod.',
-    url: '',
+    url: 'https://moodypod.vercel.app/',
     shots: [{ label: 'Moody Pod: iPod interface', ratio: '16 / 9' }],
   },
 ];
