@@ -11,7 +11,13 @@ interface Sticker {
   tilt: number;
 }
 
-const interests: { name: string; text: string; href?: string; sticker?: Sticker }[] = [
+interface EmojiSticker {
+  char: string;
+  label: string;
+  tilt: number;
+}
+
+const interests: { name: string; text: string; href?: string; sticker?: Sticker; emoji?: EmojiSticker[] }[] = [
   {
     name: 'Photography',
     text: 'Chasing light and moments around Toronto, finding stories in everyday corners.',
@@ -22,10 +28,18 @@ const interests: { name: string; text: string; href?: string; sticker?: Sticker 
     text: "Good beats = good design flow. There's always something playing while I work.",
     sticker: { src: '/images/sticker-music.webp', alt: 'A music app icon', width: 240, height: 240, tilt: 6 },
   },
-  { name: 'Travelling', text: 'Every new city teaches me something about how people navigate spaces and experiences.' },
+  {
+    name: 'Travelling',
+    text: 'Every new city teaches me something about how people navigate spaces and experiences.',
+    emoji: [{ char: '✈️', label: 'Airplane', tilt: -10 }],
+  },
   {
     name: 'Nature escapes',
     text: "Hiking Toronto's trails or getting lost in parks. My best ideas come when I step away from the screen.",
+    emoji: [
+      { char: '🌳', label: 'Tree', tilt: -6 },
+      { char: '🏖️', label: 'Beach', tilt: 8 },
+    ],
   },
   {
     name: 'Hand-building pottery',
@@ -74,7 +88,16 @@ const interests: { name: string; text: string; href?: string; sticker?: Sticker 
       <ul class="interests">
         {
           interests.map((it) => (
-            <li class:list={{ 'has-sticker': it.sticker }}>
+            <li class:list={{ 'has-sticker': it.sticker || it.emoji }}>
+              {it.emoji && (
+                <span class="emoji-stickers">
+                  {it.emoji.map((e) => (
+                    <span class="emoji-sticker" role="img" aria-label={e.label} style={`--tilt: ${e.tilt}deg`}>
+                      {e.char}
+                    </span>
+                  ))}
+                </span>
+              )}
               {it.sticker && (
                 <img
                   class="sticker"
@@ -180,6 +203,26 @@ const interests: { name: string; text: string; href?: string; sticker?: Sticker 
     box-shadow:
       0 2px 4px rgb(17 17 17 / 0.12),
       0 12px 24px rgb(17 17 17 / 0.18);
+  }
+  /* Emoji stickers: a white die-cut outline built from stacked drop-shadows. */
+  .emoji-stickers {
+    position: absolute;
+    top: -42px;
+    right: 0;
+    display: flex;
+    gap: 4px;
+  }
+  .emoji-sticker {
+    display: inline-block;
+    font-size: 48px;
+    line-height: 1;
+    filter: drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff)
+      drop-shadow(0 4px 6px rgb(17 17 17 / 0.2));
+    transform: rotate(var(--tilt, 0deg));
+    transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .has-sticker:hover .emoji-sticker {
+    transform: rotate(0deg) translateY(-4px) scale(1.08);
   }
   .has-sticker h3 {
     padding-right: 108px;
