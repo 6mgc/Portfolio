@@ -10,8 +10,8 @@ for (const m of metricsSrc.matchAll(/(\w+):\s*\{[^}]*?verified:\s*false/g)) {
   problems.push(`Metric "${m[1]}" is unverified (src/data/metrics.ts)`);
 }
 
-if (readFileSync('astro.config.mjs', 'utf8').includes('example.com')) {
-  problems.push('`site` in astro.config.mjs is still example.com');
+if (!/^\s*site:/m.test(readFileSync('astro.config.mjs', 'utf8'))) {
+  problems.push('`site` in astro.config.mjs is not set to the live address');
 }
 
 function walk(dir) {
