@@ -40,7 +40,8 @@ const defaultFlow: { title: string; body: Section; shot?: string; images?: Img[]
 const sections = cs?.flow
   ? cs.flow.map((f) => ({
       title: f.title,
-      body: cs[f.key] ?? empty(`[${f.title}]`),
+      // A results section can be just the metric tiles.
+      body: cs[f.key] ?? (f.key === 'outcome' && cs.metrics ? {} : empty(`[${f.title}]`)),
       shot: f.shot,
       images: f.images,
       metrics: f.key === 'outcome',
@@ -54,7 +55,7 @@ const sections = cs?.flow
       <a class="back" href="/#work">← All work</a>
       <p class="eyebrow">Case study · {project.name}</p>
       <h1>{project.name}</h1>
-      {cs?.headline ? <p class="headline">{cs.headline}</p> : <p class="todo">[One-line headline: what you did and the impact.]</p>}
+      {cs?.headline && <p class="headline">{cs.headline}</p>}
       {cs?.subhead && <p class="subhead">{cs.subhead}</p>}
       <dl class="meta">
         <div>

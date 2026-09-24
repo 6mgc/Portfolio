@@ -275,8 +275,21 @@ export const caseStudies: Record<string, CaseStudy> = {
       ],
     },
   },
-  // Transcribed from a low-resolution screenshot: proofread before launch.
+  // Follows the flow of the Framer case study. Transcribed from a low-resolution screenshot: proofread.
   'toronto-zoo': {
+    hero: {
+      src: '/images/toronto-zoo/hero.webp',
+      alt: 'Toronto Zoo mobile screens: Tickets, Daily Tickets with a calendar and ticket counts, and Order Summary',
+      width: 1600,
+      height: 1000,
+    },
+    flow: [
+      { key: 'problem', title: 'The challenges' },
+      { key: 'outcome', title: 'The results', shot: 'Toronto Zoo: redesigned screens' },
+      { key: 'research', title: 'Research & discovery' },
+      { key: 'design', title: 'Design & development' },
+      { key: 'reflection', title: 'Conclusion' },
+    ],
     meta: [
       {
         label: 'Responsibilities',
@@ -291,8 +304,11 @@ export const caseStudies: Record<string, CaseStudy> = {
       { value: '56', label: 'Options removed from the purchase page, streamlining decisions' },
     ],
     problem: {
-      todo: ['[The first problem(s) were cut off in the screenshot. Paste them here.]'],
       items: [
+        {
+          lead: 'No saved user data',
+          text: 'Users had to repeatedly enter personal and payment information with each ticket purchase, increasing frustration and time consumption.',
+        },
         {
           lead: 'Outdated website design',
           text: 'The old website lacked an intuitive flow and the navigation was confusing, leading to a negative user experience and difficulty finding key sections.',
@@ -304,25 +320,23 @@ export const caseStudies: Record<string, CaseStudy> = {
         {
           text: "I began with an in-depth analysis of both business and user goals, revealing that ticket purchases were the primary focus for users, directly impacting zoo revenue. Through individual and group card sorting exercises, I reorganized the website's information architecture to ensure users could navigate to key sections within three clicks, with login options readily accessible.",
         },
+        { shot: 'Toronto Zoo: card sorting' },
         {
           text: 'I then mapped out the streamlined ticket purchasing task flow, allowing users to save their personal and payment information in accounts for quicker future transactions.',
         },
+        { shot: 'Toronto Zoo: ticket purchase task flow' },
       ],
-    },
-    team: {
-      items: [{ text: 'UI Designer on a team of 5, over 8 weeks.' }],
-      todo: ['[Who else was on the team, and what you owned vs. contributed to.]'],
     },
     design: {
-      todo: ['[The part of this section between the task flow and the style guide was cut off. Paste it here.]'],
       items: [
         {
-          text: "The UI style guide focused on improving accessibility and creating a fresh, cohesive design that aligns with the zoo's goals.",
+          text: "I designed wireframes for essential pages, such as login, account, and ticket purchase, streamlining the user journey. This included features like account creation and social media logins, all aligned with a consistent UI style guide that enhances usability and reflects the brand's identity.",
+        },
+        { shot: 'Toronto Zoo: wireframes' },
+        {
+          text: "The UI style guide focused on improving accessibility and creating a fresh, cohesive design that aligns with the zoo's goals, establishing a cohesive visual identity.",
         },
       ],
-    },
-    validation: {
-      todo: ['[What the usability testing covered, who took part, and what changed as a result.]'],
     },
     reflection: {
       items: [
