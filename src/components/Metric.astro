@@ -1,0 +1,47 @@
+---
+import { metrics, type MetricKey } from '../data/metrics';
+
+interface Props {
+  id: MetricKey;
+  size?: 'lg' | 'md';
+}
+const { id, size = 'md' } = Astro.props;
+const m = metrics[id];
+const flag = import.meta.env.DEV && !m.verified;
+---
+
+<div class:list={['metric', `metric--${size}`, { 'metric--unverified': flag }]} title={flag ? `Unverified: ${'note' in m ? m.note : 'confirm against source data'}` : undefined}>
+  <span class="metric__value">{m.value}</span>
+  <span class="metric__label">{m.label}</span>
+</div>
+
+<style>
+  .metric {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .metric__value {
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .metric--md .metric__value {
+    font-size: clamp(32px, 4vw, 44px);
+  }
+  .metric--lg .metric__value {
+    font-size: clamp(48px, 7vw, 80px);
+  }
+  .metric__label {
+    font-size: 14px;
+    color: var(--ink-muted);
+  }
+  /* Dev only: marks numbers still waiting on source data. */
+  .metric--unverified {
+    outline: 1px dashed var(--accent);
+    outline-offset: 6px;
+    cursor: help;
+  }
+</style>

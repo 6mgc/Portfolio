@@ -1,0 +1,38 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="AI Playground" description="Experiments with AI product design. Coming soon.">
+  <section class="soon">
+    <div class="container">
+      <p class="eyebrow">AI Playground</p>
+      <h1>Experiments, <strong>coming <span class="accent">soon</span></strong>.</h1>
+      <div class="card">
+        <p class="eyebrow">In progress</p>
+        <p class="name">chatalog.ai</p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .soon {
+    padding: clamp(64px, 12vw, 160px) 0;
+  }
+  h1 {
+    font-size: clamp(44px, 8vw, 96px);
+    letter-spacing: -0.04em;
+    margin: 20px 0 48px;
+    max-width: 14ch;
+  }
+  .card {
+    border: 1px dashed #bdbdbd;
+    border-radius: var(--radius);
+    padding: 28px;
+    max-width: 420px;
+  }
+  .name {
+    font-size: 24px;
+    margin-top: 12px;
+  }
+</style>

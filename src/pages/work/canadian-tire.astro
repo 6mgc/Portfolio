@@ -1,0 +1,296 @@
+---
+import Base from '../../layouts/Base.astro';
+import Metric from '../../components/Metric.astro';
+import Placeholder from '../../components/Placeholder.astro';
+
+/*
+ * Content marked [bracketed] in a Placeholder or a .todo paragraph still needs Megan's real material.
+ * Nothing here should be filled in with invented research findings, team details, or numbers.
+ */
+
+const meta = [
+  { label: 'Role', value: 'Lead UI Designer' },
+  { label: 'Focus', value: 'Conversion Rate Optimization · 1:1 Personalization · Loyalty' },
+  { label: 'Mission', value: 'Ship measurable personalization impact before the AI infrastructure existed' },
+];
+
+const challenges = [
+  { title: 'Revenue leakage', body: '[Describe where revenue was being lost and how you knew.]' },
+  { title: 'Personalization gap', body: '[Describe the gap between the AI roadmap and what the stack could do today.]' },
+  { title: 'Loyalty blind spot', body: '[Describe what loyalty members were missing on the site.]' },
+];
+
+const components = [
+  { name: 'Price-drop alerts', why: '[1–2 sentences: the problem this solved and why this design.]' },
+  { name: 'Compact loyalty offers', why: '[1–2 sentences: the problem this solved and why this design.]' },
+  { name: 'Urgency modules', why: '[1–2 sentences: the problem this solved and why this design.]' },
+];
+---
+
+<Base
+  title="Canadian Tire: Personalized Deals"
+  description="Case study: rule-based smart components that shipped personalization impact at Canadian Tire."
+>
+  <!-- 1. Header -->
+  <section class="head">
+    <div class="container">
+      <a class="back" href="/#work">← All work</a>
+      <p class="eyebrow">Case study · Canadian Tire</p>
+      <h1>Boosting retail engagement through <strong>personalized <span class="accent">deals</span></strong></h1>
+      <dl class="meta">
+        {
+          meta.map((m) => (
+            <div>
+              <dt class="eyebrow">{m.label}</dt>
+              <dd>{m.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+      <Placeholder label="Hero product screenshot" ratio="16 / 8" />
+    </div>
+  </section>
+
+  <!-- 2. Challenges -->
+  <section class="section">
+    <div class="container split">
+      <p class="eyebrow">01 · The challenges</p>
+      <div>
+        <p class="lead">
+          The roadmap pointed toward full AI-driven personalization, but the infrastructure wasn't there yet. Three
+          problems couldn't wait for it.
+        </p>
+        <div class="cols">
+          {
+            challenges.map((c) => (
+              <div class="col">
+                <h3>{c.title}</h3>
+                <p class="todo">{c.body}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Results -->
+  <section class="section">
+    <div class="container split">
+      <p class="eyebrow">02 · The results</p>
+      <div class="results">
+        <Metric id="conversionLift" size="lg" />
+        <Metric id="omniChannelLift" size="lg" />
+        <Metric id="pdpViewRate" size="lg" />
+        <Metric id="attributedRevenue" size="lg" />
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Research & discovery -->
+  <section class="section">
+    <div class="container split">
+      <p class="eyebrow">03 · Research &amp; discovery</p>
+      <div class="stack">
+        <p class="todo">[How the problems were found: analytics, session recordings, support tickets.]</p>
+        <h3>Options considered</h3>
+        <p class="todo">[Alternatives considered and why each was rejected. This is the section hiring managers look for.]</p>
+        <Placeholder label="Discovery artefact: funnel, journey map, or session clip" ratio="16 / 7" />
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Team & role -->
+  <section class="section">
+    <div class="container split">
+      <p class="eyebrow">04 · Team &amp; role</p>
+      <div class="stack">
+        <p class="todo">[Squad size and makeup (PM, engineers, data, marketing).]</p>
+        <p class="todo">[What you owned end-to-end vs. what you contributed to.]</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Strategy: smart components -->
+  <section class="section">
+    <div class="container split">
+      <p class="eyebrow">05 · The strategy</p>
+      <div class="stack">
+        <p class="lead">
+          A suite of rule-based <strong>smart components</strong> that behave like personalization today and can hand
+          over to an AI engine later.
+        </p>
+        {
+          components.map((c, i) => (
+            <article class="component">
+              <div class="component__text">
+                <span class="eyebrow">0{i + 1}</span>
+                <h3>{c.name}</h3>
+                <p class="todo">{c.why}</p>
+              </div>
+              <Placeholder label={`${c.name}: annotated before/after`} ratio="4 / 3" />
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Usability testing -->
+  <section class="section">
+    <div class="container split">
+      <!-- Brief: move before the strategy section if testing shaped the final designs; otherwise keep as validation. -->
+      <p class="eyebrow">06 · Validation</p>
+      <div class="stack">
+        <p class="todo">[Usability testing: method, participants, what you learned, what changed as a result.]</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. Summary + next steps -->
+  <section class="section">
+    <div class="container split">
+      <p class="eyebrow">07 · What's next</p>
+      <div class="stack">
+        <p class="lead">From rule-based to <strong>full AI automation</strong>.</p>
+        <p class="todo">[Summary, how the rule-based components lead into AI automation, and what you learned.]</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. More work -->
+  <section class="section">
+    <div class="container">
+      <p class="eyebrow">More work</p>
+      <div class="more">
+        <div class="more__card"><p class="eyebrow">Coming soon</p><p class="more__name">chatalog.ai</p></div>
+        <div class="more__card"><p class="eyebrow">Coming soon</p><p class="more__name">Freelance project</p></div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .head {
+    padding: clamp(48px, 8vw, 96px) 0 clamp(64px, 8vw, 96px);
+  }
+  .back {
+    display: inline-block;
+    font-size: 14px;
+    text-decoration: none;
+    color: var(--ink-muted);
+    margin-bottom: 40px;
+  }
+  .back:hover {
+    color: var(--ink);
+  }
+  h1 {
+    font-size: clamp(40px, 7vw, 88px);
+    letter-spacing: -0.04em;
+    max-width: 16ch;
+    margin: 20px 0 48px;
+  }
+  .meta {
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr;
+    gap: 24px;
+    margin: 0 0 48px;
+    padding: 24px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  dd {
+    margin: 8px 0 0;
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 32px;
+  }
+  .lead {
+    font-size: clamp(22px, 2.6vw, 32px);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    max-width: 32ch;
+  }
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  h3 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .todo {
+    color: var(--ink-muted);
+    background: var(--placeholder);
+    border: 1px dashed #c8c8c8;
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-size: 15px;
+  }
+
+  .cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 40px;
+  }
+  .col {
+    border-top: 1px solid var(--line-strong);
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .results {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 48px 32px;
+  }
+
+  .component {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 32px;
+    align-items: start;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+  }
+  .component__text {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .more {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-top: 24px;
+  }
+  .more__card {
+    border: 1px dashed #bdbdbd;
+    border-radius: var(--radius);
+    padding: 28px;
+  }
+  .more__name {
+    font-size: 24px;
+    margin-top: 12px;
+  }
+
+  @media (max-width: 800px) {
+    .meta,
+    .split,
+    .cols,
+    .results,
+    .component,
+    .more {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

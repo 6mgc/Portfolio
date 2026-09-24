@@ -1,0 +1,71 @@
+---
+import { site } from '../data/site';
+---
+
+<footer class="footer">
+  <div class="container">
+    <p class="eyebrow footer__eyebrow">Let's talk</p>
+    <p class="footer__headline">Open to <strong class="accent">{site.openToYear}</strong> roles.</p>
+    <div class="footer__links">
+      <a class="link-arrow" href={`mailto:${site.email}`}>Email</a>
+      <a class="link-arrow" href={site.linkedin} rel="noopener" target="_blank">LinkedIn</a>
+      {
+        site.resume ? (
+          <a class="btn btn--primary" href={site.resume} target="_blank" rel="noopener">Résumé</a>
+        ) : (
+          <span class="btn footer__pending" title="Résumé link not set yet">Résumé [add link]</span>
+        )
+      }
+    </div>
+    <div class="footer__meta">
+      <span>© {site.copyrightYear} {site.name}. All rights reserved.</span>
+      <span>{site.location}</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    position: relative;
+    z-index: 2;
+    background: #111111;
+    color: #ffffff;
+    padding: clamp(72px, 10vw, 120px) 0 40px;
+  }
+  .footer__eyebrow {
+    color: #9a9a9a;
+  }
+  .footer__headline {
+    font-size: clamp(40px, 7vw, 88px);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin: 20px 0 48px;
+  }
+  .footer__links {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 28px;
+  }
+  .footer .link-arrow {
+    border-color: #ffffff;
+  }
+  .footer .link-arrow:hover {
+    border-color: var(--accent);
+  }
+  .footer__pending {
+    color: #9a9a9a;
+    border-style: dashed;
+  }
+  .footer__meta {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 96px;
+    padding-top: 24px;
+    border-top: 1px solid #2a2a2a;
+    font-size: 13px;
+    color: #9a9a9a;
+  }
+</style>

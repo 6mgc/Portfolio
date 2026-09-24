@@ -1,0 +1,26 @@
+---
+import { site } from '../data/site';
+---
+
+<span class="pill">
+  Open to work <span class="dot" aria-hidden="true"></span> {site.openToYear}
+</span>
+
+<style>
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+</style>
