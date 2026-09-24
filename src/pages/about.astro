@@ -3,9 +3,25 @@ import Base from '../layouts/Base.astro';
 import StatusPill from '../components/StatusPill.astro';
 import { site } from '../data/site';
 
-const interests = [
-  { name: 'Photography', text: 'Chasing light and moments around Toronto, finding stories in everyday corners.' },
-  { name: 'Music', text: "Good beats = good design flow. There's always something playing while I work." },
+interface Sticker {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  tilt: number;
+}
+
+const interests: { name: string; text: string; href?: string; sticker?: Sticker }[] = [
+  {
+    name: 'Photography',
+    text: 'Chasing light and moments around Toronto, finding stories in everyday corners.',
+    sticker: { src: '/images/sticker-camera.webp', alt: 'A black compact camera', width: 480, height: 322, tilt: -7 },
+  },
+  {
+    name: 'Music',
+    text: "Good beats = good design flow. There's always something playing while I work.",
+    sticker: { src: '/images/sticker-music.webp', alt: 'A music app icon', width: 240, height: 240, tilt: 6 },
+  },
   { name: 'Travelling', text: 'Every new city teaches me something about how people navigate spaces and experiences.' },
   {
     name: 'Nature escapes',
@@ -14,6 +30,13 @@ const interests = [
   {
     name: 'Hand-building pottery',
     text: 'Getting my hands dirty with clay reminds me that the best designs come from trial, error, and embracing the messy process.',
+    sticker: {
+      src: '/images/sticker-pottery.webp',
+      alt: 'Hand-built cups, bowls and a green checkered dish',
+      width: 400,
+      height: 400,
+      tilt: -4,
+    },
   },
   { name: 'AI experiments', text: 'Calling myself a vibe-coder, thanks to AI!', href: '/playground' },
 ];
@@ -51,7 +74,19 @@ const interests = [
       <ul class="interests">
         {
           interests.map((it) => (
-            <li>
+            <li class:list={{ 'has-sticker': it.sticker }}>
+              {it.sticker && (
+                <img
+                  class="sticker"
+                  src={it.sticker.src}
+                  alt={it.sticker.alt}
+                  width={it.sticker.width}
+                  height={it.sticker.height}
+                  loading="lazy"
+                  decoding="async"
+                  style={`--tilt: ${it.sticker.tilt}deg; --w: ${it.sticker.width > it.sticker.height ? 100 : 76}px`}
+                />
+              )}
               <h3>{it.name}</h3>
               <p>{it.text}</p>
               {it.href && (
@@ -111,7 +146,7 @@ const interests = [
     padding: 0;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 40px 32px;
+    gap: 64px 32px;
   }
   .interests li {
     display: flex;
@@ -120,6 +155,34 @@ const interests = [
     gap: 10px;
     border-top: 1px solid var(--line-strong);
     padding-top: 20px;
+  }
+  .interests li {
+    position: relative;
+  }
+  /* Stickers: white die-cut border, a slight tilt, and a soft lift on hover. */
+  .sticker {
+    position: absolute;
+    top: -50px;
+    right: 0;
+    width: var(--w, 80px);
+    height: auto;
+    padding: 5px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow:
+      0 1px 2px rgb(17 17 17 / 0.12),
+      0 6px 16px rgb(17 17 17 / 0.14);
+    transform: rotate(var(--tilt, 0deg));
+    transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.35s ease;
+  }
+  .has-sticker:hover .sticker {
+    transform: rotate(0deg) translateY(-4px) scale(1.06);
+    box-shadow:
+      0 2px 4px rgb(17 17 17 / 0.12),
+      0 12px 24px rgb(17 17 17 / 0.18);
+  }
+  .has-sticker h3 {
+    padding-right: 108px;
   }
   .interests h3 {
     font-size: 20px;
