@@ -1,6 +1,6 @@
 # Megan Cheng: Portfolio
 
-A static site built with [Astro](https://astro.build) and the Manrope font, served from the site's own files rather than Google Fonts.
+A static site built with [Astro](https://astro.build) with Manrope (headings) and Inter (body text), served from the site's own files rather than Google Fonts.
 
 ## Run it
 
