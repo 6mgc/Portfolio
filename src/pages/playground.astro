@@ -7,7 +7,8 @@ interface Experiment {
   description: string;
   highlights?: { heading: string; items: { label: string; text: string }[] };
   url: string;
-  shots: { label: string; ratio: string }[];
+  // `src` is a path under public/; without it the shot renders as a placeholder.
+  shots: { label: string; ratio: string; src?: string }[];
 }
 
 const experiments: Experiment[] = [
@@ -34,7 +35,13 @@ const experiments: Experiment[] = [
     description:
       'A nostalgic, iPod-inspired web app that recommends songs based on your current mood. Users type how they\'re feeling, and the app uses AI to suggest a song that matches their emotional state. It\'s a simple two-page experience designed to feel like using a classic Apple iPod.',
     url: 'https://moodypod.vercel.app/',
-    shots: [{ label: 'Moody Pod: iPod interface', ratio: '16 / 9' }],
+    shots: [
+      {
+        label: 'Moody Pod: an iPod-style screen asks "How are you feeling?" above a click wheel',
+        ratio: '16 / 9',
+        src: '/images/moody-pod.webp',
+      },
+    ],
   },
 ];
 ---
@@ -81,7 +88,11 @@ const experiments: Experiment[] = [
           </div>
           <div class:list={['exp__shots', { 'exp__shots--two': x.shots.length > 1 }]}>
             {x.shots.map((s) => (
-              <Placeholder label={s.label} ratio={s.ratio} />
+              s.src ? (
+                <img class="shot" src={s.src} alt={s.label} style={`aspect-ratio: ${s.ratio}`} loading="lazy" decoding="async" />
+              ) : (
+                <Placeholder label={s.label} ratio={s.ratio} />
+              )
             ))}
           </div>
         </div>
@@ -143,13 +154,25 @@ const experiments: Experiment[] = [
     display: grid;
     gap: 16px;
   }
+  .shot {
+    width: 100%;
+    object-fit: cover;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
   .exp__shots--two {
     grid-template-columns: 1fr 1fr;
   }
 
   @media (max-width: 800px) {
     .exp,
-    .exp__shots--two {
+    .shot {
+    width: 100%;
+    object-fit: cover;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  .exp__shots--two {
       grid-template-columns: 1fr;
     }
   }
