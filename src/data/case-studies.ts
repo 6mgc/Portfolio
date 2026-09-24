@@ -249,7 +249,7 @@ export const caseStudies: Record<string, CaseStudy> = {
           text: 'Analyzed user data using affinity mapping, identifying common themes such as the paradox of choice and decision fatigue. The user journey map highlighted key pain points, which informed the design strategy.',
         },
         { image: { src: '/images/flavorbyte/affinity-map.webp', alt: 'Affinity map of interview notes grouped into themes such as outdated info, price, too many or too few options, reviews and personal preferences', width: 1600, height: 659 } },
-        { shot: 'FlavorByte: user journey map' },
+        { image: { src: '/images/flavorbyte/user-journey-map.webp', alt: "User journey map for Olivia, finding a Friday-night restaurant with friends: stages Search, Browse, Consider and Decide, with actions, thoughts, feelings, pain points and opportunities", width: 1490, height: 1382 } },
         {
           lead: 'AI-driven recommendations',
           text: "Designed AI-powered features to deliver personalized restaurant recommendations based on users' past preferences, making the search process faster and more accurate.",
