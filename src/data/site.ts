@@ -41,6 +41,7 @@ export const projects: Project[] = [
     role: 'Product Designer (Lead UI)',
     // Unverified: see src/data/metrics.ts.
     impact: `${metrics.conversionLift.value} online conversion`,
+    thumb: '/images/thumb-canadian-tire.webp',
   },
   {
     slug: 'chatalog-ai',
