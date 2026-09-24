@@ -2,7 +2,6 @@ import { metrics } from './metrics';
 
 export const site = {
   name: 'Megan Cheng',
-  shortName: 'Megan.',
   title: 'Megan Cheng: Product Designer',
   description:
     'Product designer who ships measurable business impact inside real technical constraints. Retail, banking, and AI product.',
