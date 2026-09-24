@@ -1,25 +1,32 @@
 ---
 import Placeholder from './Placeholder.astro';
-import { projects } from '../data/site';
+import { projects, caseStudyProjects } from '../data/site';
 
 interface Props {
   // Slug of the project to leave out (the case study you're on).
   exclude?: string;
-  columns?: 2 | 3;
+  // 'featured': homepage, two cards then three per row. 3: More work rows, case studies only.
+  layout?: 'featured' | 3;
 }
-const { exclude, columns = 2 } = Astro.props;
-const shown = projects.filter((p) => p.slug !== exclude);
+const { exclude, layout = 'featured' } = Astro.props;
+const shown = (layout === 'featured' ? projects : caseStudyProjects).filter((p) => p.slug !== exclude);
 ---
 
-<div class:list={['cards', `cards--${columns}`]}>
+<div class:list={['cards', `cards--${layout}`]}>
   {
-    shown.map((p) => (
-      <a class="card" href={`/work/${p.slug}`}>
+    shown.map((p) => {
+      const Tag = p.comingSoon ? 'div' : 'a';
+      return (
+      <Tag class:list={['card', { 'card--soon': p.comingSoon }]} href={p.comingSoon ? undefined : `/work/${p.slug}`}>
         <div class="card__thumb">
           {p.thumb ? (
             <img src={p.thumb} alt="" width="1200" height="900" loading="lazy" decoding="async" />
           ) : (
-            <Placeholder label={`${p.name} thumbnail`} ratio="4 / 3" />
+            p.comingSoon ? (
+              <div class="card__soon-thumb" aria-hidden="true" />
+            ) : (
+              <Placeholder label={`${p.name} thumbnail`} ratio="4 / 3" />
+            )
           )}
         </div>
         <p class="card__title">
@@ -29,13 +36,20 @@ const shown = projects.filter((p) => p.slug !== exclude);
             {p.title}
           </span>
         </p>
-        <p class="card__meta">
-          {p.role}
-          <span class="card__sep" aria-hidden="true">/</span>
-          <strong>{p.impact}</strong>
-        </p>
-      </a>
-    ))
+        {p.comingSoon ? (
+          <p class="card__meta">
+            <span class="card__status">Coming soon</span>
+          </p>
+        ) : (
+          <p class="card__meta">
+            {p.role}
+            <span class="card__sep" aria-hidden="true">/</span>
+            <strong>{p.impact}</strong>
+          </p>
+        )}
+      </Tag>
+      );
+    })
   }
 </div>
 
@@ -45,8 +59,15 @@ const shown = projects.filter((p) => p.slug !== exclude);
     gap: 48px 32px;
     margin-top: 24px;
   }
-  .cards--2 {
-    grid-template-columns: repeat(2, 1fr);
+  /* Homepage: first two cards share a row, the rest sit three to a row (6-column grid). */
+  .cards--featured {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  .cards--featured > :global(*) {
+    grid-column: span 2;
+  }
+  .cards--featured > :global(:nth-child(-n + 2)) {
+    grid-column: span 3;
   }
   .cards--3 {
     grid-template-columns: repeat(3, 1fr);
@@ -108,14 +129,34 @@ const shown = projects.filter((p) => p.slug !== exclude);
     box-decoration-break: clone;
     transition: background-size 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
   }
-  .card:hover .card__hl,
+  .card:not(.card--soon):hover .card__hl,
   .card:focus-visible .card__hl {
     background-size: 100% 55%;
   }
+  /* Coming soon: a quiet panel instead of a thumbnail. */
+  .card__soon-thumb {
+    aspect-ratio: 4 / 3;
+    border: 1px dashed #c8c8c8;
+    border-radius: var(--radius);
+    background: var(--placeholder);
+  }
+  .card__status {
+    display: inline-flex;
+    padding: 2px 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+  }
   @media (max-width: 800px) {
-    .cards--2,
+    .cards--featured,
     .cards--3 {
       grid-template-columns: 1fr;
+    }
+    .cards--featured > :global(*),
+    .cards--featured > :global(:nth-child(-n + 2)) {
+      grid-column: auto;
     }
   }
 </style>

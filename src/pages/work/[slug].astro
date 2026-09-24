@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import Placeholder from '../../components/Placeholder.astro';
 import ProjectCards from '../../components/ProjectCards.astro';
-import { projects, type Project } from '../../data/site';
+import { caseStudyProjects, type Project } from '../../data/site';
 import { caseStudies, type Img, type Section } from '../../data/case-studies';
 
 /*
@@ -10,7 +10,7 @@ import { caseStudies, type Img, type Section } from '../../data/case-studies';
  * Content lives in src/data/case-studies.ts. Anything missing renders as a dashed .todo box.
  */
 export function getStaticPaths() {
-  return projects
+  return caseStudyProjects
     .filter((p) => p.slug !== 'canadian-tire')
     .map((project) => ({ params: { slug: project.slug }, props: { project } }));
 }
@@ -140,7 +140,7 @@ const sections = cs?.flow
   <section class="section">
     <div class="container">
       <p class="eyebrow">More work</p>
-      <ProjectCards exclude={project.slug} columns={3} />
+      <ProjectCards exclude={project.slug} layout={3} />
     </div>
   </section>
 </Base>

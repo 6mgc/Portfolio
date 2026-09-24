@@ -21,13 +21,15 @@ export const nav = [
 
 // All case studies, in display order. Each slug maps to /work/<slug>.
 // `impact` is the one headline result shown on the card; `thumb` is a path under public/ (placeholder until set).
+// `comingSoon` projects show on the homepage without a link or case study page.
 export interface Project {
   slug: string;
   name: string;
   title: string;
-  role: string;
-  impact: string;
+  role?: string;
+  impact?: string;
   thumb?: string;
+  comingSoon?: boolean;
 }
 
 export const projects: Project[] = [
@@ -64,4 +66,13 @@ export const projects: Project[] = [
     impact: '70% more completed ticket purchases',
     thumb: '/images/thumb-toronto-zoo.webp',
   },
+  {
+    slug: 'nurture-seed',
+    name: 'Nurture Seed',
+    title: 'Self-paced learning with AI-generated practice questions',
+    comingSoon: true,
+  },
 ];
+
+// Projects with a case study page.
+export const caseStudyProjects = projects.filter((p) => !p.comingSoon);
