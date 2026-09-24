@@ -64,5 +64,6 @@ export const projects: Project[] = [
     title: 'Redesigning the ticket purchase flow',
     role: 'UI Designer',
     impact: '70% more completed ticket purchases',
+    thumb: '/images/thumb-toronto-zoo.webp',
   },
 ];
