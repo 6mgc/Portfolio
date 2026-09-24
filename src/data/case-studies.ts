@@ -264,7 +264,7 @@ export const caseStudies: Record<string, CaseStudy> = {
           lead: 'Wireframes & prototyping',
           text: 'Created wireframes and prototypes that incorporated AI chatbot recommendations and a user-friendly interface. The design included map integration for easy navigation and restaurant discovery.',
         },
-        { shot: 'FlavorByte: wireframes' },
+        { image: { src: '/images/flavorbyte/wireframes.webp', alt: 'Low-fidelity wireframes: home, map search, results list, restaurant page, and the Bytey chat flow through to sharing picks with friends', width: 1230, height: 1290 } },
       ],
     },
     reflection: {
