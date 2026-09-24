@@ -10,8 +10,6 @@ export const site = {
   email: '6meganc@gmail.com',
   linkedin: 'https://www.linkedin.com/in/6meganc/',
   instagram: 'https://www.instagram.com/6rootie/',
-  // TODO: host the résumé PDF (e.g. public/megan-cheng-resume.pdf) and set the path here.
-  resume: '',
   copyrightYear: 2026,
 };
 

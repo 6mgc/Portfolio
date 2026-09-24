@@ -35,7 +35,6 @@ Images go in `public/` (e.g. `public/work/ct-hero.png`) and replace the `<Placeh
       In dev, unverified numbers show a dashed orange outline.
 - [ ] Headshot, annotated before/after screenshots.
 - [ ] Case study copy: sections in grey dashed boxes (research, team, rationale, testing, summary).
-- [ ] Résumé PDF: drop it in `public/` and set `resume` in `src/data/site.ts`.
 - [ ] Domain: set `site` in `astro.config.mjs`.
 
 ## Deploy

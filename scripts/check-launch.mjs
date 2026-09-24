@@ -10,8 +10,6 @@ for (const m of metricsSrc.matchAll(/(\w+):\s*\{[^}]*?verified:\s*false/g)) {
   problems.push(`Metric "${m[1]}" is unverified (src/data/metrics.ts)`);
 }
 
-const siteSrc = readFileSync('src/data/site.ts', 'utf8');
-if (/resume:\s*''/.test(siteSrc)) problems.push('Résumé link is empty (src/data/site.ts)');
 if (readFileSync('astro.config.mjs', 'utf8').includes('example.com')) {
   problems.push('`site` in astro.config.mjs is still example.com');
 }
