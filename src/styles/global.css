@@ -18,6 +18,7 @@
   /* Manrope for headings, titles and display numbers; Inter for everything else. */
   --font-display: 'Manrope Variable', 'Manrope', system-ui, sans-serif;
   --font-body: 'Inter Variable', 'Inter', system-ui, sans-serif;
+  /* Extra side inset on top of the gutter. */
   --frame: 56px;
   --gutter: clamp(16px, 4vw, 48px);
   --radius: 4px;
@@ -79,23 +80,6 @@ p {
   margin: 0;
 }
 
-/* Frame: two fixed hairlines inset from each edge, full page height. */
-.frame-line {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: var(--line);
-  pointer-events: none;
-  z-index: 0;
-}
-.frame-line--left {
-  left: var(--frame);
-}
-.frame-line--right {
-  right: var(--frame);
-}
-
 .container {
   position: relative;
   z-index: 1;
@@ -105,7 +89,6 @@ p {
 }
 
 .section {
-  border-top: 1px solid var(--line);
   padding: clamp(64px, 10vw, 120px) 0;
 }
 
