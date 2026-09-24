@@ -39,7 +39,7 @@ const principles = [
         </p>
         <div class="hero__cta">
           <a class="cta" href="#work">The work <span class="cta__arrow" aria-hidden="true">→</span></a>
-          <Placeholder label="Headshot" ratio="1 / 1" class="hero__photo" />
+          <img class="hero__photo" src="/images/megan-cheng-thumb.webp" alt="Megan Cheng" width="64" height="64" />
         </div>
       </div>
     </div>
@@ -153,11 +153,13 @@ const principles = [
     align-items: center;
     gap: 20px;
   }
-  .hero__cta :global(.hero__photo) {
+  .hero__photo {
     width: 64px;
-    border: 1px solid var(--accent);
-    font-size: 9px;
-    padding: 4px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    padding: 3px;
+    object-fit: cover;
   }
 
   .section-head {
