@@ -239,7 +239,7 @@ export const caseStudies: Record<string, CaseStudy> = {
           lead: 'Quantitative survey & user interviews',
           text: "Launched an online survey with 10 participants and held four one-on-one interviews. This provided valuable insights into users' needs, challenges, and opinions about AI's role in restaurant search. The main pain points identified were the overwhelming number of restaurant options, the challenge of making group decisions, and the desire for personalized recommendations.",
         },
-        { shot: 'FlavorByte: competitor analysis (Yelp, OpenTable, Google Maps)' },
+        { image: { src: '/images/flavorbyte/competitor-analysis.webp', alt: 'Competitor analysis: Yelp for user-generated reviews and ratings, OpenTable for restaurant reservations, Google Maps for mapping and navigation', width: 1560, height: 790 } },
       ],
     },
     design: {
