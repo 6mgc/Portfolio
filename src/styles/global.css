@@ -158,6 +158,17 @@ a.cta:focus-visible .cta__arrow {
   border-color: #ffffff;
   color: #ffffff;
 }
+/* Icon-only: a circle. Needs an aria-label. */
+.cta--icon {
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  justify-content: center;
+}
+.cta--icon svg {
+  width: 22px;
+  height: 22px;
+}
 /* Not linked yet: no fill, dashed outline. */
 .cta--pending {
   border-style: dashed;

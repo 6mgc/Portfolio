@@ -8,10 +8,10 @@ export const site = {
     'Product designer who ships measurable business impact inside real technical constraints. Retail, banking, and AI product.',
   location: 'Toronto, ON',
   email: '6meganc@gmail.com',
-  linkedin: 'https://www.linkedin.com/in/6meganc',
+  linkedin: 'https://www.linkedin.com/in/6meganc/',
+  instagram: 'https://www.instagram.com/6rootie/',
   // TODO: host the résumé PDF (e.g. public/megan-cheng-resume.pdf) and set the path here.
   resume: '',
-  openToYear: '2027',
   copyrightYear: 2026,
 };
 

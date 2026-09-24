@@ -1,22 +1,51 @@
 ---
 import { site } from '../data/site';
+
+const links = [
+  { label: 'Email', href: `mailto:${site.email}`, icon: 'mail' },
+  { label: 'LinkedIn', href: site.linkedin, icon: 'linkedin', external: true },
+  { label: 'Instagram', href: site.instagram, icon: 'instagram', external: true },
+];
 ---
 
 <footer class="footer">
   <div class="container">
-    <p class="eyebrow footer__eyebrow">Let's talk</p>
-    <p class="footer__headline">Open to <strong class="accent">{site.openToYear}</strong> roles.</p>
-    <div class="footer__links">
-      <a class="cta cta--on-dark" href={`mailto:${site.email}`}>Email <span class="cta__arrow" aria-hidden="true">→</span></a>
-      <a class="cta cta--on-dark" href={site.linkedin} rel="noopener" target="_blank">LinkedIn <span class="cta__arrow" aria-hidden="true">→</span></a>
+    <ul class="footer__links">
       {
-        site.resume ? (
-          <a class="cta cta--on-dark" href={site.resume} target="_blank" rel="noopener">Résumé <span class="cta__arrow" aria-hidden="true">→</span></a>
-        ) : (
-          <span class="cta cta--pending footer__pending" title="Résumé link not set yet">Résumé [add link]</span>
-        )
+        links.map((l) => (
+          <li>
+            <a
+              class="cta cta--on-dark cta--icon"
+              href={l.href}
+              aria-label={l.label}
+              title={l.label}
+              {...(l.external ? { target: '_blank', rel: 'noopener' } : {})}
+            >
+              {l.icon === 'mail' && (
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">
+                  <rect x="3" y="5" width="18" height="14" rx="2" />
+                  <path d="m3.5 6.5 8.5 7 8.5-7" />
+                </svg>
+              )}
+              {l.icon === 'linkedin' && (
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+                  <rect x="4" y="9" width="3.2" height="11" />
+                  <circle cx="5.6" cy="5.4" r="1.9" />
+                  <path d="M10 9h3.1v1.5c.5-.9 1.7-1.8 3.5-1.8 3.2 0 3.9 2.1 3.9 4.8V20h-3.2v-5.8c0-1.4 0-3.1-1.9-3.1s-2.2 1.5-2.2 3V20H10z" />
+                </svg>
+              )}
+              {l.icon === 'instagram' && (
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+                  <circle cx="12" cy="12" r="4" />
+                  <circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none" />
+                </svg>
+              )}
+            </a>
+          </li>
+        ))
       }
-    </div>
+    </ul>
     <div class="footer__meta">
       <span>© {site.copyrightYear} {site.name}. All rights reserved.</span>
       <span>{site.location}</span>
@@ -30,34 +59,22 @@ import { site } from '../data/site';
     z-index: 2;
     background: #111111;
     color: #ffffff;
-    padding: clamp(72px, 10vw, 120px) 0 40px;
-  }
-  .footer__eyebrow {
-    color: #9a9a9a;
-  }
-  .footer__headline {
-    font-family: var(--font-display);
-    font-size: clamp(40px, 7vw, 88px);
-    line-height: 1;
-    letter-spacing: -0.03em;
-    margin: 20px 0 48px;
+    padding: 56px 0 40px;
   }
   .footer__links {
     display: flex;
-    align-items: center;
     flex-wrap: wrap;
-    gap: 16px;
-  }
-  .footer__pending {
-    color: #9a9a9a;
-    border-color: #9a9a9a;
+    gap: 12px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
   .footer__meta {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 12px;
-    margin-top: 96px;
+    margin-top: 40px;
     padding-top: 24px;
     border-top: 1px solid #2a2a2a;
     font-size: 13px;
