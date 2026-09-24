@@ -3,10 +3,11 @@ import Base from '../../layouts/Base.astro';
 import Placeholder from '../../components/Placeholder.astro';
 import ProjectCards from '../../components/ProjectCards.astro';
 import { projects, type Project } from '../../data/site';
+import { caseStudies, type Section } from '../../data/case-studies';
 
 /*
  * Case study pages for the secondary projects. Canadian Tire has its own page (canadian-tire.astro).
- * Everything in a .todo box or Placeholder is waiting on Megan's real material; don't invent it.
+ * Content lives in src/data/case-studies.ts. Anything missing renders as a dashed .todo box.
  */
 export function getStaticPaths() {
   return projects
@@ -15,23 +16,25 @@ export function getStaticPaths() {
 }
 
 const { project } = Astro.props as { project: Project };
+const cs = caseStudies[project.slug];
+const empty = (todo: string): Section => ({ todo: [todo] });
 
-const sections = [
-  { title: 'The problem', todo: ['[Who the users were, what wasn\'t working, and why it mattered to the business.]'] },
+const sections: { title: string; body: Section; shot?: string; metrics?: boolean }[] = [
+  { title: 'The problem', body: cs?.problem ?? empty("[Who the users were, what wasn't working, and why it mattered.]") },
+  { title: 'Outcome', body: cs ? (cs.outcome ?? {}) : empty('[Results. Only numbers you can source.]'), metrics: true },
   {
     title: 'Research & discovery',
-    todo: ['[How you found the problem: interviews, analytics, competitive review.]'],
-    shot: 'Research artefact',
+    body: cs?.research ?? empty('[How you found the problem: interviews, analytics, competitive review.]'),
+    shot: `${project.name}: research artefact`,
   },
-  { title: 'Team & role', todo: ['[Team size and makeup.]', '[What you owned end-to-end vs. contributed to.]'] },
+  { title: 'Team & role', body: cs?.team ?? empty('[Team size, and what you owned vs. contributed to.]') },
   {
     title: 'The design',
-    todo: ['[Key design decisions and the reasoning behind each.]', '[Options considered and why each was rejected.]'],
+    body: cs?.design ?? empty('[Key design decisions, the reasoning behind each, and options rejected.]'),
     shot: `${project.name}: final designs`,
   },
-  { title: 'Validation', todo: ['[Testing method, what you learned, what changed as a result.]'] },
-  { title: 'Outcome', todo: ['[Results. Only numbers you can source.]'] },
-  { title: 'Reflection', todo: ['[What you learned and what you would do next.]'] },
+  { title: 'Validation', body: cs?.validation ?? empty('[Testing method, what you learned, what changed.]') },
+  { title: 'Reflection', body: cs?.reflection ?? empty('[What you learned and what you would do next.]') },
 ];
 ---
 
@@ -41,20 +44,28 @@ const sections = [
       <a class="back" href="/#work">← All work</a>
       <p class="eyebrow">Case study · {project.name}</p>
       <h1>{project.name}</h1>
-      <p class="todo">[One-line headline: what you did and the impact.]</p>
+      {cs?.headline ? <p class="headline">{cs.headline}</p> : <p class="todo">[One-line headline: what you did and the impact.]</p>}
+      {cs?.subhead && <p class="subhead">{cs.subhead}</p>}
       <dl class="meta">
         <div>
           <dt class="eyebrow">Role</dt>
           <dd>{project.role}</dd>
         </div>
-        <div>
-          <dt class="eyebrow">Focus</dt>
-          <dd class="todo">[Focus areas]</dd>
-        </div>
-        <div>
-          <dt class="eyebrow">Timeline</dt>
-          <dd class="todo">[Dates]</dd>
-        </div>
+        {
+          cs ? (
+            cs.meta.map((m) => (
+              <div>
+                <dt class="eyebrow">{m.label}</dt>
+                <dd>{m.value}</dd>
+              </div>
+            ))
+          ) : (
+            <div>
+              <dt class="eyebrow">Details</dt>
+              <dd class="todo">[Responsibilities, team size, duration]</dd>
+            </div>
+          )
+        }
       </dl>
       <Placeholder label={`${project.name}: hero screenshot`} ratio="16 / 8" />
     </div>
@@ -68,7 +79,22 @@ const sections = [
             0{i + 1} · {s.title}
           </p>
           <div class="stack">
-            {s.todo.map((t) => (
+            {s.metrics && cs?.metrics && (
+              <div class="metrics">
+                {cs.metrics.map((m) => (
+                  <div class="metric">
+                    <span class="metric__value">{m.value}</span>
+                    <span class="metric__label">{m.label}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {s.body.items?.map((it) => (
+              <p class="item">
+                {it.lead && <strong>{it.lead}.</strong>} {it.text}
+              </p>
+            ))}
+            {s.body.todo?.map((t) => (
               <p class="todo">{t}</p>
             ))}
             {s.shot && <Placeholder label={s.shot} ratio="16 / 7" />}
@@ -105,9 +131,18 @@ const sections = [
     letter-spacing: -0.03em;
     margin: 20px 0 24px;
   }
+  .headline {
+    font-size: clamp(20px, 2.2vw, 26px);
+    line-height: 1.35;
+    max-width: 40ch;
+  }
+  .subhead {
+    color: var(--ink-muted);
+    margin-top: 8px;
+  }
   .meta {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 2fr 1fr 1fr;
     gap: 24px;
     margin: 40px 0 48px;
     padding: 24px 0;
@@ -127,6 +162,32 @@ const sections = [
     flex-direction: column;
     gap: 24px;
   }
+  .item {
+    max-width: 62ch;
+  }
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--line);
+  }
+  .metric {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .metric__value {
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--accent);
+  }
+  .metric__label {
+    font-size: 14px;
+    color: var(--ink-muted);
+  }
   .todo {
     color: var(--ink-muted);
     background: var(--placeholder);
@@ -137,7 +198,8 @@ const sections = [
   }
   @media (max-width: 800px) {
     .meta,
-    .split {
+    .split,
+    .metrics {
       grid-template-columns: 1fr;
     }
   }
