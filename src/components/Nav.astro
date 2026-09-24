@@ -1,6 +1,8 @@
 ---
 import { nav, site } from '../data/site';
-const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const path = Astro.url.pathname.replace(/\/$/, '').replace(/\.html$/, '') || '/';
+// Case study pages count as "Work".
+const isCurrent = (href: string) => href === path || (href === '/#work' && path.startsWith('/work/'));
 ---
 
 <header class="nav">
@@ -11,7 +13,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
         {
           nav.map((item) => (
             <li>
-              <a href={item.href} aria-current={item.href === path ? 'page' : undefined}>
+              <a href={item.href} data-label={item.label} aria-current={isCurrent(item.href) ? 'page' : undefined}>
                 {item.label}
               </a>
             </li>
@@ -24,10 +26,12 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 </header>
 
 <style>
+  /* Always visible: sticks to the top of the viewport. */
   .nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
     background: var(--bg);
-    position: relative;
-    z-index: 2;
   }
   .nav__inner {
     display: flex;
@@ -54,13 +58,33 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   .nav__email {
     font-size: 15px;
     text-decoration: none;
+  }
+  /* Hover: bold + accent. Current page: bold. The hidden bold copy reserves the width so nothing shifts. */
+  nav a {
+    display: inline-grid;
+    transition: color 0.15s;
+  }
+  nav a::after {
+    content: attr(data-label);
+    font-weight: 700;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+  }
+  nav a:hover,
+  nav a:focus-visible {
+    color: var(--accent);
+    font-weight: 700;
+  }
+  nav a[aria-current='page'] {
+    font-weight: 700;
+  }
+  .nav__email {
     border-bottom: 1px solid transparent;
     padding-bottom: 2px;
     transition: border-color 0.15s;
   }
-  nav a:hover,
-  .nav__email:hover,
-  nav a[aria-current='page'] {
+  .nav__email:hover {
     border-color: var(--accent);
   }
   .nav__email {
