@@ -1,20 +1,29 @@
 ---
 import Base from '../layouts/Base.astro';
-import Placeholder from '../components/Placeholder.astro';
+import { site } from '../data/site';
+
+/*
+ * AI Playground: "stepping into my laptop".
+ * A lock screen types a password and unlocks onto a desktop. Each experiment is a desktop widget;
+ * hovering one (or clicking / tapping it) opens a Finder-style window with the project details.
+ * Without JS, or with reduced motion, the lock screen is skipped and every widget still links out.
+ */
 
 interface Experiment {
+  slug: string;
   name: string;
+  short: string;
   description: string;
   highlights?: { heading: string; items: { label: string; text: string }[] };
-  inspiration?: { src: string; alt: string; caption: string };
+  image: { src: string; alt: string; width: number; height: number; caption?: string };
   url: string;
-  // `src` is a path under public/; without it the shot renders as a placeholder.
-  shots: { label: string; ratio: string; src?: string }[];
 }
 
 const experiments: Experiment[] = [
   {
+    slug: 'yes-card',
     name: 'Daily YES! Card: TVB Edition',
+    short: 'Daily YES! Card',
     description:
       'Daily YES! Card is a digital revival of a beloved Hong Kong childhood ritual. It\'s a "Just for Fun" web app that combines the nostalgia of Yes! Card vending machines with the legendary, often meme-worthy phrases (金句) from classic TVB dramas.',
     highlights: {
@@ -25,170 +34,1175 @@ const experiments: Experiment[] = [
         { label: 'Tech meets Canto-pop', text: 'A playful bridge between 90s/00s nostalgia and modern AI.' },
       ],
     },
-    inspiration: {
+    image: {
       src: '/images/yes-card-machine.webp',
       alt: 'An orange YES! Card vending machine in a Hong Kong shop, with a coin slot, a white turning knob, and a big yellow pointing hand.',
+      width: 360,
+      height: 480,
       caption: 'The inspiration: an original YES! Card machine.',
     },
     url: 'https://dailyyescard.vercel.app/',
-    shots: [
-      { label: 'Daily YES! Card: vending machine', ratio: '1 / 1' },
-      { label: 'Daily YES! Card: card reveal', ratio: '1 / 1' },
-    ],
   },
   {
+    slug: 'moody-pod',
     name: 'Moody Pod',
+    short: 'Moody Pod',
     description:
       'A nostalgic, iPod-inspired web app that recommends songs based on your current mood. Users type how they\'re feeling, and the app uses AI to suggest a song that matches their emotional state. It\'s a simple two-page experience designed to feel like using a classic Apple iPod.',
+    image: {
+      src: '/images/moody-pod.webp',
+      alt: 'Moody Pod: an iPod-style screen asks "How are you feeling?" above a click wheel.',
+      width: 1600,
+      height: 900,
+    },
     url: 'https://moodypod.vercel.app/',
-    shots: [
-      {
-        label: 'Moody Pod: an iPod-style screen asks "How are you feeling?" above a click wheel',
-        ratio: '16 / 9',
-        src: '/images/moody-pod.webp',
-      },
-    ],
   },
+];
+
+const reminders = ['Figma new release', 'Deals ending soon carousel Auto card', 'Plant more Nurture Seeds 🌱'];
+
+const dock = [
+  { href: '/', label: 'Home', icon: 'home' },
+  { href: '/work', label: 'Work', icon: 'work' },
+  { href: '/about', label: 'About', icon: 'about' },
+  { href: `mailto:${site.email}`, label: 'Email', icon: 'mail' },
+  { href: site.linkedin, label: 'LinkedIn', icon: 'linkedin', external: true },
 ];
 ---
 
-<Base title="AI Playground" description="Small AI experiments by Megan Cheng: Daily YES! Card and Moody Pod.">
-  <section class="intro">
-    <div class="container">
-      <p class="eyebrow">AI Playground</p>
-      <h1>Welcome to my AI <strong class="accent">playground</strong></h1>
-    </div>
-  </section>
+<Base title="AI Playground" description="Small AI experiments by Megan Cheng: Daily YES! Card and Moody Pod." desktop>
+  <h1 class="sr-only">AI Playground</h1>
 
-  {
-    experiments.map((x, i) => (
-      <section class="section">
-        <div class="container exp">
-          <div class="exp__head">
-            <p class="eyebrow">0{i + 1} / 0{experiments.length}</p>
-            <h2>{x.name}</h2>
-            {x.inspiration && (
-              <figure class="inspo">
-                <img src={x.inspiration.src} alt={x.inspiration.alt} width="360" height="480" loading="lazy" decoding="async" />
-                <figcaption>{x.inspiration.caption}</figcaption>
-              </figure>
-            )}
+  <div class="screen" data-screen>
+    <!-- Wallpaper: a peach sunset over soft hills. -->
+    <div class="wall" aria-hidden="true">
+      <span class="wall__sun"></span>
+      <svg class="wall__hills" viewBox="0 0 1440 420" preserveAspectRatio="none">
+        <path class="h1" d="M0 250C180 170 330 150 520 200S860 300 1060 230 1330 150 1440 180V420H0Z" />
+        <path class="h2" d="M0 310C200 250 380 270 560 300S900 360 1120 300 1360 260 1440 280V420H0Z" />
+        <path class="h3" d="M0 370C240 330 460 350 700 370S1160 400 1440 360V420H0Z" />
+      </svg>
+    </div>
+
+    <!-- Menu bar -->
+    <div class="menubar" aria-hidden="true">
+      <span class="menubar__left">
+        <b>Megan Cheng<span class="accent">.</span></b>
+        <span>Playground</span>
+        <span class="hide-sm">AI experiments</span>
+      </span>
+      <span class="menubar__right">
+        <span class="menubar__status"><i></i> Open to work</span>
+        <span data-clock="menubar"></span>
+      </span>
+    </div>
+
+    <!-- Desktop -->
+    <div class="desk" data-desk>
+      <div class="widget widget--clock" style="--d: 0">
+        <p class="widget__eyebrow">Toronto</p>
+        <p class="clock__time" data-clock="toronto">--:--</p>
+        <p class="clock__date" data-clock="toronto-date">&nbsp;</p>
+      </div>
+
+      <div class="widget widget--reminders" style="--d: 1">
+        <p class="rem__head"><span>Reminders</span><span class="rem__count">{reminders.length}</span></p>
+        <ul>
+          {reminders.map((r) => (
+            <li><span class="rem__ring" aria-hidden="true"></span>{r}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="widget widget--note" style="--d: 2">
+        <p class="note__title">Welcome to my AI <strong>playground</strong></p>
+        <p class="note__body">Small things I build with AI, just for fun. <span class="hint-hover">Hover over a widget to open it.</span><span class="hint-tap">Tap a widget to open it.</span></p>
+      </div>
+
+      {
+        experiments.map((x, i) => (
+          <a
+            class={`widget widget--project widget--${x.slug}`}
+            href={x.url}
+            target="_blank"
+            rel="noopener"
+            style={`--d: ${3 + i}`}
+            data-project={x.slug}
+            aria-haspopup="dialog"
+            aria-controls={`finder-${x.slug}`}
+            aria-label={`${x.name}: open project details`}
+          >
+            <img src={x.image.src} alt="" width={x.image.width} height={x.image.height} loading="eager" decoding="async" />
+            <span class="project__label">
+              <span class="project__kind">AI experiment</span>
+              <span class="project__name">{x.short}</span>
+            </span>
+          </a>
+        ))
+      }
+    </div>
+
+    <!-- Finder-style windows, one per project; only the active one shows. -->
+    {
+      experiments.map((x) => (
+        <div class="finder" id={`finder-${x.slug}`} data-finder={x.slug} role="dialog" aria-label={x.name} hidden>
+          <div class="finder__bar">
+            <span class="lights">
+              <button type="button" class="light light--close" data-close aria-label="Close window"></button>
+              <span class="light light--min" aria-hidden="true"></span>
+              <span class="light light--max" aria-hidden="true"></span>
+            </span>
+            <span class="finder__path">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 4.5a1 1 0 0 1 1-1h3.6l1.4 1.5h6a1 1 0 0 1 1 1v6.5a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1Z" /></svg>
+              Playground <span aria-hidden="true">/</span> <b>{x.short}</b>
+            </span>
           </div>
-          <div class="exp__body">
-            <p class="exp__desc">{x.description}</p>
-            {x.highlights && (
-              <div class="exp__hl">
-                <p class="eyebrow">{x.highlights.heading}</p>
-                <ul>
-                  {x.highlights.items.map((h) => (
-                    <li>
-                      <strong>{h.label}.</strong> {h.text}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {x.url ? (
-              <a class="cta" href={x.url} target="_blank" rel="noopener">
+          <div class="finder__body">
+            <figure class="finder__fig">
+              <img src={x.image.src} alt={x.image.alt} width={x.image.width} height={x.image.height} loading="lazy" decoding="async" />
+              {x.image.caption && <figcaption>{x.image.caption}</figcaption>}
+            </figure>
+            <div class="finder__info">
+              <h2>{x.name}</h2>
+              <a class="cta cta--primary finder__cta" href={x.url} target="_blank" rel="noopener">
                 Try it out <span class="cta__arrow" aria-hidden="true">→</span>
               </a>
-            ) : (
-              <span class="cta cta--pending">
-                Try it out [add link]
-              </span>
-            )}
-          </div>
-          <div class:list={['exp__shots', { 'exp__shots--two': x.shots.length > 1 }]}>
-            {x.shots.map((s) => (
-              s.src ? (
-                <img class="shot" src={s.src} alt={s.label} style={`aspect-ratio: ${s.ratio}`} loading="lazy" decoding="async" />
-              ) : (
-                <Placeholder label={s.label} ratio={s.ratio} />
-              )
-            ))}
+              <dl class="finder__meta">
+                <div><dt>Project type</dt><dd>AI experiment</dd></div>
+                <div><dt>Status</dt><dd><i class="live" aria-hidden="true"></i> Live</dd></div>
+              </dl>
+              <p class="finder__desc">{x.description}</p>
+              {x.highlights && (
+                <div class="finder__hl">
+                  <p class="eyebrow">{x.highlights.heading}</p>
+                  <ul>
+                    {x.highlights.items.map((h) => (
+                      <li>
+                        <strong>{h.label}.</strong> {h.text}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </section>
-    ))
-  }
+      ))
+    }
+
+    <!-- Dock -->
+    <nav class="dock" aria-label="Dock">
+      <ul>
+        {
+          dock.map((d) => (
+            <li>
+              <a
+                href={d.href}
+                class={`dock__app dock__app--${d.icon}`}
+                aria-label={d.label}
+                {...(d.external ? { target: '_blank', rel: 'noopener' } : {})}
+              >
+                <span class="dock__tip" aria-hidden="true">{d.label}</span>
+                {d.icon === 'about' ? (
+                  <img src="/images/megan-cheng.webp" alt="" width="64" height="64" />
+                ) : (
+                  <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    {d.icon === 'home' && <path d="M4 11 12 4l8 7v8a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1Z" />}
+                    {d.icon === 'work' && (
+                      <>
+                        <rect x="3.5" y="7" width="17" height="12.5" rx="2" />
+                        <path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3.5 12.5h17" />
+                      </>
+                    )}
+                    {d.icon === 'mail' && (
+                      <>
+                        <rect x="3.5" y="5.5" width="17" height="13" rx="2" />
+                        <path d="m4 7 8 6 8-6" />
+                      </>
+                    )}
+                    {d.icon === 'linkedin' && (
+                      <>
+                        <path d="M7 10v7M7 7v.01M11 17v-7M11 13.5c0-2 1.3-3.5 3-3.5s2.8 1.2 2.8 3.2V17" />
+                      </>
+                    )}
+                  </svg>
+                )}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <!-- Lock screen: shown on arrival, then "logs in". Hidden unless JS runs and motion is allowed. -->
+    <div class="lock" data-lockscreen hidden>
+      <div class="lock__top">
+        <p class="lock__date" data-clock="lock-date">&nbsp;</p>
+        <p class="lock__time" data-clock="lock">--:--</p>
+      </div>
+      <div class="lock__user">
+        <img class="lock__avatar" src="/images/megan-cheng.webp" alt="" width="96" height="96" />
+        <p class="lock__name">{site.name}</p>
+        <p class="lock__pw" aria-hidden="true"><span class="lock__dots" data-dots></span><span class="lock__enter">→</span></p>
+        <p class="lock__hint">Click or press any key to skip</p>
+      </div>
+    </div>
+    <script is:inline>
+      // Decide before first paint, so the desktop never flashes before the lock screen.
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.querySelector('[data-lockscreen]').hidden = false;
+        document.querySelector('[data-screen]').classList.add('is-locked');
+      }
+    </script>
+  </div>
 </Base>
 
 <style>
-  .intro {
-    padding: clamp(64px, 12vw, 160px) 0 clamp(48px, 8vw, 96px);
-  }
-  h1 {
-    font-size: clamp(44px, 8vw, 96px);
-    letter-spacing: -0.03em;
-    margin: 20px 0 0;
-    max-width: 14ch;
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
   }
 
-  .exp {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 32px 48px;
+  /* ---------- Screen + wallpaper ---------- */
+  .screen {
+    --sky-1: #ffe3cf;
+    --sky-2: #ffc4a8;
+    --sky-3: #f79a86;
+    --sun: #fff1e0;
+    --hill-1: #f4a6a0;
+    --hill-2: #e98a8f;
+    --hill-3: #d9727f;
+    --glass: rgb(255 255 255 / 0.62);
+    --glass-ink: #111111;
+    --glass-muted: #4a4a4a;
+    --glass-line: rgb(255 255 255 / 0.7);
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    height: calc(100svh - 72px);
+    min-height: 680px;
+    color: var(--glass-ink);
   }
-  .exp__head h2 {
-    font-size: clamp(28px, 3.4vw, 40px);
-    margin-top: 12px;
+  :global([data-mode='dark']) .screen {
+    --sky-1: #2c2745;
+    --sky-2: #5b3b62;
+    --sky-3: #b0606a;
+    --sun: #ffc9a3;
+    --hill-1: #6d4466;
+    --hill-2: #4b3352;
+    --hill-3: #33263d;
+    --glass: rgb(34 34 34 / 0.6);
+    --glass-ink: #f2f2f2;
+    --glass-muted: #c4c4c4;
+    --glass-line: rgb(255 255 255 / 0.12);
   }
-  .inspo {
-    margin: 32px 0 0;
-    max-width: 240px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  .wall {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, var(--sky-1) 0%, var(--sky-2) 48%, var(--sky-3) 100%);
   }
-  .inspo img {
+  .wall__sun {
+    position: absolute;
+    left: 58%;
+    top: 34%;
+    width: clamp(160px, 18vw, 280px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--sun) 0 45%, transparent 70%);
+    opacity: 0.9;
+  }
+  .wall__hills {
+    position: absolute;
+    left: 0;
+    bottom: 0;
     width: 100%;
-    height: auto;
-    border-radius: var(--radius);
+    height: 48%;
   }
-  .inspo figcaption {
+  .wall__hills .h1 { fill: var(--hill-1); }
+  .wall__hills .h2 { fill: var(--hill-2); }
+  .wall__hills .h3 { fill: var(--hill-3); }
+
+  /* ---------- Menu bar ---------- */
+  .menubar {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    height: 30px;
+    padding: 0 var(--gutter);
     font-size: 13px;
-    color: var(--ink-muted);
+    background: rgb(255 255 255 / 0.28);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
   }
-  .exp__body {
+  :global([data-mode='dark']) .menubar {
+    background: rgb(0 0 0 / 0.22);
+  }
+  .menubar__left,
+  .menubar__right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    white-space: nowrap;
+  }
+  .menubar b {
+    font-family: var(--font-display);
+  }
+  .menubar__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .menubar__status i,
+  .live {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--success);
+  }
+
+  /* ---------- Widgets ---------- */
+  .desk {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 220px)) repeat(2, minmax(0, 330px));
+    grid-template-rows: repeat(2, clamp(170px, 26vh, 240px));
+    grid-template-areas:
+      'clock rem yes moody'
+      'note  note yes moody';
+    gap: 20px;
+    justify-content: center;
+    padding: clamp(24px, 5vh, 56px) var(--gutter) 0;
+  }
+  .widget {
+    position: relative;
+    border-radius: 22px;
+    padding: 18px;
+    background: var(--glass);
+    border: 1px solid var(--glass-line);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    box-shadow: 0 10px 30px rgb(80 30 20 / 0.12);
+    color: var(--glass-ink);
+  }
+  .widget p {
+    margin: 0;
+  }
+  .widget__eyebrow {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .widget--clock {
+    grid-area: clock;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 28px;
+    justify-content: space-between;
   }
-  .exp__desc {
-    max-width: 62ch;
+  .clock__time {
+    font-family: var(--font-display);
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
   }
-  .exp__hl ul {
+  .clock__date {
+    font-size: 13px;
+    color: var(--glass-muted);
+  }
+
+  /* Reminders: always the dark widget, like the reference. */
+  .widget--reminders {
+    grid-area: rem;
+    background: rgb(28 28 30 / 0.82);
+    border-color: rgb(255 255 255 / 0.08);
+    color: #f2f2f2;
+    overflow: hidden;
+  }
+  .rem__head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ff9f5a;
+  }
+  .rem__count {
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1;
+  }
+  .widget--reminders ul {
     list-style: none;
     margin: 12px 0 0;
     padding: 0;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    color: var(--ink-muted);
+    font-size: 13px;
+    line-height: 1.3;
   }
-  .exp__hl strong {
-    color: var(--ink);
+  .widget--reminders li {
+    display: flex;
+    gap: 8px;
   }
-  .exp__shots {
-    grid-column: 1 / -1;
-    display: grid;
-    gap: 16px;
-  }
-  .shot {
-    width: 100%;
-    object-fit: cover;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-  }
-  .exp__shots--two {
-    grid-template-columns: 1fr 1fr;
+  .rem__ring {
+    flex: none;
+    width: 14px;
+    height: 14px;
+    margin-top: 1px;
+    border-radius: 50%;
+    border: 1.5px solid #8e8e93;
   }
 
-  @media (max-width: 800px) {
-    .exp,
-    .exp__shots--two {
-      grid-template-columns: 1fr;
+  .widget--note {
+    grid-area: note;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  .note__title {
+    font-family: var(--font-display);
+    font-size: clamp(26px, 2.6vw, 34px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .note__title strong {
+    color: var(--glass-ink);
+    background: linear-gradient(var(--accent-soft), var(--accent-soft)) no-repeat 0 88% / 100% 38%;
+  }
+  :global([data-mode='dark']) .note__title strong {
+    color: #111;
+    background-size: 100% 100%;
+    padding: 0 0.1em;
+  }
+  .hint-tap,
+  :global(html.touch) .hint-hover {
+    display: none;
+  }
+  :global(html.touch) .hint-tap {
+    display: inline;
+  }
+  .note__body {
+    font-size: 14px;
+    color: var(--glass-muted);
+    max-width: 40ch;
+  }
+
+  /* Project widgets */
+  .widget--project {
+    display: block;
+    padding: 0;
+    overflow: hidden;
+    text-decoration: none;
+    transition:
+      transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
+      box-shadow 0.35s;
+  }
+  .widget--yes-card { grid-area: yes; }
+  .widget--moody-pod { grid-area: moody; }
+  .widget--project img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .widget--moody-pod img {
+    object-position: 50% 50%;
+  }
+  .widget--project:hover,
+  .widget--project:focus-visible,
+  .widget--project.is-active {
+    transform: translateY(-4px) scale(1.015);
+    box-shadow: 0 18px 44px rgb(80 30 20 / 0.24);
+  }
+  .widget--project:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+  .project__label {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: var(--glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .project__kind {
+    font-size: 12px;
+    color: var(--glass-muted);
+  }
+  .project__name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 17px;
+  }
+
+  /* ---------- Finder window ---------- */
+  .finder {
+    position: absolute;
+    z-index: 5;
+    left: var(--x, 50%);
+    top: var(--y, 50%);
+    width: min(560px, calc(100% - 32px));
+    max-height: calc(100% - 140px);
+    display: flex;
+    flex-direction: column;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    box-shadow:
+      0 30px 80px rgb(40 10 10 / 0.3),
+      0 0 0 0.5px rgb(0 0 0 / 0.2);
+    transform-origin: var(--ox, 50%) var(--oy, 50%);
+    animation: win-open 0.32s cubic-bezier(0.2, 0.9, 0.25, 1.05) both;
+  }
+  .finder[hidden] {
+    display: none;
+  }
+  .finder.is-closing {
+    animation: win-close 0.18s ease-in both;
+  }
+  @keyframes win-open {
+    from { opacity: 0; transform: scale(0.6); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes win-close {
+    to { opacity: 0; transform: scale(0.92); }
+  }
+  .finder__bar {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 14px;
+    background: var(--placeholder);
+    border-bottom: 1px solid var(--line);
+  }
+  .lights {
+    display: flex;
+    gap: 8px;
+  }
+  .light {
+    width: 12px;
+    height: 12px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+  }
+  .light--close { background: #ff5f57; cursor: pointer; }
+  .light--min { background: #febc2e; }
+  .light--max { background: #28c840; }
+  .light--close:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .finder__path {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    padding: 5px 12px;
+    border-radius: 8px;
+    background: var(--bg);
+    font-size: 13px;
+    color: var(--ink-muted);
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .finder__path b {
+    color: var(--ink);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .finder__path svg {
+    flex: none;
+    width: 15px;
+    height: 15px;
+    fill: #5aa9f5;
+  }
+  .finder__body {
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .finder__fig {
+    margin: 0;
+  }
+  .finder__fig img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 260px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  [data-finder='yes-card'] .finder__fig img {
+    object-position: 50% 30%;
+  }
+  .finder__fig figcaption {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+  .finder__info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .finder__info h2 {
+    font-size: clamp(24px, 2.4vw, 30px);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+  .finder__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 40px;
+    margin: 0;
+    padding: 14px 0;
+    width: 100%;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .finder__meta dt {
+    color: var(--ink-muted);
+    font-size: 12px;
+  }
+  .finder__meta dd {
+    margin: 2px 0 0;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .finder__desc {
+    margin: 0;
+    font-size: 15px;
+  }
+  .finder__hl ul {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--ink-muted);
+  }
+  .finder__hl strong {
+    color: var(--ink);
+  }
+
+  /* ---------- Dock ---------- */
+  .dock {
+    position: absolute;
+    z-index: 3;
+    left: 50%;
+    bottom: 14px;
+    transform: translateX(-50%);
+  }
+  .dock ul {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    margin: 0;
+    padding: 8px 10px;
+    list-style: none;
+    border-radius: 22px;
+    background: rgb(255 255 255 / 0.4);
+    border: 1px solid rgb(255 255 255 / 0.55);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    box-shadow: 0 10px 30px rgb(80 30 20 / 0.15);
+  }
+  :global([data-mode='dark']) .dock ul {
+    background: rgb(30 30 30 / 0.45);
+    border-color: rgb(255 255 255 / 0.12);
+  }
+  .dock li {
+    transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transform-origin: 50% 100%;
+  }
+  /* Magnify the hovered app and nudge its neighbours, like the macOS dock. */
+  .dock li:hover,
+  .dock li:focus-within {
+    transform: scale(1.3) translateY(-4px);
+  }
+  .dock li:hover + li,
+  .dock li:has(+ li:hover) {
+    transform: scale(1.12) translateY(-2px);
+  }
+  .dock__app {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    color: #ffffff;
+    text-decoration: none;
+    overflow: visible;
+  }
+  .dock__app svg {
+    width: 26px;
+    height: 26px;
+  }
+  .dock__app img {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+    object-position: 50% 20%;
+  }
+  .dock__app--home { background: linear-gradient(160deg, #ff9a52, #f26b1d); color: #111; }
+  .dock__app--work { background: linear-gradient(160deg, #3a3a3a, #111111); }
+  .dock__app--mail { background: linear-gradient(160deg, #5ac8fa, #1a7cf0); }
+  .dock__app--linkedin { background: linear-gradient(160deg, #2a86e0, #0a66c2); }
+  .dock__app:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+  .dock__tip {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 3px 10px;
+    border-radius: 6px;
+    background: rgb(30 30 30 / 0.85);
+    color: #fff;
+    font-size: 11px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s;
+  }
+  .dock__app:hover .dock__tip,
+  .dock__app:focus-visible .dock__tip {
+    opacity: 1;
+  }
+
+  /* ---------- Lock screen ---------- */
+  .lock {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: clamp(40px, 9vh, 96px) 16px clamp(40px, 10vh, 100px);
+    color: #ffffff;
+    text-shadow: 0 1px 12px rgb(80 20 20 / 0.25);
+    background: linear-gradient(180deg, rgb(120 40 30 / 0.08), rgb(90 20 30 / 0.3));
+    backdrop-filter: blur(22px) saturate(1.2);
+    -webkit-backdrop-filter: blur(22px) saturate(1.2);
+    cursor: pointer;
+  }
+  .lock[hidden] {
+    display: none;
+  }
+  .lock p {
+    margin: 0;
+  }
+  .lock__top {
+    text-align: center;
+  }
+  .lock__date {
+    font-size: clamp(16px, 1.6vw, 20px);
+    font-weight: 600;
+  }
+  .lock__time {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(88px, 14vw, 180px);
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+  .lock__user {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .lock__avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: 50% 20%;
+    border: 2px solid rgb(255 255 255 / 0.8);
+    box-shadow: 0 8px 24px rgb(80 20 20 / 0.25);
+  }
+  .lock__name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 18px;
+  }
+  .lock__pw {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 200px;
+    height: 34px;
+    padding: 0 6px 0 14px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgb(255 255 255 / 0.45);
+  }
+  .lock__dots {
+    letter-spacing: 3px;
+    font-size: 14px;
+  }
+  .lock__enter {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.35);
+    font-size: 13px;
+    transition: background-color 0.2s, color 0.2s, transform 0.2s;
+  }
+  .lock.is-entering .lock__enter {
+    background: #ffffff;
+    color: var(--accent);
+    transform: scale(1.15);
+  }
+  .lock__hint {
+    font-size: 12px;
+    opacity: 0.85;
+  }
+  .lock.is-unlocking {
+    animation: unlock 0.75s cubic-bezier(0.6, 0, 0.3, 1) forwards;
+    pointer-events: none;
+  }
+  @keyframes unlock {
+    to {
+      opacity: 0;
+      transform: scale(1.08);
+      filter: blur(14px);
+    }
+  }
+
+  /* Desktop "wakes up": widgets pop in one after another once the lock screen lifts. */
+  .screen.is-locked .desk > *,
+  .screen.is-locked .dock,
+  .screen.is-locked .menubar {
+    opacity: 0;
+  }
+  .screen.is-awake .desk > * {
+    animation: pop-in 0.6s cubic-bezier(0.2, 0.9, 0.25, 1.15) both;
+    animation-delay: calc(0.15s + var(--d, 0) * 0.08s);
+  }
+  .screen.is-awake .menubar {
+    animation: fade-in 0.5s ease both;
+  }
+  .screen.is-awake .dock {
+    animation: dock-up 0.6s cubic-bezier(0.2, 0.9, 0.25, 1.1) 0.5s both;
+  }
+  @keyframes pop-in {
+    from { opacity: 0; transform: scale(0.85) translateY(16px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+  }
+  @keyframes dock-up {
+    from { opacity: 0; transform: translate(-50%, 40px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+  }
+
+  /* ---------- Smaller screens ---------- */
+  @media (max-width: 1100px) {
+    .desk {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-rows: repeat(2, clamp(170px, 24vh, 220px));
+    }
+  }
+  @media (max-width: 720px) {
+    .screen {
+      height: auto;
+      min-height: calc(100svh - 96px);
+      padding-bottom: 110px;
+    }
+    .hide-sm {
+      display: none;
+    }
+    .desk {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto 220px;
+      grid-template-areas:
+        'clock rem'
+        'note  note'
+        'yes   moody';
+      gap: 14px;
+      padding-top: 20px;
+    }
+    .menubar__right [data-clock] {
+      display: none;
+    }
+    .widget--clock {
+      gap: 16px;
+    }
+    /* The window becomes a bottom sheet. */
+    .finder {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: auto;
+      bottom: 0;
+      width: 100%;
+      max-height: 85svh;
+      border-radius: 18px 18px 0 0;
+      transform-origin: 50% 100%;
+      animation-name: sheet-up;
+    }
+    @keyframes sheet-up {
+      from { transform: translateY(100%); }
+      to { transform: none; }
+    }
+    .screen:has(.finder:not([hidden]))::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 4;
+      background: rgb(0 0 0 / 0.35);
+    }
+    .dock {
+      position: absolute;
+    }
+    .dock ul {
+      gap: 8px;
+    }
+    .dock__app {
+      width: 44px;
+      height: 44px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .finder,
+    .finder.is-closing,
+    .screen.is-awake .desk > *,
+    .screen.is-awake .dock,
+    .screen.is-awake .menubar {
+      animation: none;
+    }
+    .widget--project,
+    .dock li {
+      transition: none;
     }
   }
 </style>
+
+<style is:global>
+  /* The playground is a full-screen desktop: no page scroll on large screens. */
+  body.is-desktop main {
+    overflow: clip;
+  }
+</style>
+
+<script>
+  const screen = document.querySelector<HTMLElement>('[data-screen]')!;
+  const lock = document.querySelector<HTMLElement>('[data-lockscreen]')!;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const sheet = matchMedia('(max-width: 720px)');
+  if (!canHover) document.documentElement.classList.add('touch');
+
+  /* ---------- Clocks ---------- */
+  const fmt = (opts: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat('en-CA', opts);
+  const clocks: [string, Intl.DateTimeFormat][] = [
+    ['menubar', fmt({ weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })],
+    ['toronto', fmt({ hour: 'numeric', minute: '2-digit', hour12: false, timeZone: 'America/Toronto' })],
+    ['toronto-date', fmt({ weekday: 'long', month: 'long', day: 'numeric', timeZone: 'America/Toronto' })],
+    ['lock', fmt({ hour: 'numeric', minute: '2-digit', hour12: false })],
+    ['lock-date', fmt({ weekday: 'long', month: 'long', day: 'numeric' })],
+  ];
+  const tick = () => {
+    const now = new Date();
+    for (const [key, f] of clocks) {
+      document.querySelectorAll<HTMLElement>(`[data-clock="${key}"]`).forEach((el) => (el.textContent = f.format(now).replace(/\./g, '')));
+    }
+  };
+  tick();
+  setInterval(tick, 15_000);
+
+  /* ---------- Lock screen: type a password, then unlock ---------- */
+  const wake = () => {
+    screen.classList.remove('is-locked');
+    screen.classList.add('is-awake');
+  };
+  if (lock.hidden) {
+    // Reduced motion: straight to the desktop.
+  } else {
+    const dots = lock.querySelector<HTMLElement>('[data-dots]')!;
+    const timers: number[] = [];
+    let done = false;
+    const unlock = () => {
+      if (done) return;
+      done = true;
+      timers.forEach(clearTimeout);
+      lock.classList.add('is-unlocking');
+      wake();
+      setTimeout(() => (lock.hidden = true), 750);
+      removeEventListener('keydown', unlock);
+    };
+    const LEN = 8;
+    for (let i = 1; i <= LEN; i++) timers.push(window.setTimeout(() => (dots.textContent = '•'.repeat(i)), 350 + i * 110));
+    timers.push(window.setTimeout(() => lock.classList.add('is-entering'), 350 + LEN * 110 + 180));
+    timers.push(window.setTimeout(unlock, 350 + LEN * 110 + 520));
+    lock.addEventListener('click', unlock);
+    addEventListener('keydown', unlock);
+  }
+
+  /* ---------- Widgets open Finder-style windows ---------- */
+  const widgets = document.querySelectorAll<HTMLAnchorElement>('[data-project]');
+  let open: HTMLElement | null = null;
+  let openWidget: HTMLElement | null = null;
+  let pinned = false;
+  let closeTimer = 0;
+  let openTimer = 0;
+
+  const place = (win: HTMLElement, widget: HTMLElement) => {
+    if (sheet.matches) {
+      win.style.removeProperty('--x');
+      win.style.removeProperty('--y');
+      return;
+    }
+    const s = screen.getBoundingClientRect();
+    const w = widget.getBoundingClientRect();
+    const ww = win.offsetWidth;
+    const wh = win.offsetHeight;
+    const gap = 20;
+    const margin = 16;
+    // Beside the widget, on whichever side has room; the window grows out of the widget.
+    let x = w.left - s.left - gap - ww;
+    if (x < margin) x = w.right - s.left + gap;
+    if (x + ww > s.width - margin) x = (s.width - ww) / 2;
+    let y = w.top - s.top + w.height / 2 - wh / 2;
+    y = Math.max(40, Math.min(y, s.height - wh - 90));
+    win.style.setProperty('--x', `${x}px`);
+    win.style.setProperty('--y', `${y}px`);
+    win.style.setProperty('--ox', `${w.left - s.left + w.width / 2 - x}px`);
+    win.style.setProperty('--oy', `${w.top - s.top + w.height / 2 - y}px`);
+  };
+
+  const show = (widget: HTMLElement, pin: boolean) => {
+    clearTimeout(closeTimer);
+    const win = document.getElementById(widget.getAttribute('aria-controls')!)!;
+    if (open && open !== win) hide(true);
+    pinned = pinned || pin;
+    if (open === win) return;
+    open = win;
+    openWidget = widget;
+    widget.classList.add('is-active');
+    widget.setAttribute('aria-expanded', 'true');
+    win.classList.remove('is-closing');
+    win.hidden = false;
+    place(win, widget);
+    if (pin) win.querySelector<HTMLElement>('[data-close]')?.focus({ preventScroll: true });
+  };
+
+  const hide = (instant = false) => {
+    if (!open) return;
+    const win = open;
+    const widget = openWidget;
+    open = null;
+    openWidget = null;
+    pinned = false;
+    widget?.classList.remove('is-active');
+    widget?.setAttribute('aria-expanded', 'false');
+    if (instant || reduce) {
+      win.hidden = true;
+      return;
+    }
+    win.classList.add('is-closing');
+    win.addEventListener('animationend', () => {
+      if (win.classList.contains('is-closing')) {
+        win.hidden = true;
+        win.classList.remove('is-closing');
+      }
+    }, { once: true });
+  };
+
+  const scheduleClose = () => {
+    clearTimeout(openTimer);
+    if (pinned) return;
+    clearTimeout(closeTimer);
+    closeTimer = window.setTimeout(() => hide(), 350);
+  };
+
+  widgets.forEach((widget) => {
+    widget.setAttribute('aria-expanded', 'false');
+    if (canHover) {
+      widget.addEventListener('pointerenter', () => {
+        clearTimeout(closeTimer);
+        clearTimeout(openTimer);
+        openTimer = window.setTimeout(() => show(widget, false), open ? 0 : 120);
+      });
+      widget.addEventListener('pointerleave', scheduleClose);
+    }
+    // Click, tap, or Enter pins the window open. The "Try it out" button inside links out.
+    widget.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (open && openWidget === widget && pinned) return hide();
+      show(widget, true);
+    });
+  });
+
+  document.querySelectorAll<HTMLElement>('[data-finder]').forEach((win) => {
+    win.addEventListener('pointerenter', () => clearTimeout(closeTimer));
+    win.addEventListener('pointerleave', scheduleClose);
+    // Interacting inside the window keeps it open.
+    win.addEventListener('pointerdown', () => (pinned = true));
+    win.querySelector('[data-close]')?.addEventListener('click', () => {
+      const w = openWidget;
+      hide();
+      w?.focus({ preventScroll: true });
+    });
+  });
+
+  addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && open) {
+      const w = openWidget;
+      hide();
+      w?.focus({ preventScroll: true });
+    }
+  });
+  document.addEventListener('pointerdown', (e) => {
+    const t = e.target as Element;
+    if (open && !t.closest('[data-finder], [data-project]')) hide();
+  });
+  addEventListener('resize', () => open && openWidget && place(open, openWidget));
+</script>
