@@ -3,7 +3,6 @@ import Base from '../layouts/Base.astro';
 import StatusPill from '../components/StatusPill.astro';
 import ProjectCards from '../components/ProjectCards.astro';
 import { metrics } from '../data/metrics';
-import { projects } from '../data/site';
 
 const principles = [
   {
@@ -47,10 +46,13 @@ const principles = [
     <div class="container">
       <div class="section-head">
         <p class="eyebrow">Selected work</p>
-        <p class="eyebrow">{String(projects.length).padStart(2, '0')} projects</p>
       </div>
 
       <ProjectCards />
+
+      <div class="more-work">
+        <a class="cta" href="/work">See more work <span class="cta__arrow" aria-hidden="true">→</span></a>
+      </div>
     </div>
   </section>
 
@@ -120,6 +122,11 @@ const principles = [
     gap: 20px;
   }
 
+  .more-work {
+    display: flex;
+    justify-content: center;
+    margin-top: 56px;
+  }
   .section-head {
     display: flex;
     justify-content: space-between;

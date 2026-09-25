@@ -14,7 +14,7 @@ export const site = {
 
 export const nav = [
   { href: '/', label: 'Home' },
-  { href: '/#work', label: 'Work' },
+  { href: '/work', label: 'Work' },
   { href: '/about', label: 'About' },
   { href: '/playground', label: 'AI Playground' },
 ];
@@ -75,3 +75,7 @@ export const projects: Project[] = [
 
 // Projects with a case study page.
 export const caseStudyProjects = projects.filter((p) => !p.comingSoon);
+
+// Homepage "Selected work", in display order. Everything else is on the Work page.
+export const featuredSlugs = ['canadian-tire', 'chatalog-ai', 'nurture-seed'];
+export const featuredProjects = featuredSlugs.map((slug) => projects.find((p) => p.slug === slug)!);

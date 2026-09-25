@@ -1,15 +1,17 @@
 ---
 import Placeholder from './Placeholder.astro';
-import { projects, caseStudyProjects } from '../data/site';
+import { projects, caseStudyProjects, featuredProjects } from '../data/site';
 
 interface Props {
   // Slug of the project to leave out (the case study you're on).
   exclude?: string;
-  // 'featured': homepage, two per row. 3: More work rows, case studies only.
-  layout?: 'featured' | 3;
+  // 'featured': homepage selection, two per row. 'all': Work page, every project, two per row.
+  // 3: More work rows on case study pages, case studies only.
+  layout?: 'featured' | 'all' | 3;
 }
 const { exclude, layout = 'featured' } = Astro.props;
-const shown = (layout === 'featured' ? projects : caseStudyProjects).filter((p) => p.slug !== exclude);
+const source = layout === 'featured' ? featuredProjects : layout === 'all' ? projects : caseStudyProjects;
+const shown = source.filter((p) => p.slug !== exclude);
 ---
 
 <div class:list={['cards', `cards--${layout}`]}>
@@ -64,8 +66,9 @@ const shown = (layout === 'featured' ? projects : caseStudyProjects).filter((p) 
     gap: 48px 32px;
     margin-top: 24px;
   }
-  /* Homepage: two cards per row. */
-  .cards--featured {
+  /* Homepage and Work page: two cards per row. */
+  .cards--featured,
+  .cards--all {
     grid-template-columns: repeat(2, 1fr);
   }
   .cards--3 {
@@ -192,6 +195,7 @@ const shown = (layout === 'featured' ? projects : caseStudyProjects).filter((p) 
   }
   @media (max-width: 800px) {
     .cards--featured,
+    .cards--all,
     .cards--3 {
       grid-template-columns: 1fr;
     }

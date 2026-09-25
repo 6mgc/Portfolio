@@ -1,0 +1,31 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProjectCards from '../../components/ProjectCards.astro';
+import { projects } from '../../data/site';
+---
+
+<Base title="Work" description="All of Megan Cheng's product design work: case studies in retail, B2B SaaS, AI and more.">
+  <section class="head">
+    <div class="container">
+      <p class="eyebrow">Work</p>
+      <h1>All <strong>the <span class="accent">work</span></strong></h1>
+      <p class="count eyebrow">{String(projects.length).padStart(2, '0')} projects</p>
+      <ProjectCards layout="all" />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .head {
+    padding: clamp(64px, 10vw, 128px) 0 clamp(64px, 10vw, 120px);
+  }
+  h1 {
+    font-size: clamp(44px, 8vw, 96px);
+    letter-spacing: -0.03em;
+    line-height: 1.08;
+    margin: 20px 0 24px;
+  }
+  .count {
+    margin-bottom: 24px;
+  }
+</style>

@@ -1,8 +1,8 @@
 ---
 import { nav, site } from '../data/site';
 const path = Astro.url.pathname.replace(/\/$/, '').replace(/\.html$/, '') || '/';
-// Case study pages count as "Work".
-const isCurrent = (href: string) => href === path || (href === '/#work' && path.startsWith('/work/'));
+// The Work page and every case study page count as "Work".
+const isCurrent = (href: string) => href === path || (href === '/work' && path.startsWith('/work/'));
 ---
 
 <header class="nav">
