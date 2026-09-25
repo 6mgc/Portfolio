@@ -23,6 +23,18 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : undefin
     {canonical && <link rel="canonical" href={canonical} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="theme-color" content="#ffffff" />
+    <script is:inline>
+      // Apply the saved theme (or the OS preference) before first paint so the page never flashes.
+      (() => {
+        let t;
+        try {
+          t = localStorage.getItem('theme');
+        } catch {}
+        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = t;
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', t === 'dark' ? '#121212' : '#ffffff');
+      })();
+    </script>
     <meta property="og:type" content="website" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />

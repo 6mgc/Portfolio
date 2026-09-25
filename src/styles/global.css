@@ -16,6 +16,15 @@
   /* Light orange for highlighter backgrounds behind #111 text (16:1). */
   --accent-soft: #ffd3b5;
   --success: #34c759;
+  --dash: #c8c8c8;
+  /* "In progress" card panel. */
+  --soon-bg: #fff4ec;
+  --soon-dot: #ffd3b5;
+  --footer-bg: #111111;
+  --footer-ink: #ffffff;
+  --footer-muted: #9a9a9a;
+  --footer-line: #2a2a2a;
+  color-scheme: light;
 
   /* Manrope for headings, titles and display numbers; Inter for everything else. */
   --font-display: 'Manrope Variable', 'Manrope', system-ui, sans-serif;
@@ -25,6 +34,24 @@
   --gutter: clamp(16px, 4vw, 48px);
   --radius: 4px;
   --max: 1120px;
+}
+
+/* Dark theme, set on <html data-theme="dark"> by the header switch (or the OS preference on first visit).
+   Contrast on --bg #121212: ink 16.7:1, ink-muted 7.4:1, accent 6.2:1. */
+:root[data-theme='dark'] {
+  --bg: #121212;
+  --ink: #f2f2f2;
+  --ink-muted: #a3a3a3;
+  --line: #2c2c2c;
+  --line-strong: #f2f2f2;
+  --placeholder: #1c1c1c;
+  --accent-soft: #5c2a0c; /* highlighter behind #f2f2f2 text: 10.5:1 */
+  --dash: #444444;
+  --soon-bg: #1f1712;
+  --soon-dot: #4a2410;
+  --footer-bg: #0b0b0b;
+  --footer-line: #262626;
+  color-scheme: dark;
 }
 
 *,
@@ -49,6 +76,7 @@ body {
   font-size: 17px;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 img {
