@@ -1,8 +1,7 @@
 ---
 /*
  * Site-wide motion and interaction layer.
- * - Custom cursor (desktop, fine pointers only): a dot that grows over links, and becomes a camera
- *   viewfinder (double corner brackets + focus reticle) over project cards.
+ * - Custom cursor (desktop, fine pointers only): an orange dot that tightens over links and buttons.
  * - Magnetic buttons: CTAs and icon buttons lean toward the pointer.
  * - Scroll reveals: content rises in as it enters the viewport; big numbers count up.
  * - Easter eggs: a console note, and a shutter flash after clicking the header name 5 times.
@@ -12,20 +11,6 @@
 
 <div class="cursor" aria-hidden="true">
   <span class="cursor__dot"></span>
-  <!-- Camera viewfinder: double corner brackets and a focus reticle. -->
-  <svg class="cursor__frame" viewBox="0 0 120 90" fill="none" stroke="currentColor" stroke-linecap="square">
-    <g class="vf__outer" stroke-width="3">
-      <path d="M2 24V2h24" /><path d="M94 2h24v22" /><path d="M2 66v22h24" /><path d="M94 88h24V66" />
-    </g>
-    <g class="vf__inner" stroke-width="1.75">
-      <path d="M9 19V9h10" /><path d="M101 9h10v10" /><path d="M9 71v10h10" /><path d="M101 81h10V71" />
-    </g>
-    <g class="vf__reticle" stroke-width="1.75">
-      <circle cx="60" cy="45" r="12.5" />
-      <path d="M60 32.5v4M60 53.5v4M47.5 45h4M68.5 45h4" />
-      <circle cx="60" cy="45" r="1.4" fill="currentColor" stroke="none" />
-    </g>
-  </svg>
 </div>
 <div class="shutter" aria-hidden="true"></div>
 <p class="shutter-toast" role="status" aria-live="polite"></p>
@@ -74,43 +59,8 @@
     margin: -3px 0 0 -3px;
   }
   .cursor.is-text .cursor__dot,
-  .cursor.is-hidden .cursor__dot,
-  .cursor.is-frame .cursor__dot {
+  .cursor.is-hidden .cursor__dot {
     opacity: 0;
-  }
-  /* Viewfinder: it snaps in slightly oversized, then the reticle "pulls focus". */
-  .cursor__frame {
-    position: absolute;
-    width: 132px;
-    height: 99px;
-    margin: -49.5px 0 0 -66px;
-    overflow: visible;
-    /* Black in both themes (it sits over screenshots), with a thin white halo plus a soft shadow
-       so it stays readable on dark and busy images too. */
-    color: #111111;
-    filter: drop-shadow(0 0 1px rgb(255 255 255 / 0.95)) drop-shadow(0 0 2px rgb(255 255 255 / 0.8))
-      drop-shadow(0 3px 8px rgb(0 0 0 / 0.35));
-    opacity: 0;
-    transform: scale(1.35);
-    transition:
-      opacity 0.2s ease,
-      transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-  .cursor.is-frame .cursor__frame {
-    opacity: 1;
-    transform: scale(1);
-  }
-  .vf__reticle {
-    transform-origin: 60px 45px;
-    transform: scale(1.6);
-    opacity: 0;
-    transition:
-      transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.08s,
-      opacity 0.3s ease 0.08s;
-  }
-  .cursor.is-frame .vf__reticle {
-    transform: none;
-    opacity: 1;
   }
 
   /* ---------- Magnetic ---------- */
@@ -204,11 +154,9 @@
       x = e.clientX;
       y = e.clientY;
       const t = e.target as Element;
-      const card = t.closest('.card');
       const link = t.closest('a, button, [data-cursor]');
       const text = t.closest('input, textarea');
-      cursor.classList.toggle('is-frame', !!card);
-      cursor.classList.toggle('is-link', !card && !!link);
+      cursor.classList.toggle('is-link', !!link);
       cursor.classList.toggle('is-text', !!text);
     }, { passive: true });
     document.addEventListener('pointerleave', () => cursor.classList.add('is-hidden'));
