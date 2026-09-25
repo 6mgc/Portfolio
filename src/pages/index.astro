@@ -4,6 +4,20 @@ import StatusPill from '../components/StatusPill.astro';
 import ProjectCards from '../components/ProjectCards.astro';
 import { metrics } from '../data/metrics';
 
+// Hero headline, split into words so they can rise in one after another.
+// `style`: 'bold' (strong), 'accent' (strong + orange, gets the highlighter swipe).
+const headline: { w: string; style?: 'bold' | 'accent' }[] = [
+  { w: 'Product' },
+  { w: 'designer' },
+  { w: 'driving' },
+  { w: 'measurable', style: 'bold' },
+  { w: 'revenue', style: 'accent' },
+  { w: 'through' },
+  { w: 'better' },
+  { w: 'retail' },
+  { w: 'experiences' },
+];
+
 const principles = [
   {
     title: 'I ship inside real constraints',
@@ -25,13 +39,26 @@ const principles = [
   <section class="hero">
     <div class="container">
       <StatusPill />
-      <h1 class="hero__title">
-        Product designer driving <strong>measurable <span class="accent">revenue</span></strong> through better retail
-        experiences
+      <h1 class="hero__title" aria-label={headline.map((h) => h.w).join(' ')}>
+        {
+          headline.map((h, i) => (
+            <>
+              <span class="w" aria-hidden="true" style={`--i: ${i}`}>
+                {h.style === 'accent' ? (
+                  <strong class="w__in accent hl">{h.w}</strong>
+                ) : h.style === 'bold' ? (
+                  <strong class="w__in">{h.w}</strong>
+                ) : (
+                  <span class="w__in">{h.w}</span>
+                )}
+              </span>{' '}
+            </>
+          ))
+        }
       </h1>
       <div class="hero__foot">
         <p class="hero__sub">
-          Product Designer at Canadian Tire. <strong>{metrics.attributedRevenue.value}+</strong> in attributed revenue
+          Product Designer at Canadian Tire. <strong data-count>{metrics.attributedRevenue.value}+</strong> in attributed revenue
           impact through 1:1 personalization and conversion design.
         </p>
       </div>
@@ -98,6 +125,70 @@ const principles = [
     line-height: 1.08;
     margin: 32px 0 56px;
     max-width: 18ch;
+  }
+  /* Headline: each word rises out of its own line box, then a highlighter swipes under "revenue". */
+  .hero__title .w {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+  .hero__title .w__in {
+    display: inline-block;
+    animation: word-rise 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: calc(0.15s + var(--i) * 0.07s);
+  }
+  @keyframes word-rise {
+    from {
+      transform: translateY(105%) rotate(4deg);
+    }
+    to {
+      transform: none;
+    }
+  }
+  .hero__title .hl {
+    background: linear-gradient(var(--accent-soft), var(--accent-soft)) no-repeat 0 88% / 0% 38%;
+    animation:
+      word-rise 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both,
+      hl-swipe 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 1.2s both;
+    animation-delay: calc(0.15s + var(--i) * 0.07s), 1.2s;
+  }
+  @keyframes hl-swipe {
+    to {
+      background-size: 100% 38%;
+    }
+  }
+  .hero__sub,
+  .hero :global(.pill) {
+    animation: fade-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .hero :global(.pill) {
+    animation-delay: 0.05s;
+  }
+  .hero__sub {
+    animation-delay: 0.85s;
+  }
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__title .w__in,
+    .hero__title .hl,
+    .hero__sub,
+    .hero :global(.pill) {
+      animation: none;
+    }
+    .hero__title .hl {
+      background-size: 100% 38%;
+    }
   }
   .hero__foot {
     display: flex;

@@ -6,7 +6,8 @@ import Base from '../layouts/Base.astro';
   <section class="nf">
     <div class="container">
       <p class="eyebrow">404</p>
-      <h1>This page <strong>doesn't <span class="accent">exist</span></strong>.</h1>
+      <h1 class="blur-in">This page is <strong>out of <span class="accent">focus</span></strong>.</h1>
+      <p class="nf__sub">Couldn't find what you were looking for. Hover the headline to pull focus, then head home.</p>
       <a class="cta" href="/">Back home <span class="cta__arrow" aria-hidden="true">→</span></a>
     </div>
   </section>
@@ -15,6 +16,24 @@ import Base from '../layouts/Base.astro';
 <style>
   .nf {
     padding: clamp(96px, 14vw, 200px) 0;
+  }
+  /* Easter egg: the headline starts blurred, like an out-of-focus photo, and snaps sharp on hover. */
+  .blur-in {
+    filter: blur(6px);
+    transition: filter 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .blur-in:hover {
+    filter: none;
+  }
+  .nf__sub {
+    color: var(--ink-muted);
+    margin: -16px 0 32px;
+    max-width: 50ch;
+  }
+  @media (prefers-reduced-motion: reduce), (hover: none) {
+    .blur-in {
+      filter: none;
+    }
   }
   h1 {
     font-size: clamp(40px, 7vw, 80px);
