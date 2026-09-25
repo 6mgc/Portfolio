@@ -4,9 +4,9 @@ import { site } from '../data/site';
 
 /*
  * AI Playground: "stepping into my laptop".
- * A lock screen types a password and unlocks onto a desktop. Each experiment is a desktop widget;
+ * The site's login screen (first visit) unlocks onto this desktop. Each experiment is a desktop widget;
  * hovering one (or clicking / tapping it) opens a Finder-style window with the project details.
- * Without JS, or with reduced motion, the lock screen is skipped and every widget still links out.
+ * Without JS every widget still links out.
  */
 
 interface Experiment {
@@ -72,15 +72,8 @@ const dock = [
   <h1 class="sr-only">AI Playground</h1>
 
   <div class="screen" data-screen>
-    <!-- Wallpaper: a peach sunset over soft hills. -->
-    <div class="wall" aria-hidden="true">
-      <span class="wall__sun"></span>
-      <svg class="wall__hills" viewBox="0 0 1440 420" preserveAspectRatio="none">
-        <path class="h1" d="M0 250C180 170 330 150 520 200S860 300 1060 230 1330 150 1440 180V420H0Z" />
-        <path class="h2" d="M0 310C200 250 380 270 560 300S900 360 1120 300 1360 260 1440 280V420H0Z" />
-        <path class="h3" d="M0 370C240 330 460 350 700 370S1160 400 1440 360V420H0Z" />
-      </svg>
-    </div>
+    <!-- Wallpaper: a pastel sunset sky. -->
+    <div class="wall" aria-hidden="true"></div>
 
     <!-- Desktop -->
     <div class="desk" data-desk>
@@ -204,26 +197,9 @@ const dock = [
       </ul>
     </nav>
 
-    <!-- Lock screen: shown on arrival, then "logs in". Hidden unless JS runs and motion is allowed. -->
-    <div class="lock" data-lockscreen hidden>
-      <div class="lock__top">
-        <p class="lock__date" data-clock="lock-date">&nbsp;</p>
-        <p class="lock__time" data-clock="lock">--:--</p>
-      </div>
-      <div class="lock__user">
-        <img class="lock__avatar" src="/images/megan-cheng.webp" alt="" width="96" height="96" />
-        <p class="lock__name">{site.name}</p>
-        <p class="lock__pw" aria-hidden="true"><span class="lock__dots" data-dots></span><span class="lock__enter">→</span></p>
-        <p class="lock__hint">Click or press any key to skip</p>
-      </div>
-    </div>
     <script is:inline>
-      // Decide before first paint, so the desktop never flashes before the lock screen.
+      // Keep widgets hidden until they're scattered, so they never jump (JS only).
       document.querySelector('[data-screen]').classList.add('is-scattering');
-      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        document.querySelector('[data-lockscreen]').hidden = false;
-        document.querySelector('[data-screen]').classList.add('is-locked');
-      }
     </script>
   </div>
 </Base>
@@ -240,13 +216,6 @@ const dock = [
 
   /* ---------- Screen + wallpaper ---------- */
   .screen {
-    --sky-1: #ffe3cf;
-    --sky-2: #ffc4a8;
-    --sky-3: #f79a86;
-    --sun: #fff1e0;
-    --hill-1: #f4a6a0;
-    --hill-2: #e98a8f;
-    --hill-3: #d9727f;
     --glass: rgb(255 255 255 / 0.62);
     --glass-ink: #111111;
     --glass-muted: #4a4a4a;
@@ -259,13 +228,6 @@ const dock = [
     color: var(--glass-ink);
   }
   :global([data-mode='dark']) .screen {
-    --sky-1: #2c2745;
-    --sky-2: #5b3b62;
-    --sky-3: #b0606a;
-    --sun: #ffc9a3;
-    --hill-1: #6d4466;
-    --hill-2: #4b3352;
-    --hill-3: #33263d;
     --glass: rgb(34 34 34 / 0.6);
     --glass-ink: #f2f2f2;
     --glass-muted: #c4c4c4;
@@ -275,28 +237,18 @@ const dock = [
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: linear-gradient(180deg, var(--sky-1) 0%, var(--sky-2) 48%, var(--sky-3) 100%);
+    background:
+      radial-gradient(ellipse 90% 45% at 55% 100%, rgb(255 214 120 / 0.9) 0%, transparent 70%),
+      radial-gradient(ellipse 70% 30% at 20% 30%, rgb(255 196 170 / 0.7) 0%, transparent 70%),
+      linear-gradient(180deg, #d8b2c4 0%, #f2c0b4 20%, #efc4ba 34%, #cdc6cf 50%, #e9c6b6 62%, #f8bb7d 80%, #f6a24c 100%);
   }
-  .wall__sun {
+  /* Dark mode: the same sky at dusk. */
+  :global([data-mode='dark']) .wall::after {
+    content: '';
     position: absolute;
-    left: 58%;
-    top: 34%;
-    width: clamp(160px, 18vw, 280px);
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: radial-gradient(circle, var(--sun) 0 45%, transparent 70%);
-    opacity: 0.9;
+    inset: 0;
+    background: linear-gradient(180deg, rgb(24 18 40 / 0.62), rgb(30 16 28 / 0.42));
   }
-  .wall__hills {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 48%;
-  }
-  .wall__hills .h1 { fill: var(--hill-1); }
-  .wall__hills .h2 { fill: var(--hill-2); }
-  .wall__hills .h3 { fill: var(--hill-3); }
 
   .live {
     display: inline-block;
@@ -700,115 +652,9 @@ const dock = [
     opacity: 1;
   }
 
-  /* ---------- Lock screen ---------- */
-  .lock {
-    position: absolute;
-    inset: 0;
-    z-index: 20;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    padding: clamp(40px, 9vh, 96px) 16px clamp(40px, 10vh, 100px);
-    color: #ffffff;
-    text-shadow: 0 1px 12px rgb(80 20 20 / 0.25);
-    background: linear-gradient(180deg, rgb(120 40 30 / 0.08), rgb(90 20 30 / 0.3));
-    backdrop-filter: blur(22px) saturate(1.2);
-    -webkit-backdrop-filter: blur(22px) saturate(1.2);
-    cursor: pointer;
-  }
-  .lock[hidden] {
-    display: none;
-  }
-  .lock p {
-    margin: 0;
-  }
-  .lock__top {
-    text-align: center;
-  }
-  .lock__date {
-    font-size: clamp(16px, 1.6vw, 20px);
-    font-weight: 600;
-  }
-  .lock__time {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: clamp(88px, 14vw, 180px);
-    line-height: 1;
-    letter-spacing: -0.04em;
-  }
-  .lock__user {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-  }
-  .lock__avatar {
-    width: 88px;
-    height: 88px;
-    border-radius: 50%;
-    object-fit: cover;
-    object-position: 50% 20%;
-    border: 2px solid rgb(255 255 255 / 0.8);
-    box-shadow: 0 8px 24px rgb(80 20 20 / 0.25);
-  }
-  .lock__name {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 18px;
-  }
-  .lock__pw {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    width: 200px;
-    height: 34px;
-    padding: 0 6px 0 14px;
-    border-radius: 999px;
-    background: rgb(255 255 255 / 0.3);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgb(255 255 255 / 0.45);
-  }
-  .lock__dots {
-    letter-spacing: 3px;
-    font-size: 14px;
-  }
-  .lock__enter {
-    display: grid;
-    place-items: center;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: rgb(255 255 255 / 0.35);
-    font-size: 13px;
-    transition: background-color 0.2s, color 0.2s, transform 0.2s;
-  }
-  .lock.is-entering .lock__enter {
-    background: #ffffff;
-    color: var(--accent);
-    transform: scale(1.15);
-  }
-  .lock__hint {
-    font-size: 12px;
-    opacity: 0.85;
-  }
-  .lock.is-unlocking {
-    animation: unlock 0.75s cubic-bezier(0.6, 0, 0.3, 1) forwards;
-    pointer-events: none;
-  }
-  @keyframes unlock {
-    to {
-      opacity: 0;
-      transform: scale(1.08);
-      filter: blur(14px);
-    }
-  }
-
-  /* Desktop "wakes up": widgets pop in one after another once the lock screen lifts. */
-  .screen.is-locked .desk > *,
-  .screen.is-locked .dock {
+  /* Desktop "wakes up": widgets pop in one after another (after the login screen, on a first visit). */
+  :global(html.is-locked) .desk > *,
+  :global(html.is-locked) .dock {
     opacity: 0;
   }
   .screen.is-awake .desk > * {
@@ -915,58 +761,10 @@ const dock = [
 
 <script>
   const screen = document.querySelector<HTMLElement>('[data-screen]')!;
-  const lock = document.querySelector<HTMLElement>('[data-lockscreen]')!;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const canHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
   const sheet = matchMedia('(max-width: 720px)');
   if (!canHover) document.documentElement.classList.add('touch');
-
-  /* ---------- Clocks ---------- */
-  const fmt = (opts: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat('en-CA', opts);
-  const clocks: [string, Intl.DateTimeFormat][] = [
-    ['lock', fmt({ hour: 'numeric', minute: '2-digit', hour12: false })],
-    ['lock-date', fmt({ weekday: 'long', month: 'long', day: 'numeric' })],
-  ];
-  const tick = () => {
-    const now = new Date();
-    for (const [key, f] of clocks) {
-      document.querySelectorAll<HTMLElement>(`[data-clock="${key}"]`).forEach((el) => (el.textContent = f.format(now).replace(/\./g, '')));
-    }
-  };
-  tick();
-  setInterval(tick, 15_000);
-
-  /* ---------- Lock screen: type a password, then unlock ---------- */
-  const wake = () => {
-    screen.classList.remove('is-locked');
-    screen.classList.add('is-awake');
-  };
-  if (lock.hidden) {
-    // Reduced motion: straight to the desktop.
-  } else {
-    const dots = lock.querySelector<HTMLElement>('[data-dots]')!;
-    const timers: number[] = [];
-    let done = false;
-    const unlock = () => {
-      if (done) return;
-      done = true;
-      timers.forEach(clearTimeout);
-      lock.classList.add('is-unlocking');
-      wake();
-      setTimeout(() => (lock.hidden = true), 750);
-    };
-    const LEN = 8;
-    for (let i = 1; i <= LEN; i++) timers.push(window.setTimeout(() => (dots.textContent = '•'.repeat(i)), 350 + i * 110));
-    timers.push(window.setTimeout(() => lock.classList.add('is-entering'), 350 + LEN * 110 + 180));
-    timers.push(window.setTimeout(unlock, 350 + LEN * 110 + 520));
-    lock.addEventListener('click', unlock);
-    // Any key skips; Space and arrows shouldn't also scroll the page underneath.
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab') e.preventDefault();
-      unlock();
-    };
-    addEventListener('keydown', onKey, { once: true });
-  }
 
   /* ---------- Scatter the project widgets across the middle of the screen ---------- */
   // A fresh random layout on every visit. Each widget's centre lands in the middle band of the
@@ -1008,6 +806,11 @@ const dock = [
   };
   scatter();
   screen.classList.remove('is-scattering');
+
+  // Widgets pop in now, or once the first-visit login screen unlocks.
+  const wake = () => screen.classList.add('is-awake');
+  if (document.documentElement.classList.contains('is-locked')) addEventListener('site:unlocked', wake, { once: true });
+  else wake();
   let lastW = innerWidth;
   addEventListener('resize', () => {
     // Re-scatter only when the width really changes (not on mobile toolbar show/hide).

@@ -1,0 +1,196 @@
+---
+/*
+ * First-visit login screen: the site opens like logging in to my laptop.
+ * Shows once per browser session, on whichever page a visitor lands first. A password types itself,
+ * then the screen unlocks and the page's own entrance animations start. Click or any key skips it.
+ * The inline script in Base.astro decides before first paint (adds `is-locked` to <html>), so
+ * without JS, on later pages, or with reduced motion, nothing shows.
+ */
+import { site } from '../data/site';
+---
+
+<div class="login" data-login aria-hidden="true">
+  <div class="login__wall"></div>
+  <div class="login__top">
+    <p class="login__date" data-login-date>&nbsp;</p>
+    <p class="login__time" data-login-time>--:--</p>
+  </div>
+  <div class="login__user">
+    <img class="login__avatar" src="/images/megan-cheng.webp" alt="" width="96" height="96" />
+    <p class="login__name">{site.name}</p>
+    <p class="login__pw"><span class="login__dots" data-login-dots></span><span class="login__enter">→</span></p>
+    <p class="login__hint">Click or press any key to skip</p>
+  </div>
+</div>
+
+<style is:global>
+  .login {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: clamp(48px, 11vh, 120px) 16px clamp(40px, 10vh, 100px);
+    overflow: hidden;
+    color: #ffffff;
+    text-shadow: 0 1px 12px rgb(80 20 20 / 0.25);
+    cursor: pointer;
+  }
+  html.is-locked .login,
+  .login.is-unlocking {
+    display: flex;
+  }
+  /* Hold the page still underneath until the screen unlocks. */
+  html.is-locked {
+    overflow: hidden;
+  }
+  html.is-locked body *:not(.login, .login *) {
+    animation-play-state: paused !important;
+  }
+  .login p {
+    margin: 0;
+  }
+  .login__wall {
+    position: absolute;
+    inset: -40px;
+    z-index: -1;
+    background:
+      radial-gradient(ellipse 90% 45% at 55% 100%, rgb(255 214 120 / 0.9) 0%, transparent 70%),
+      radial-gradient(ellipse 70% 30% at 20% 30%, rgb(255 196 170 / 0.7) 0%, transparent 70%),
+      linear-gradient(180deg, #d8b2c4 0%, #f2c0b4 20%, #efc4ba 34%, #cdc6cf 50%, #e9c6b6 62%, #f8bb7d 80%, #f6a24c 100%);
+    filter: blur(10px);
+  }
+  .login__wall::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgb(120 40 30 / 0.06), rgb(90 20 30 / 0.28));
+  }
+  [data-mode='dark'] .login__wall::after {
+    background: linear-gradient(180deg, rgb(24 18 40 / 0.62), rgb(30 16 28 / 0.42));
+  }
+  .login__top {
+    text-align: center;
+  }
+  .login__date {
+    font-size: clamp(16px, 1.6vw, 20px);
+    font-weight: 600;
+  }
+  .login__time {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(88px, 14vw, 180px);
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+  .login__user {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .login__avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: 50% 20%;
+    border: 2px solid rgb(255 255 255 / 0.8);
+    box-shadow: 0 8px 24px rgb(80 20 20 / 0.25);
+  }
+  .login__name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 18px;
+  }
+  .login__pw {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 200px;
+    height: 34px;
+    padding: 0 6px 0 14px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgb(255 255 255 / 0.45);
+  }
+  .login__dots {
+    letter-spacing: 3px;
+    font-size: 14px;
+  }
+  .login__enter {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.35);
+    font-size: 13px;
+    transition: background-color 0.2s, color 0.2s, transform 0.2s;
+  }
+  .login.is-entering .login__enter {
+    background: #ffffff;
+    color: var(--accent);
+    transform: scale(1.15);
+  }
+  .login__hint {
+    font-size: 12px;
+    opacity: 0.85;
+  }
+  .login.is-unlocking {
+    animation: login-unlock 0.75s cubic-bezier(0.6, 0, 0.3, 1) forwards;
+    pointer-events: none;
+  }
+  @keyframes login-unlock {
+    to {
+      opacity: 0;
+      transform: scale(1.08);
+      filter: blur(14px);
+    }
+  }
+</style>
+
+<script>
+  const root = document.documentElement;
+  const login = document.querySelector<HTMLElement>('[data-login]')!;
+
+  if (root.classList.contains('is-locked')) {
+    const fmt = (o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat('en-CA', o);
+    const now = new Date();
+    login.querySelector('[data-login-time]')!.textContent = fmt({ hour: 'numeric', minute: '2-digit', hour12: false }).format(now);
+    login.querySelector('[data-login-date]')!.textContent = fmt({ weekday: 'long', month: 'long', day: 'numeric' }).format(now);
+
+    const dots = login.querySelector<HTMLElement>('[data-login-dots]')!;
+    const timers: number[] = [];
+    let done = false;
+    const unlock = () => {
+      if (done) return;
+      done = true;
+      timers.forEach(clearTimeout);
+      removeEventListener('keydown', onKey);
+      login.classList.add('is-unlocking');
+      root.classList.remove('is-locked');
+      // Pages that stage their own entrance (e.g. the playground desktop) listen for this.
+      dispatchEvent(new Event('site:unlocked'));
+      setTimeout(() => login.remove(), 800);
+    };
+    // Any key skips; Space and arrows shouldn't also scroll the page underneath.
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') e.preventDefault();
+      unlock();
+    };
+    const LEN = 8;
+    for (let i = 1; i <= LEN; i++) timers.push(window.setTimeout(() => (dots.textContent = '•'.repeat(i)), 350 + i * 110));
+    timers.push(window.setTimeout(() => login.classList.add('is-entering'), 350 + LEN * 110 + 180));
+    timers.push(window.setTimeout(unlock, 350 + LEN * 110 + 520));
+    login.addEventListener('click', unlock);
+    addEventListener('keydown', onKey);
+  } else {
+    login.remove();
+  }
+</script>

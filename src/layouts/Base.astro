@@ -3,6 +3,7 @@ import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import Motion from '../components/Motion.astro';
+import LoginScreen from '../components/LoginScreen.astro';
 import { site } from '../data/site';
 
 interface Props {
@@ -53,6 +54,20 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : undefin
           window.name = window.name.replace(/(?:^|;)theme=(light|dark)/, '') + ';theme=' + v;
         };
       })();
+      // First page of the visit opens with the laptop login screen (see LoginScreen.astro).
+      // Once per browser session; never with reduced motion.
+      (() => {
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        let seen = /(?:^|;)login=1(?:;|$)/.test(window.name);
+        try {
+          seen = seen || sessionStorage.getItem('login') === '1';
+          sessionStorage.setItem('login', '1');
+        } catch {}
+        if (!seen) {
+          window.name += ';login=1';
+          document.documentElement.classList.add('is-locked');
+        }
+      })();
     </script>
     <meta property="og:type" content="website" />
     <meta property="og:title" content={fullTitle} />
@@ -60,6 +75,7 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : undefin
     {canonical && <meta property="og:url" content={canonical} />}
   </head>
   <body class:list={{ 'is-desktop': desktop }}>
+    <LoginScreen />
     <Nav />
     <main>
       <slot />
