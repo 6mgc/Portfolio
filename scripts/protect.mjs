@@ -37,7 +37,6 @@ const lockMarkup = (payload) => `<section class="lock" data-lock>
     <svg class="lock__icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>
     <p class="eyebrow">Case study · Canadian Tire</p>
     <h1 class="lock__title">This case study is <strong>password <span class="accent">protected</span></strong></h1>
-    <p class="lock__text">It includes confidential work and results. Enter the password to view it, or <a href="mailto:${email}?subject=Canadian%20Tire%20case%20study%20access">email me</a> (${email}) for access.</p>
     ${
       payload
         ? `<form class="lock__form" data-lock-form novalidate>

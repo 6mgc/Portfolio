@@ -66,12 +66,12 @@
       background-color 0.25s,
       opacity 0.2s;
   }
+  /* Over links and buttons the dot tightens into a small precise point, so it never covers the
+     label; the link's own hover state (bold, orange, fill) does the talking. */
   .cursor.is-link .cursor__dot {
-    width: 44px;
-    height: 44px;
-    margin: -22px 0 0 -22px;
-    background: color-mix(in srgb, var(--accent) 22%, transparent);
-    border: 1.5px solid var(--accent);
+    width: 6px;
+    height: 6px;
+    margin: -3px 0 0 -3px;
   }
   .cursor.is-text .cursor__dot,
   .cursor.is-hidden .cursor__dot,
