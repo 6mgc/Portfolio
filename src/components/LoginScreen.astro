@@ -175,7 +175,7 @@ import { site } from '../data/site';
       removeEventListener('keydown', onKey);
       login.classList.add('is-unlocking');
       root.classList.remove('is-locked');
-      // Pages that stage their own entrance (e.g. the playground desktop) listen for this.
+      // Pages that stage their own entrance listen for this.
       dispatchEvent(new Event('site:unlocked'));
       setTimeout(() => login.remove(), 800);
     };

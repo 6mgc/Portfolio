@@ -1,12 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
-import { site } from '../data/site';
 
 /*
- * AI Playground: "stepping into my laptop".
- * The site's login screen (first visit) unlocks onto this desktop. Each experiment is a desktop widget;
- * hovering one (or clicking / tapping it) opens a Finder-style window with the project details.
- * Without JS every widget still links out.
+ * AI Playground: the experiments float around the page. Hovering one (or clicking / tapping it)
+ * opens a details panel. The cards drift slowly and bounce off the edges of the field, and they
+ * stop while a panel is open. Without JS, on phones, or with reduced motion, they sit still.
  */
 
 interface Experiment {
@@ -58,257 +56,106 @@ const experiments: Experiment[] = [
     url: 'https://moodypod.vercel.app/',
   },
 ];
-
-const dock = [
-  { href: '/', label: 'Home', icon: 'home' },
-  { href: '/work', label: 'Work', icon: 'work' },
-  { href: '/about', label: 'About', icon: 'about' },
-  { href: `mailto:${site.email}`, label: 'Email', icon: 'mail' },
-  { href: site.linkedin, label: 'LinkedIn', icon: 'linkedin', external: true },
-];
 ---
 
-<Base title="AI Playground" description="Small AI experiments by Megan Cheng: Daily YES! Card and Moody Pod." desktop>
-  <h1 class="sr-only">AI Playground</h1>
-
-  <div class="screen" data-screen>
-    <!-- Wallpaper: a pastel sunset sky. -->
-    <div class="wall" aria-hidden="true"></div>
-
-    <!-- Desktop -->
-    <div class="desk" data-desk>
-      <div class="widget widget--note" style="--d: 0">
-        <p class="note__title">Welcome to my AI <strong>playground</strong></p>
-        <p class="note__body">Small things I build with AI, just for fun. <span class="hint-hover">Hover over a widget to open it.</span><span class="hint-tap">Tap a widget to open it.</span></p>
-      </div>
-
-      {
-        experiments.map((x, i) => (
-          <a
-            class={`widget widget--project widget--${x.slug}`}
-            href={x.url}
-            target="_blank"
-            rel="noopener"
-            style={`--d: ${1 + i}`}
-            data-project={x.slug}
-            aria-haspopup="dialog"
-            aria-controls={`finder-${x.slug}`}
-            aria-label={`${x.name}: open project details`}
-          >
-            <img src={x.image.src} alt="" width={x.image.width} height={x.image.height} loading="eager" decoding="async" />
-            <span class="project__label">
-              <span class="project__kind">AI experiment</span>
-              <span class="project__name">{x.short}</span>
-            </span>
-          </a>
-        ))
-      }
+<Base title="AI Playground" description="Small AI experiments by Megan Cheng: Daily YES! Card and Moody Pod.">
+  <section class="intro">
+    <div class="container">
+      <p class="eyebrow">AI Playground</p>
+      <h1>Welcome to my AI <strong class="accent">playground</strong></h1>
+      <p class="intro__sub">
+        Small things I build with AI, just for fun.{' '}
+        <span class="hint-hover">Hover over a project to see more.</span><span class="hint-tap">Tap a project to see more.</span>
+      </p>
     </div>
+  </section>
 
-    <!-- Finder-style windows, one per project; only the active one shows. -->
-    {
-      experiments.map((x) => (
-        <div class="finder" id={`finder-${x.slug}`} data-finder={x.slug} role="dialog" aria-label={x.name} hidden>
-          <div class="finder__bar">
-            <span class="lights">
-              <button type="button" class="light light--close" data-close aria-label="Close window"></button>
-              <span class="light light--min" aria-hidden="true"></span>
-              <span class="light light--max" aria-hidden="true"></span>
-            </span>
-            <span class="finder__path">
-              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 4.5a1 1 0 0 1 1-1h3.6l1.4 1.5h6a1 1 0 0 1 1 1v6.5a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1Z" /></svg>
-              Playground <span aria-hidden="true">/</span> <b>{x.short}</b>
-            </span>
-          </div>
-          <div class="finder__body">
-            <figure class="finder__fig">
-              <img src={x.image.src} alt={x.image.alt} width={x.image.width} height={x.image.height} loading="lazy" decoding="async" />
-              {x.image.caption && <figcaption>{x.image.caption}</figcaption>}
-            </figure>
-            <div class="finder__info">
-              <h2>{x.name}</h2>
-              <a class="cta cta--primary finder__cta" href={x.url} target="_blank" rel="noopener">
-                Try it out <span class="cta__arrow" aria-hidden="true">→</span>
-              </a>
-              <dl class="finder__meta">
-                <div><dt>Project type</dt><dd>AI experiment</dd></div>
-                <div><dt>Status</dt><dd><i class="live" aria-hidden="true"></i> Live</dd></div>
-              </dl>
-              <p class="finder__desc">{x.description}</p>
-              {x.highlights && (
-                <div class="finder__hl">
-                  <p class="eyebrow">{x.highlights.heading}</p>
-                  <ul>
-                    {x.highlights.items.map((h) => (
-                      <li>
-                        <strong>{h.label}.</strong> {h.text}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      ))
-    }
-
-    <!-- Dock -->
-    <nav class="dock" aria-label="Dock">
-      <ul>
+  <section class="field-wrap">
+    <div class="container">
+      <div class="field" data-field>
+        <script is:inline>
+          // Hidden until the script places the cards, so they never jump (JS only).
+          document.currentScript.parentElement.classList.add('is-placing');
+        </script>
         {
-          dock.map((d) => (
-            <li>
-              <a
-                href={d.href}
-                class={`dock__app dock__app--${d.icon}`}
-                aria-label={d.label}
-                {...(d.external ? { target: '_blank', rel: 'noopener' } : {})}
-              >
-                <span class="dock__tip" aria-hidden="true">{d.label}</span>
-                {d.icon === 'about' ? (
-                  <img src="/images/megan-cheng.webp" alt="" width="64" height="64" />
-                ) : (
-                  <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    {d.icon === 'home' && <path d="M4 11 12 4l8 7v8a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1Z" />}
-                    {d.icon === 'work' && (
-                      <>
-                        <rect x="3.5" y="7" width="17" height="12.5" rx="2" />
-                        <path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3.5 12.5h17" />
-                      </>
-                    )}
-                    {d.icon === 'mail' && (
-                      <>
-                        <rect x="3.5" y="5.5" width="17" height="13" rx="2" />
-                        <path d="m4 7 8 6 8-6" />
-                      </>
-                    )}
-                    {d.icon === 'linkedin' && (
-                      <>
-                        <path d="M7 10v7M7 7v.01M11 17v-7M11 13.5c0-2 1.3-3.5 3-3.5s2.8 1.2 2.8 3.2V17" />
-                      </>
-                    )}
-                  </svg>
-                )}
-              </a>
-            </li>
+          experiments.map((x, i) => (
+            <a
+              class={`float float--${x.slug}`}
+              href={x.url}
+              target="_blank"
+              rel="noopener"
+              style={`--i: ${i}`}
+              data-project={x.slug}
+              aria-haspopup="dialog"
+              aria-controls={`panel-${x.slug}`}
+              aria-label={`${x.name}: see project details`}
+            >
+              <span class="float__img">
+                <img src={x.image.src} alt="" width={x.image.width} height={x.image.height} loading="eager" decoding="async" />
+              </span>
+              <span class="float__label">
+                <span class="float__name">{x.short}</span>
+                <span class="float__kind">AI experiment</span>
+              </span>
+            </a>
           ))
         }
-      </ul>
-    </nav>
 
-    <script is:inline>
-      // Keep widgets hidden until they're scattered, so they never jump (JS only).
-      document.querySelector('[data-screen]').classList.add('is-scattering');
-    </script>
-  </div>
+        {
+          experiments.map((x) => (
+            <div class="panel" id={`panel-${x.slug}`} data-panel={x.slug} role="dialog" aria-label={x.name} hidden>
+              <div class="panel__head">
+                <p class="eyebrow">AI experiment</p>
+                <button type="button" class="panel__close" data-close aria-label="Close">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg>
+                </button>
+              </div>
+              <div class="panel__body">
+                <figure class="panel__fig">
+                  <img src={x.image.src} alt={x.image.alt} width={x.image.width} height={x.image.height} loading="lazy" decoding="async" />
+                  {x.image.caption && <figcaption>{x.image.caption}</figcaption>}
+                </figure>
+                <h2>{x.name}</h2>
+                <a class="cta cta--primary" href={x.url} target="_blank" rel="noopener">
+                  Try it out <span class="cta__arrow" aria-hidden="true">→</span>
+                </a>
+                <p class="panel__desc">{x.description}</p>
+                {x.highlights && (
+                  <div class="panel__hl">
+                    <p class="eyebrow">{x.highlights.heading}</p>
+                    <ul>
+                      {x.highlights.items.map((h) => (
+                        <li>
+                          <strong>{h.label}.</strong> {h.text}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
 </Base>
 
 <style>
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
+  .intro {
+    padding: clamp(64px, 12vw, 160px) 0 clamp(24px, 4vw, 48px);
   }
-
-  /* ---------- Screen + wallpaper ---------- */
-  .screen {
-    --glass: rgb(255 255 255 / 0.62);
-    --glass-ink: #111111;
-    --glass-muted: #4a4a4a;
-    --glass-line: rgb(255 255 255 / 0.7);
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    height: calc(100svh - 72px);
-    min-height: 560px;
-    color: var(--glass-ink);
+  h1 {
+    font-size: clamp(44px, 8vw, 96px);
+    letter-spacing: -0.03em;
+    margin: 20px 0 0;
+    max-width: 14ch;
   }
-  :global([data-mode='dark']) .screen {
-    --glass: rgb(34 34 34 / 0.6);
-    --glass-ink: #f2f2f2;
-    --glass-muted: #c4c4c4;
-    --glass-line: rgb(255 255 255 / 0.12);
-  }
-  .wall {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background:
-      radial-gradient(ellipse 90% 45% at 55% 100%, rgb(255 214 120 / 0.9) 0%, transparent 70%),
-      radial-gradient(ellipse 70% 30% at 20% 30%, rgb(255 196 170 / 0.7) 0%, transparent 70%),
-      linear-gradient(180deg, #d8b2c4 0%, #f2c0b4 20%, #efc4ba 34%, #cdc6cf 50%, #e9c6b6 62%, #f8bb7d 80%, #f6a24c 100%);
-  }
-  /* Dark mode: the same sky at dusk. */
-  :global([data-mode='dark']) .wall::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgb(24 18 40 / 0.62), rgb(30 16 28 / 0.42));
-  }
-
-  .live {
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--success);
-  }
-
-  /* ---------- Widgets ---------- */
-  /* The desk fills the screen above the dock. The welcome note sits top-left; the project widgets
-     are scattered at random across the middle of the screen by the script below. */
-  .desk {
-    position: absolute;
-    inset: 0 0 96px;
-    z-index: 1;
-  }
-  .widget {
-    position: relative;
-    border-radius: 22px;
-    padding: 18px;
-    background: var(--glass);
-    border: 1px solid var(--glass-line);
-    backdrop-filter: blur(24px) saturate(1.4);
-    -webkit-backdrop-filter: blur(24px) saturate(1.4);
-    box-shadow: 0 10px 30px rgb(80 30 20 / 0.12);
-    color: var(--glass-ink);
-  }
-  .widget p {
-    margin: 0;
-  }
-  .widget__eyebrow {
-    font-size: 13px;
-    font-weight: 600;
-  }
-
-  .widget--note {
-    position: absolute;
-    top: clamp(20px, 4vh, 40px);
-    left: var(--gutter);
-    width: min(360px, calc(100% - 2 * var(--gutter)));
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    gap: 10px;
-  }
-  .note__title {
-    font-family: var(--font-display);
-    font-size: clamp(26px, 2.6vw, 34px);
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-  }
-  .note__title strong {
-    color: var(--glass-ink);
-    background: linear-gradient(var(--accent-soft), var(--accent-soft)) no-repeat 0 88% / 100% 38%;
-  }
-  :global([data-mode='dark']) .note__title strong {
-    color: #111;
-    background-size: 100% 100%;
-    padding: 0 0.1em;
+  .intro__sub {
+    margin: 24px 0 0;
+    max-width: 46ch;
+    font-size: clamp(17px, 1.6vw, 20px);
+    color: var(--ink-muted);
   }
   .hint-tap,
   :global(html.touch) .hint-hover {
@@ -317,239 +164,193 @@ const dock = [
   :global(html.touch) .hint-tap {
     display: inline;
   }
-  .note__body {
-    font-size: 14px;
-    color: var(--glass-muted);
-    max-width: 40ch;
-  }
 
-  /* Project widgets */
-  .widget--project {
-    display: block;
-    padding: 0;
-    overflow: hidden;
+  /* ---------- Floating field ---------- */
+  .field-wrap {
+    padding-bottom: clamp(48px, 8vw, 96px);
+  }
+  /* Lift the field above the footer so an open panel (or the phone sheet) is never covered. */
+  .field-wrap .container {
+    z-index: 3;
+  }
+  .field {
+    position: relative;
+    height: clamp(520px, 70vh, 760px);
+  }
+  .float {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
     text-decoration: none;
+    transform: translate(var(--px, 0), var(--py, 0));
+    will-change: transform;
+  }
+  /* Before the script places them: a tidy fallback spot (and the no-JS layout). */
+  .float--yes-card { --px: 8%; --py: 40px; }
+  .float--moody-pod { --px: 45vw; --py: 120px; }
+  .field.is-placing .float {
+    visibility: hidden;
+  }
+  .float__img {
+    display: block;
+    overflow: hidden;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    background: var(--placeholder);
+    box-shadow: 0 16px 40px rgb(0 0 0 / 0.1);
     transition:
       transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
       box-shadow 0.35s;
   }
-  .widget--project {
-    position: absolute;
-    left: var(--px, 50%);
-    top: var(--py, 50%);
-  }
-  .widget--yes-card {
-    --px: 34%;
-    --py: 22%;
-    width: clamp(200px, 17vw, 250px);
-    aspect-ratio: 3 / 4;
-  }
-  .widget--moody-pod {
-    --px: 54%;
-    --py: 30%;
-    width: clamp(240px, 22vw, 330px);
-    aspect-ratio: 5 / 4;
-  }
-  /* Keep widgets hidden until the script has scattered them, so they never jump. */
-  .screen.is-scattering .widget--project {
-    visibility: hidden;
-  }
-  .widget--project img {
-    position: absolute;
-    inset: 0;
+  .float__img img {
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-  .widget--moody-pod img {
-    object-position: 50% 50%;
+  .float--yes-card .float__img {
+    width: clamp(190px, 16vw, 240px);
+    aspect-ratio: 3 / 4;
   }
-  .widget--project:hover,
-  .widget--project:focus-visible,
-  .widget--project.is-active {
-    transform: translateY(-4px) scale(1.015);
-    box-shadow: 0 18px 44px rgb(80 30 20 / 0.24);
+  .float--moody-pod .float__img {
+    width: clamp(250px, 24vw, 340px);
+    aspect-ratio: 16 / 10;
   }
-  .widget--project:focus-visible {
+  .float:hover .float__img,
+  .float:focus-visible .float__img,
+  .float.is-active .float__img {
+    transform: scale(1.04) rotate(-1.5deg);
+    box-shadow: 0 22px 50px rgb(0 0 0 / 0.16);
+  }
+  .float:focus-visible {
+    outline: none;
+  }
+  .float:focus-visible .float__img {
     outline: 3px solid var(--accent);
     outline-offset: 3px;
   }
-  .project__label {
-    position: absolute;
-    left: 12px;
-    right: 12px;
-    bottom: 12px;
+  .float__label {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    padding: 10px 14px;
-    border-radius: 14px;
-    background: var(--glass);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
   }
-  .project__kind {
-    font-size: 12px;
-    color: var(--glass-muted);
-  }
-  .project__name {
+  .float__name {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 17px;
+    font-size: 18px;
+  }
+  .float:hover .float__name,
+  .float.is-active .float__name {
+    color: var(--accent);
+  }
+  .float__kind {
+    font-size: 14px;
+    color: var(--ink-muted);
   }
 
-  /* ---------- Finder window ---------- */
-  .finder {
+  /* ---------- Details panel ---------- */
+  .panel {
     position: absolute;
     z-index: 5;
-    left: var(--x, 50%);
-    top: var(--y, 50%);
-    width: min(560px, calc(100% - 32px));
-    max-height: calc(100% - 140px);
+    left: 0;
+    top: 0;
+    width: min(520px, 100%);
+    max-height: min(640px, 100%, calc(100svh - 120px));
     display: flex;
     flex-direction: column;
-    border-radius: 14px;
-    overflow: hidden;
     background: var(--bg);
     color: var(--ink);
     border: 1px solid var(--line);
-    box-shadow:
-      0 30px 80px rgb(40 10 10 / 0.3),
-      0 0 0 0.5px rgb(0 0 0 / 0.2);
-    transform-origin: var(--ox, 50%) var(--oy, 50%);
-    animation: win-open 0.32s cubic-bezier(0.2, 0.9, 0.25, 1.05) both;
+    border-radius: 16px;
+    box-shadow: 0 24px 64px rgb(0 0 0 / 0.16);
+    transform: translate(var(--x, 0), var(--y, 0));
+    animation: panel-in 0.3s cubic-bezier(0.2, 0.9, 0.25, 1.05) both;
   }
-  .finder[hidden] {
+  .panel[hidden] {
     display: none;
   }
-  .finder.is-closing {
-    animation: win-close 0.18s ease-in both;
+  .panel.is-closing {
+    animation: panel-out 0.18s ease-in both;
   }
-  @keyframes win-open {
-    from { opacity: 0; transform: scale(0.6); }
-    to { opacity: 1; transform: none; }
+  @keyframes panel-in {
+    from { opacity: 0; transform: translate(var(--x, 0), calc(var(--y, 0px) + 12px)) scale(0.96); }
   }
-  @keyframes win-close {
-    to { opacity: 0; transform: scale(0.92); }
+  @keyframes panel-out {
+    to { opacity: 0; transform: translate(var(--x, 0), calc(var(--y, 0px) + 8px)) scale(0.98); }
   }
-  .finder__bar {
+  .panel__head {
     flex: none;
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 16px;
-    padding: 10px 14px;
-    background: var(--placeholder);
-    border-bottom: 1px solid var(--line);
+    padding: 14px 16px 0 24px;
   }
-  .lights {
-    display: flex;
-    gap: 8px;
-  }
-  .light {
-    width: 12px;
-    height: 12px;
+  .panel__close {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
     padding: 0;
-    border: 0;
+    border: 1px solid var(--line);
     border-radius: 50%;
-  }
-  .light--close { background: #ff5f57; cursor: pointer; }
-  .light--min { background: #febc2e; }
-  .light--max { background: #28c840; }
-  .light--close:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-  .finder__path {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    min-width: 0;
-    padding: 5px 12px;
-    border-radius: 8px;
-    background: var(--bg);
-    font-size: 13px;
-    color: var(--ink-muted);
-    white-space: nowrap;
-    overflow: hidden;
-  }
-  .finder__path b {
+    background: transparent;
     color: var(--ink);
-    font-weight: 600;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
   }
-  .finder__path svg {
-    flex: none;
-    width: 15px;
-    height: 15px;
-    fill: #5aa9f5;
+  .panel__close:hover {
+    border-color: var(--accent);
+    color: var(--accent);
   }
-  .finder__body {
+  .panel__close svg {
+    width: 18px;
+    height: 18px;
+  }
+  .panel__body {
     overflow: auto;
     overscroll-behavior: contain;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  .finder__fig {
-    margin: 0;
-  }
-  .finder__fig img {
-    display: block;
-    width: 100%;
-    height: auto;
-    max-height: 260px;
-    object-fit: cover;
-    border-radius: 10px;
-  }
-  [data-finder='yes-card'] .finder__fig img {
-    object-position: 50% 30%;
-  }
-  .finder__fig figcaption {
-    margin-top: 8px;
-    font-size: 13px;
-    color: var(--ink-muted);
-  }
-  .finder__info {
+    padding: 12px 24px 24px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
   }
-  .finder__info h2 {
+  .panel__body > * {
+    flex-shrink: 0;
+  }
+  .panel__fig {
+    margin: 0;
+    width: 100%;
+  }
+  .panel__fig img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 240px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  [data-panel='yes-card'] .panel__fig img {
+    object-position: 50% 30%;
+  }
+  .panel__fig figcaption {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+  .panel h2 {
     font-size: clamp(24px, 2.4vw, 30px);
     letter-spacing: -0.02em;
     line-height: 1.15;
   }
-  .finder__meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px 40px;
-    margin: 0;
-    padding: 14px 0;
-    width: 100%;
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-    font-size: 14px;
-  }
-  .finder__meta dt {
-    color: var(--ink-muted);
-    font-size: 12px;
-  }
-  .finder__meta dd {
-    margin: 2px 0 0;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .finder__desc {
+  .panel__desc {
     margin: 0;
     font-size: 15px;
   }
-  .finder__hl ul {
+  .panel__hl ul {
     list-style: none;
     margin: 10px 0 0;
     padding: 0;
@@ -559,151 +360,28 @@ const dock = [
     font-size: 14px;
     color: var(--ink-muted);
   }
-  .finder__hl strong {
+  .panel__hl strong {
     color: var(--ink);
   }
 
-  /* ---------- Dock ---------- */
-  .dock {
-    position: absolute;
-    z-index: 3;
-    left: 50%;
-    bottom: 14px;
-    transform: translateX(-50%);
-  }
-  .dock ul {
-    display: flex;
-    align-items: flex-end;
-    gap: 10px;
-    margin: 0;
-    padding: 8px 10px;
-    list-style: none;
-    border-radius: 22px;
-    background: rgb(255 255 255 / 0.4);
-    border: 1px solid rgb(255 255 255 / 0.55);
-    backdrop-filter: blur(24px) saturate(1.4);
-    -webkit-backdrop-filter: blur(24px) saturate(1.4);
-    box-shadow: 0 10px 30px rgb(80 30 20 / 0.15);
-  }
-  :global([data-mode='dark']) .dock ul {
-    background: rgb(30 30 30 / 0.45);
-    border-color: rgb(255 255 255 / 0.12);
-  }
-  .dock li {
-    transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
-    transform-origin: 50% 100%;
-  }
-  /* Magnify the hovered app and nudge its neighbours, like the macOS dock. */
-  .dock li:hover,
-  .dock li:focus-within {
-    transform: scale(1.3) translateY(-4px);
-  }
-  .dock li:hover + li,
-  .dock li:has(+ li:hover) {
-    transform: scale(1.12) translateY(-2px);
-  }
-  .dock__app {
-    position: relative;
-    display: grid;
-    place-items: center;
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    color: #ffffff;
-    text-decoration: none;
-    overflow: visible;
-  }
-  .dock__app svg {
-    width: 26px;
-    height: 26px;
-  }
-  .dock__app img {
-    width: 100%;
-    height: 100%;
-    border-radius: 12px;
-    object-fit: cover;
-    object-position: 50% 20%;
-  }
-  .dock__app--home { background: linear-gradient(160deg, #ff9a52, #f26b1d); color: #111; }
-  .dock__app--work { background: linear-gradient(160deg, #3a3a3a, #111111); }
-  .dock__app--mail { background: linear-gradient(160deg, #5ac8fa, #1a7cf0); }
-  .dock__app--linkedin { background: linear-gradient(160deg, #2a86e0, #0a66c2); }
-  .dock__app:focus-visible {
-    outline: 3px solid var(--accent);
-    outline-offset: 3px;
-  }
-  .dock__tip {
-    position: absolute;
-    bottom: calc(100% + 10px);
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 3px 10px;
-    border-radius: 6px;
-    background: rgb(30 30 30 / 0.85);
-    color: #fff;
-    font-size: 11px;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.15s;
-  }
-  .dock__app:hover .dock__tip,
-  .dock__app:focus-visible .dock__tip {
-    opacity: 1;
-  }
-
-  /* Desktop "wakes up": widgets pop in one after another (after the login screen, on a first visit). */
-  :global(html.is-locked) .desk > *,
-  :global(html.is-locked) .dock {
-    opacity: 0;
-  }
-  .screen.is-awake .desk > * {
-    animation: pop-in 0.6s cubic-bezier(0.2, 0.9, 0.25, 1.15) both;
-    animation-delay: calc(0.15s + var(--d, 0) * 0.08s);
-  }
-  .screen.is-awake .dock {
-    animation: dock-up 0.6s cubic-bezier(0.2, 0.9, 0.25, 1.1) 0.5s both;
-  }
-  @keyframes pop-in {
-    from { opacity: 0; transform: scale(0.85) translateY(16px); }
-    to { opacity: 1; transform: none; }
-  }
-  @keyframes dock-up {
-    from { opacity: 0; transform: translate(-50%, 40px); }
-    to { opacity: 1; transform: translate(-50%, 0); }
-  }
-
-  /* ---------- Smaller screens ---------- */
+  /* ---------- Phones: cards stack, the panel is a bottom sheet ---------- */
   @media (max-width: 720px) {
-    .screen {
+    .field {
       height: auto;
-      min-height: calc(100svh - 96px);
-      padding-bottom: 110px;
-    }
-    .desk {
-      position: relative;
-      inset: auto;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      padding: 20px var(--gutter) 0;
+      gap: 16px;
+      align-items: start;
     }
-    .widget--note {
-      position: relative;
-      inset: auto;
-      width: auto;
-      grid-column: 1 / -1;
+    .float {
+      position: static;
+      transform: none;
     }
-    .widget--project {
-      position: relative;
-      left: auto;
-      top: auto;
-      width: auto;
-      aspect-ratio: auto;
-      height: 220px;
+    .float .float__img {
+      width: 100%;
+      aspect-ratio: 4 / 5;
     }
-    /* The window becomes a bottom sheet. */
-    .finder {
+    .panel {
       position: fixed;
       left: 0;
       right: 0;
@@ -712,196 +390,210 @@ const dock = [
       width: 100%;
       max-height: 85svh;
       border-radius: 18px 18px 0 0;
-      transform-origin: 50% 100%;
+      transform: none;
       animation-name: sheet-up;
+    }
+    .panel.is-closing {
+      animation-name: sheet-down;
     }
     @keyframes sheet-up {
       from { transform: translateY(100%); }
       to { transform: none; }
     }
-    .screen:has(.finder:not([hidden]))::after {
+    @keyframes sheet-down {
+      to { transform: translateY(100%); }
+    }
+    .field:has(.panel:not([hidden]))::after {
       content: '';
       position: fixed;
       inset: 0;
       z-index: 4;
       background: rgb(0 0 0 / 0.35);
     }
-    .dock {
-      position: absolute;
-    }
-    .dock ul {
-      gap: 8px;
-    }
-    .dock__app {
-      width: 44px;
-      height: 44px;
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .finder,
-    .finder.is-closing,
-    .screen.is-awake .desk > *,
-    .screen.is-awake .dock {
+    .panel,
+    .panel.is-closing {
       animation: none;
     }
-    .widget--project,
-    .dock li {
+    .float__img {
       transition: none;
     }
   }
 </style>
 
-<style is:global>
-  /* The playground is a full-screen desktop: no page scroll on large screens. */
-  body.is-desktop main {
-    overflow: clip;
-  }
-</style>
-
 <script>
-  const screen = document.querySelector<HTMLElement>('[data-screen]')!;
+  const field = document.querySelector<HTMLElement>('[data-field]')!;
+  const cards = [...field.querySelectorAll<HTMLAnchorElement>('[data-project]')];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const canHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
   const sheet = matchMedia('(max-width: 720px)');
   if (!canHover) document.documentElement.classList.add('touch');
 
-  /* ---------- Scatter the project widgets across the middle of the screen ---------- */
-  // A fresh random layout on every visit. Each widget's centre lands in the middle band of the
-  // desk, without overlapping the welcome note or another widget.
-  const desk = document.querySelector<HTMLElement>('[data-desk]')!;
-  const note = desk.querySelector<HTMLElement>('.widget--note')!;
-  type Rect = { x: number; y: number; w: number; h: number };
-  const overlaps = (a: Rect, b: Rect, pad = 24) =>
+  /* ---------- Float: random start, slow drift, soft bounce off the edges ---------- */
+  type Body = { el: HTMLElement; x: number; y: number; vx: number; vy: number; w: number; h: number };
+  let bodies: Body[] = [];
+  let hovered: HTMLElement | null = null;
+  let open: HTMLElement | null = null;
+  let openCard: HTMLElement | null = null;
+
+  const setPos = (b: Body) => {
+    b.el.style.setProperty('--px', `${b.x}px`);
+    b.el.style.setProperty('--py', `${b.y}px`);
+  };
+  const overlaps = (a: Body, b: Body, pad = 32) =>
     a.x < b.x + b.w + pad && b.x < a.x + a.w + pad && a.y < b.y + b.h + pad && b.y < a.y + a.h + pad;
+
   const scatter = () => {
-    const items = [...desk.querySelectorAll<HTMLElement>('[data-project]')];
     if (sheet.matches) {
-      items.forEach((el) => (el.style.cssText = el.style.cssText.replace(/--p[xy]:[^;]+;?/g, '')));
+      cards.forEach((el) => el.style.removeProperty('--px') || el.style.removeProperty('--py'));
+      bodies = [];
       return;
     }
-    const W = desk.clientWidth;
-    const H = desk.clientHeight;
-    const placed: Rect[] = [{ x: note.offsetLeft, y: note.offsetTop, w: note.offsetWidth, h: note.offsetHeight }];
-    for (const el of items) {
-      const w = el.offsetWidth;
-      const h = el.offsetHeight;
-      let best: Rect | null = null;
+    const W = field.clientWidth;
+    const H = field.clientHeight;
+    bodies = [];
+    for (const el of cards) {
+      const b: Body = { el, x: 0, y: 0, vx: 0, vy: 0, w: el.offsetWidth, h: el.offsetHeight };
       for (let t = 0; t < 300; t++) {
-        const cx = W * (0.3 + Math.random() * 0.4);
-        const cy = H * (0.3 + Math.random() * 0.4);
-        const r = {
-          x: Math.min(Math.max(cx - w / 2, 16), W - w - 16),
-          y: Math.min(Math.max(cy - h / 2, 16), H - h - 16),
-          w,
-          h,
-        };
-        best = r;
-        if (!placed.some((p) => overlaps(r, p))) break;
+        b.x = Math.random() * Math.max(0, W - b.w);
+        b.y = Math.random() * Math.max(0, H - b.h);
+        if (!bodies.some((o) => overlaps(b, o))) break;
       }
-      placed.push(best!);
-      el.style.setProperty('--px', `${best!.x}px`);
-      el.style.setProperty('--py', `${best!.y}px`);
+      // 10 to 22 px a second, in a random direction.
+      const speed = 10 + Math.random() * 12;
+      const angle = Math.random() * Math.PI * 2;
+      b.vx = Math.cos(angle) * speed;
+      b.vy = Math.sin(angle) * speed;
+      bodies.push(b);
+      setPos(b);
     }
   };
-  scatter();
-  screen.classList.remove('is-scattering');
 
-  // Widgets pop in now, or once the first-visit login screen unlocks.
-  const wake = () => screen.classList.add('is-awake');
-  if (document.documentElement.classList.contains('is-locked')) addEventListener('site:unlocked', wake, { once: true });
-  else wake();
+  let last = performance.now();
+  const step = (now: number) => {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    // Everything holds still while a card is hovered or a panel is open, so it's easy to read.
+    if (!hovered && !open && !document.documentElement.classList.contains('is-locked')) {
+      const W = field.clientWidth;
+      const H = field.clientHeight;
+      for (const b of bodies) {
+        b.x += b.vx * dt;
+        b.y += b.vy * dt;
+        if (b.x < 0) (b.x = 0), (b.vx = Math.abs(b.vx));
+        if (b.y < 0) (b.y = 0), (b.vy = Math.abs(b.vy));
+        if (b.x > W - b.w) (b.x = W - b.w), (b.vx = -Math.abs(b.vx));
+        if (b.y > H - b.h) (b.y = H - b.h), (b.vy = -Math.abs(b.vy));
+      }
+      // Cards that drift into each other swap directions and ease apart.
+      for (let i = 0; i < bodies.length; i++) {
+        for (let j = i + 1; j < bodies.length; j++) {
+          const a = bodies[i];
+          const c = bodies[j];
+          if (!overlaps(a, c, 8)) continue;
+          [a.vx, c.vx] = [c.vx, a.vx];
+          [a.vy, c.vy] = [c.vy, a.vy];
+          const push = (a.x + a.w / 2 < c.x + c.w / 2 ? -1 : 1) * 0.6;
+          a.x += push;
+          c.x -= push;
+        }
+      }
+      bodies.forEach(setPos);
+    }
+    requestAnimationFrame(step);
+  };
+
+  scatter();
+  field.classList.remove('is-placing');
+  if (!reduce) requestAnimationFrame(step);
   let lastW = innerWidth;
   addEventListener('resize', () => {
-    // Re-scatter only when the width really changes (not on mobile toolbar show/hide).
     if (Math.abs(innerWidth - lastW) < 40) return;
     lastW = innerWidth;
     scatter();
   });
 
-  /* ---------- Widgets open Finder-style windows ---------- */
-  const widgets = document.querySelectorAll<HTMLAnchorElement>('[data-project]');
-  let open: HTMLElement | null = null;
-  let openWidget: HTMLElement | null = null;
+  /* ---------- Details panel ---------- */
   let pinned = false;
   let closeTimer = 0;
   let openTimer = 0;
 
-  const place = (win: HTMLElement, widget: HTMLElement) => {
-    if (sheet.matches) {
-      win.style.removeProperty('--x');
-      win.style.removeProperty('--y');
-      return;
-    }
-    const s = screen.getBoundingClientRect();
-    const w = widget.getBoundingClientRect();
-    const ww = win.offsetWidth;
-    const wh = win.offsetHeight;
-    const gap = 20;
-    const margin = 16;
-    const rel = (r: DOMRect) => ({ x: r.left - s.left, y: r.top - s.top, w: r.width, h: r.height });
-    const own = rel(w);
-    // Other project widgets: the window should leave them reachable, so hovering can move on.
-    const others = [...widgets].filter((el) => el !== widget).map((el) => rel(el.getBoundingClientRect()));
-    const clampY = (y: number) => Math.max(margin, Math.min(y, s.height - wh - 90));
-    const clampX = (x: number) => Math.max(margin, Math.min(x, s.width - ww - margin));
-    const midY = clampY(own.y + own.h / 2 - wh / 2);
+  const place = (panel: HTMLElement, card: HTMLElement) => {
+    if (sheet.matches) return;
+    const f = field.getBoundingClientRect();
+    const c = card.getBoundingClientRect();
+    const pw = panel.offsetWidth;
+    const ph = panel.offsetHeight;
+    const gap = 24;
+    const own = { x: c.left - f.left, y: c.top - f.top, w: c.width, h: c.height };
+    const others = cards
+      .filter((el) => el !== card)
+      .map((el) => {
+        const r = el.getBoundingClientRect();
+        return { x: r.left - f.left, y: r.top - f.top, w: r.width, h: r.height };
+      });
+    const y = Math.max(0, Math.min(own.y + own.h / 2 - ph / 2, f.height - ph));
     const candidates = [
-      { x: own.x - gap - ww, y: midY },
-      { x: own.x + own.w + gap, y: midY },
+      { x: own.x + own.w + gap, y },
+      { x: own.x - gap - pw, y },
     ]
-      .filter((c) => c.x >= margin && c.x + ww <= s.width - margin)
-      .concat([{ x: clampX(own.x + own.w / 2 - ww / 2), y: midY }]);
-    const area = (a: { x: number; y: number; w: number; h: number }, b: { x: number; y: number; w: number; h: number }) =>
+      .filter((p) => p.x >= 0 && p.x + pw <= f.width)
+      .concat([{ x: Math.max(0, Math.min(own.x + own.w / 2 - pw / 2, f.width - pw)), y }]);
+    type R = { x: number; y: number; w: number; h: number };
+    const area = (a: R, b: R) =>
       Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x)) * Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y));
-    // Least cover of the other widgets wins; ties go to the first (beside the widget).
-    const score = (c: { x: number; y: number }) => {
-      const r = { ...c, w: ww, h: wh };
+    // Least cover of the other cards wins, so hovering can move straight on to the next one.
+    const score = (p: { x: number; y: number }) => {
+      const r = { ...p, w: pw, h: ph };
       return others.reduce((n, o) => n + area(r, o), 0) * 4 + area(r, own);
     };
-    const { x, y } = candidates.reduce((best, c) => (score(c) < score(best) ? c : best));
-    win.style.setProperty('--x', `${x}px`);
-    win.style.setProperty('--y', `${y}px`);
-    win.style.setProperty('--ox', `${w.left - s.left + w.width / 2 - x}px`);
-    win.style.setProperty('--oy', `${w.top - s.top + w.height / 2 - y}px`);
+    const best = candidates.reduce((a, b) => (score(b) < score(a) ? b : a));
+    panel.style.setProperty('--x', `${best.x}px`);
+    panel.style.setProperty('--y', `${best.y}px`);
   };
 
-  const show = (widget: HTMLElement, pin: boolean) => {
+  const show = (card: HTMLElement, pin: boolean) => {
     clearTimeout(closeTimer);
-    const win = document.getElementById(widget.getAttribute('aria-controls')!)!;
-    if (open && open !== win) hide(true);
+    const panel = document.getElementById(card.getAttribute('aria-controls')!)!;
+    if (open && open !== panel) hide(true);
     pinned = pinned || pin;
-    if (open === win) return;
-    open = win;
-    openWidget = widget;
-    widget.classList.add('is-active');
-    widget.setAttribute('aria-expanded', 'true');
-    win.classList.remove('is-closing');
-    win.hidden = false;
-    place(win, widget);
-    if (pin) win.querySelector<HTMLElement>('[data-close]')?.focus({ preventScroll: true });
+    if (open === panel) return;
+    open = panel;
+    openCard = card;
+    card.classList.add('is-active');
+    card.setAttribute('aria-expanded', 'true');
+    panel.classList.remove('is-closing');
+    panel.hidden = false;
+    place(panel, card);
+    if (pin) panel.querySelector<HTMLElement>('[data-close]')?.focus({ preventScroll: true });
   };
 
   const hide = (instant = false) => {
     if (!open) return;
-    const win = open;
-    const widget = openWidget;
+    const panel = open;
+    const card = openCard;
     open = null;
-    openWidget = null;
+    openCard = null;
     pinned = false;
-    widget?.classList.remove('is-active');
-    widget?.setAttribute('aria-expanded', 'false');
+    card?.classList.remove('is-active');
+    card?.setAttribute('aria-expanded', 'false');
     if (instant || reduce) {
-      win.hidden = true;
+      panel.hidden = true;
       return;
     }
-    win.classList.add('is-closing');
-    win.addEventListener('animationend', () => {
-      if (win.classList.contains('is-closing')) {
-        win.hidden = true;
-        win.classList.remove('is-closing');
-      }
-    }, { once: true });
+    panel.classList.add('is-closing');
+    panel.addEventListener(
+      'animationend',
+      () => {
+        if (panel.classList.contains('is-closing')) {
+          panel.hidden = true;
+          panel.classList.remove('is-closing');
+        }
+      },
+      { once: true },
+    );
   };
 
   const scheduleClose = () => {
@@ -911,46 +603,46 @@ const dock = [
     closeTimer = window.setTimeout(() => hide(), 350);
   };
 
-  widgets.forEach((widget) => {
-    widget.setAttribute('aria-expanded', 'false');
+  cards.forEach((card) => {
+    card.setAttribute('aria-expanded', 'false');
+    card.addEventListener('pointerenter', () => (hovered = card));
+    card.addEventListener('pointerleave', () => hovered === card && (hovered = null));
     if (canHover) {
-      widget.addEventListener('pointerenter', () => {
+      card.addEventListener('pointerenter', () => {
         clearTimeout(closeTimer);
         clearTimeout(openTimer);
-        openTimer = window.setTimeout(() => show(widget, false), open ? 0 : 120);
+        openTimer = window.setTimeout(() => show(card, false), open ? 0 : 120);
       });
-      widget.addEventListener('pointerleave', scheduleClose);
+      card.addEventListener('pointerleave', scheduleClose);
     }
-    // Click, tap, or Enter pins the window open. The "Try it out" button inside links out.
-    widget.addEventListener('click', (e) => {
+    // Click, tap, or Enter pins the panel open. "Try it out" inside the panel links out.
+    card.addEventListener('click', (e) => {
       e.preventDefault();
-      if (open && openWidget === widget && pinned) return hide();
-      show(widget, true);
+      if (open && openCard === card && pinned) return hide();
+      show(card, true);
     });
   });
 
-  document.querySelectorAll<HTMLElement>('[data-finder]').forEach((win) => {
-    win.addEventListener('pointerenter', () => clearTimeout(closeTimer));
-    win.addEventListener('pointerleave', scheduleClose);
-    // Interacting inside the window keeps it open.
-    win.addEventListener('pointerdown', () => (pinned = true));
-    win.querySelector('[data-close]')?.addEventListener('click', () => {
-      const w = openWidget;
+  document.querySelectorAll<HTMLElement>('[data-panel]').forEach((panel) => {
+    panel.addEventListener('pointerenter', () => clearTimeout(closeTimer));
+    panel.addEventListener('pointerleave', scheduleClose);
+    panel.addEventListener('pointerdown', () => (pinned = true));
+    panel.querySelector('[data-close]')?.addEventListener('click', () => {
+      const c = openCard;
       hide();
-      w?.focus({ preventScroll: true });
+      c?.focus({ preventScroll: true });
     });
   });
 
   addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && open) {
-      const w = openWidget;
+      const c = openCard;
       hide();
-      w?.focus({ preventScroll: true });
+      c?.focus({ preventScroll: true });
     }
   });
   document.addEventListener('pointerdown', (e) => {
-    const t = e.target as Element;
-    if (open && !t.closest('[data-finder], [data-project]')) hide();
+    if (open && !(e.target as Element).closest('[data-panel], [data-project]')) hide();
   });
-  addEventListener('resize', () => open && openWidget && place(open, openWidget));
+  addEventListener('resize', () => open && openCard && place(open, openCard));
 </script>
