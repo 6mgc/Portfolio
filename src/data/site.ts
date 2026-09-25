@@ -38,8 +38,7 @@ export const projects: Project[] = [
     name: 'Canadian Tire',
     title: 'Boosting retail engagement through personalized deals',
     role: 'Product Designer (Lead UI)',
-    // Unverified: see src/data/metrics.ts.
-    impact: `${metrics.conversionLift.value} online conversion`,
+    impact: `${metrics.conversionLift.value} online conversion rate`,
     thumb: '/images/thumb-canadian-tire.webp',
   },
   {
