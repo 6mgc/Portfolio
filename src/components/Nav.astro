@@ -40,7 +40,7 @@ const isCurrent = (href: string) => href === path || (href === '/work' && path.s
     const label = dark ? 'Switch to light mode' : 'Switch to dark mode';
     btn?.setAttribute('aria-label', label);
     btn?.setAttribute('title', label);
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#121212' : '#ffffff');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#222222' : '#ffffff');
   };
   sync();
   btn?.addEventListener('click', () => {

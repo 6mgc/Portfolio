@@ -40,7 +40,7 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : undefin
         };
         const mode = read() || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         document.documentElement.dataset.mode = mode;
-        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', mode === 'dark' ? '#121212' : '#ffffff');
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', mode === 'dark' ? '#222222' : '#ffffff');
         window.__saveTheme = (v) => {
           for (const store of [() => localStorage, () => sessionStorage]) {
             try {
