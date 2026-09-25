@@ -36,7 +36,7 @@ const isCurrent = (href: string) => href === path || (href === '/#work' && path.
 <script>
   const btn = document.querySelector<HTMLButtonElement>('.theme-toggle');
   const sync = () => {
-    const dark = document.documentElement.dataset.theme === 'dark';
+    const dark = document.documentElement.dataset.mode === 'dark';
     const label = dark ? 'Switch to light mode' : 'Switch to dark mode';
     btn?.setAttribute('aria-label', label);
     btn?.setAttribute('title', label);
@@ -44,11 +44,9 @@ const isCurrent = (href: string) => href === path || (href === '/#work' && path.
   };
   sync();
   btn?.addEventListener('click', () => {
-    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-    document.documentElement.dataset.theme = next;
-    try {
-      localStorage.setItem('theme', next);
-    } catch {}
+    const next = document.documentElement.dataset.mode === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.mode = next;
+    (window as unknown as { __saveTheme?: (v: string) => void }).__saveTheme?.(next);
     sync();
   });
 </script>
@@ -132,10 +130,10 @@ const isCurrent = (href: string) => href === path || (href === '/#work' && path.
     height: 20px;
   }
   .icon-sun,
-  :global([data-theme='dark']) .icon-moon {
+  :global([data-mode='dark']) .icon-moon {
     display: none;
   }
-  :global([data-theme='dark']) .icon-sun {
+  :global([data-mode='dark']) .icon-sun {
     display: block;
   }
   @media (max-width: 520px) {

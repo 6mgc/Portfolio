@@ -36,9 +36,10 @@
   --max: 1120px;
 }
 
-/* Dark theme, set on <html data-theme="dark"> by the header switch (or the OS preference on first visit).
+/* Dark theme, set on <html data-mode="dark"> by the header switch (or the OS preference on first visit).
+   Uses data-mode, not data-theme, so an embedding host that stamps its own data-theme can't override it.
    Contrast on --bg #121212: ink 16.7:1, ink-muted 7.4:1, accent 6.2:1. */
-:root[data-theme='dark'] {
+:root[data-mode='dark'] {
   --bg: #121212;
   --ink: #f2f2f2;
   --ink-muted: #a3a3a3;

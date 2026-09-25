@@ -24,15 +24,31 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : undefin
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="theme-color" content="#ffffff" />
     <script is:inline>
-      // Apply the saved theme (or the OS preference) before first paint so the page never flashes.
+      // Apply the chosen theme before first paint so pages never flash, and every page matches.
+      // The choice is kept in localStorage, with sessionStorage and window.name as fallbacks for
+      // browsers or embeds that block storage; first-time visitors get their OS preference.
       (() => {
-        let t;
-        try {
-          t = localStorage.getItem('theme');
-        } catch {}
-        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        document.documentElement.dataset.theme = t;
-        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', t === 'dark' ? '#121212' : '#ffffff');
+        const read = () => {
+          for (const store of [() => localStorage, () => sessionStorage]) {
+            try {
+              const v = store().getItem('theme');
+              if (v === 'light' || v === 'dark') return v;
+            } catch {}
+          }
+          const m = /(?:^|;)theme=(light|dark)(?:;|$)/.exec(window.name);
+          return m ? m[1] : null;
+        };
+        const mode = read() || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.dataset.mode = mode;
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', mode === 'dark' ? '#121212' : '#ffffff');
+        window.__saveTheme = (v) => {
+          for (const store of [() => localStorage, () => sessionStorage]) {
+            try {
+              store().setItem('theme', v);
+            } catch {}
+          }
+          window.name = window.name.replace(/(?:^|;)theme=(light|dark)/, '') + ';theme=' + v;
+        };
       })();
     </script>
     <meta property="og:type" content="website" />
