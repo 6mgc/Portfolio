@@ -7,7 +7,7 @@ const isCurrent = (href: string) => href === path || (href === '/work' && path.s
 
 <header class="nav">
   <div class="container nav__inner">
-    <a href="/" class="nav__brand" aria-label={`${site.name}, home`}>Megan<span class="accent">.</span></a>
+    <a href="/" class="nav__brand" aria-label={`${site.name}, home`}>Megan Cheng<span class="accent">.</span></a>
     <nav aria-label="Primary">
       <ul>
         {
@@ -136,14 +136,32 @@ const isCurrent = (href: string) => href === path || (href === '/work' && path.s
   :global([data-mode='dark']) .icon-sun {
     display: block;
   }
-  @media (max-width: 520px) {
+  /* Phones: name and theme switch on the first row, links on the second. */
+  @media (max-width: 720px) {
     .nav__inner {
-      padding-top: 16px;
-      padding-bottom: 16px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-template-areas:
+        'brand toggle'
+        'links links';
+      row-gap: 10px;
+      padding-top: 12px;
+      padding-bottom: 12px;
+      min-height: 0;
+    }
+    .nav__brand {
+      grid-area: brand;
+    }
+    .theme-toggle {
+      grid-area: toggle;
+      width: 36px;
+      height: 36px;
+    }
+    nav {
+      grid-area: links;
     }
     ul {
-      gap: 16px;
-      flex-wrap: wrap;
+      gap: 18px;
     }
     nav a {
       font-size: 14px;
