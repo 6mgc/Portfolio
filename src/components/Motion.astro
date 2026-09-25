@@ -1,8 +1,8 @@
 ---
 /*
  * Site-wide motion and interaction layer.
- * - Custom cursor (desktop, fine pointers only): a dot that grows over links, and becomes a labelled
- *   camera-viewfinder frame over project cards ("View", "Locked", "Soon").
+ * - Custom cursor (desktop, fine pointers only): a dot that grows over links, and becomes a camera
+ *   viewfinder (double corner brackets + focus reticle) over project cards.
  * - Magnetic buttons: CTAs and icon buttons lean toward the pointer.
  * - Scroll reveals: content rises in as it enters the viewport; big numbers count up.
  * - Easter eggs: a console note, and a shutter flash after clicking the header name 5 times.
@@ -12,10 +12,20 @@
 
 <div class="cursor" aria-hidden="true">
   <span class="cursor__dot"></span>
-  <span class="cursor__frame">
-    <i></i><i></i><i></i><i></i>
-    <span class="cursor__label"></span>
-  </span>
+  <!-- Camera viewfinder: double corner brackets and a focus reticle. -->
+  <svg class="cursor__frame" viewBox="0 0 120 90" fill="none" stroke="currentColor" stroke-linecap="square">
+    <g class="vf__outer" stroke-width="3">
+      <path d="M2 24V2h24" /><path d="M94 2h24v22" /><path d="M2 66v22h24" /><path d="M94 88h24V66" />
+    </g>
+    <g class="vf__inner" stroke-width="1.75">
+      <path d="M9 19V9h10" /><path d="M101 9h10v10" /><path d="M9 71v10h10" /><path d="M101 81h10V71" />
+    </g>
+    <g class="vf__reticle" stroke-width="1.75">
+      <circle cx="60" cy="45" r="12.5" />
+      <path d="M60 32.5v4M60 53.5v4M47.5 45h4M68.5 45h4" />
+      <circle cx="60" cy="45" r="1.4" fill="currentColor" stroke="none" />
+    </g>
+  </svg>
 </div>
 <div class="shutter" aria-hidden="true"></div>
 <p class="shutter-toast" role="status" aria-live="polite"></p>
@@ -68,43 +78,35 @@
   .cursor.is-frame .cursor__dot {
     opacity: 0;
   }
-  /* Viewfinder: four corner marks with a label, like framing a shot. */
+  /* Viewfinder: it snaps in slightly oversized, then the reticle "pulls focus". */
   .cursor__frame {
     position: absolute;
-    width: 116px;
-    height: 84px;
-    margin: -42px 0 0 -58px;
+    width: 132px;
+    height: 99px;
+    margin: -49.5px 0 0 -66px;
+    overflow: visible;
+    color: var(--accent);
     opacity: 0;
-    transform: scale(0.6);
+    transform: scale(1.35);
     transition:
-      opacity 0.25s ease,
-      transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      opacity 0.2s ease,
+      transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
   .cursor.is-frame .cursor__frame {
     opacity: 1;
     transform: scale(1);
   }
-  .cursor__frame i {
-    position: absolute;
-    width: 18px;
-    height: 18px;
-    border: 0 solid var(--accent);
+  .vf__reticle {
+    transform-origin: 60px 45px;
+    transform: scale(1.6);
+    opacity: 0;
+    transition:
+      transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.08s,
+      opacity 0.3s ease 0.08s;
   }
-  .cursor__frame i:nth-child(1) { top: 0; left: 0; border-top-width: 2.5px; border-left-width: 2.5px; }
-  .cursor__frame i:nth-child(2) { top: 0; right: 0; border-top-width: 2.5px; border-right-width: 2.5px; }
-  .cursor__frame i:nth-child(3) { bottom: 0; left: 0; border-bottom-width: 2.5px; border-left-width: 2.5px; }
-  .cursor__frame i:nth-child(4) { bottom: 0; right: 0; border-bottom-width: 2.5px; border-right-width: 2.5px; }
-  .cursor__label {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    padding: 6px 12px;
-    border-radius: 999px;
-    background: var(--accent);
-    color: var(--accent-ink);
-    font: 600 13px/1 var(--font-body);
-    white-space: nowrap;
+  .cursor.is-frame .vf__reticle {
+    transform: none;
+    opacity: 1;
   }
 
   /* ---------- Magnetic ---------- */
@@ -192,7 +194,6 @@
   /* ---------- Cursor ---------- */
   if (finePointer && !reduce) {
     const cursor = document.querySelector<HTMLElement>('.cursor')!;
-    const label = cursor.querySelector<HTMLElement>('.cursor__label')!;
     root.classList.add('has-cursor');
     let x = -100, y = -100, cx = x, cy = y;
     addEventListener('pointermove', (e) => {
@@ -205,13 +206,6 @@
       cursor.classList.toggle('is-frame', !!card);
       cursor.classList.toggle('is-link', !card && !!link);
       cursor.classList.toggle('is-text', !!text);
-      if (card) {
-        label.textContent = card.classList.contains('card--soon')
-          ? 'Coming soon'
-          : card.querySelector('.card__lock')
-            ? 'Locked'
-            : 'View';
-      }
     }, { passive: true });
     document.addEventListener('pointerleave', () => cursor.classList.add('is-hidden'));
     document.addEventListener('pointerenter', () => cursor.classList.remove('is-hidden'));
