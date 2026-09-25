@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/protect.mjs",
     "preview": "astro preview",
     "check:launch": "node scripts/check-launch.mjs"
   },

@@ -39,6 +39,12 @@ const shown = source.filter((p) => p.slug !== exclude);
         <p class="card__title">
           <span class="card__hl">
             <span class="card__name">{p.name}</span>
+            {p.locked && (
+              <svg class="card__lock" viewBox="0 0 24 24" role="img" aria-label="Password protected" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4.5" y="10.5" width="15" height="10" rx="2" />
+                <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" />
+              </svg>
+            )}
             <span class="card__sep" aria-hidden="true">/</span>
             {p.title}
           </span>
@@ -110,6 +116,14 @@ const shown = source.filter((p) => p.slug !== exclude);
   }
   .card__name {
     font-weight: 700;
+  }
+  .card__lock {
+    display: inline-block;
+    width: 0.75em;
+    height: 0.75em;
+    margin-left: 0.3em;
+    vertical-align: -0.02em;
+    color: var(--ink-muted);
   }
   .card__sep {
     color: var(--ink-muted);

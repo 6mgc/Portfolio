@@ -37,6 +37,19 @@ Images go in `public/` (e.g. `public/work/ct-hero.png`) and replace the `<Placeh
 - [ ] Case study copy: sections in grey dashed boxes (research, team, rationale, testing, summary).
 - [ ] Domain: set `site` in `astro.config.mjs` to the live address.
 
+## Password-protected case study
+
+The Canadian Tire case study is encrypted at build time by `scripts/protect.mjs` (AES-256-GCM, key
+derived from the password with PBKDF2). The published HTML holds only the encrypted content and an
+unlock form, so the text can't be read without the password. Images are separate files and aren't
+encrypted.
+
+- Set the password as the `CASE_STUDY_PASSWORD` environment variable. On Vercel: Project → Settings →
+  Environment Variables, then redeploy. To change the password, change the variable and redeploy.
+- If the variable is missing, the build still succeeds but the page ships locked with no content.
+- Locally: `CASE_STUDY_PASSWORD=yourpassword npm run build`.
+- Once unlocked, the page stays open for the rest of that browser tab's session.
+
 ## Deploy
 
 Any static host works. Build command `npm run build`, output directory `dist`.

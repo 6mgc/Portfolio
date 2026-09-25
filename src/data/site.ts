@@ -30,6 +30,8 @@ export interface Project {
   impact?: string;
   thumb?: string;
   comingSoon?: boolean;
+  // Case study is password-protected (see scripts/protect.mjs); the card shows a lock.
+  locked?: boolean;
 }
 
 export const projects: Project[] = [
@@ -40,6 +42,7 @@ export const projects: Project[] = [
     role: 'Product Designer (Lead UI)',
     impact: `${metrics.conversionLift.value} online conversion rate`,
     thumb: '/images/thumb-canadian-tire.webp',
+    locked: true,
   },
   {
     slug: 'nurture-seed',
