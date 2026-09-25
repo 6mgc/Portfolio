@@ -59,8 +59,6 @@ const experiments: Experiment[] = [
   },
 ];
 
-const reminders = ['Figma new release', 'Deals ending soon carousel Auto card', 'Plant more Nurture Seeds 🌱'];
-
 const dock = [
   { href: '/', label: 'Home', icon: 'home' },
   { href: '/work', label: 'Work', icon: 'work' },
@@ -84,37 +82,9 @@ const dock = [
       </svg>
     </div>
 
-    <!-- Menu bar -->
-    <div class="menubar" aria-hidden="true">
-      <span class="menubar__left">
-        <b>Megan Cheng<span class="accent">.</span></b>
-        <span>Playground</span>
-        <span class="hide-sm">AI experiments</span>
-      </span>
-      <span class="menubar__right">
-        <span class="menubar__status"><i></i> Open to work</span>
-        <span data-clock="menubar"></span>
-      </span>
-    </div>
-
     <!-- Desktop -->
     <div class="desk" data-desk>
-      <div class="widget widget--clock" style="--d: 0">
-        <p class="widget__eyebrow">Toronto</p>
-        <p class="clock__time" data-clock="toronto">--:--</p>
-        <p class="clock__date" data-clock="toronto-date">&nbsp;</p>
-      </div>
-
-      <div class="widget widget--reminders" style="--d: 1">
-        <p class="rem__head"><span>Reminders</span><span class="rem__count">{reminders.length}</span></p>
-        <ul>
-          {reminders.map((r) => (
-            <li><span class="rem__ring" aria-hidden="true"></span>{r}</li>
-          ))}
-        </ul>
-      </div>
-
-      <div class="widget widget--note" style="--d: 2">
+      <div class="widget widget--note" style="--d: 0">
         <p class="note__title">Welcome to my AI <strong>playground</strong></p>
         <p class="note__body">Small things I build with AI, just for fun. <span class="hint-hover">Hover over a widget to open it.</span><span class="hint-tap">Tap a widget to open it.</span></p>
       </div>
@@ -126,7 +96,7 @@ const dock = [
             href={x.url}
             target="_blank"
             rel="noopener"
-            style={`--d: ${3 + i}`}
+            style={`--d: ${1 + i}`}
             data-project={x.slug}
             aria-haspopup="dialog"
             aria-controls={`finder-${x.slug}`}
@@ -249,6 +219,7 @@ const dock = [
     </div>
     <script is:inline>
       // Decide before first paint, so the desktop never flashes before the lock screen.
+      document.querySelector('[data-screen]').classList.add('is-scattering');
       if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
         document.querySelector('[data-lockscreen]').hidden = false;
         document.querySelector('[data-screen]').classList.add('is-locked');
@@ -284,7 +255,7 @@ const dock = [
     isolation: isolate;
     overflow: hidden;
     height: calc(100svh - 72px);
-    min-height: 680px;
+    min-height: 560px;
     color: var(--glass-ink);
   }
   :global([data-mode='dark']) .screen {
@@ -327,40 +298,6 @@ const dock = [
   .wall__hills .h2 { fill: var(--hill-2); }
   .wall__hills .h3 { fill: var(--hill-3); }
 
-  /* ---------- Menu bar ---------- */
-  .menubar {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    height: 30px;
-    padding: 0 var(--gutter);
-    font-size: 13px;
-    background: rgb(255 255 255 / 0.28);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-  }
-  :global([data-mode='dark']) .menubar {
-    background: rgb(0 0 0 / 0.22);
-  }
-  .menubar__left,
-  .menubar__right {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    white-space: nowrap;
-  }
-  .menubar b {
-    font-family: var(--font-display);
-  }
-  .menubar__status {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .menubar__status i,
   .live {
     display: inline-block;
     width: 7px;
@@ -370,18 +307,12 @@ const dock = [
   }
 
   /* ---------- Widgets ---------- */
+  /* The desk fills the screen above the dock. The welcome note sits top-left; the project widgets
+     are scattered at random across the middle of the screen by the script below. */
   .desk {
-    position: relative;
+    position: absolute;
+    inset: 0 0 96px;
     z-index: 1;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 220px)) repeat(2, minmax(0, 330px));
-    grid-template-rows: repeat(2, clamp(170px, 26vh, 240px));
-    grid-template-areas:
-      'clock rem yes moody'
-      'note  note yes moody';
-    gap: 20px;
-    justify-content: center;
-    padding: clamp(24px, 5vh, 56px) var(--gutter) 0;
   }
   .widget {
     position: relative;
@@ -402,69 +333,11 @@ const dock = [
     font-weight: 600;
   }
 
-  .widget--clock {
-    grid-area: clock;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  .clock__time {
-    font-family: var(--font-display);
-    font-size: 48px;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 1;
-  }
-  .clock__date {
-    font-size: 13px;
-    color: var(--glass-muted);
-  }
-
-  /* Reminders: always the dark widget, like the reference. */
-  .widget--reminders {
-    grid-area: rem;
-    background: rgb(28 28 30 / 0.82);
-    border-color: rgb(255 255 255 / 0.08);
-    color: #f2f2f2;
-    overflow: hidden;
-  }
-  .rem__head {
-    display: flex;
-    justify-content: space-between;
-    font-size: 13px;
-    font-weight: 600;
-    color: #ff9f5a;
-  }
-  .rem__count {
-    font-family: var(--font-display);
-    font-size: 22px;
-    line-height: 1;
-  }
-  .widget--reminders ul {
-    list-style: none;
-    margin: 12px 0 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    font-size: 13px;
-    line-height: 1.3;
-  }
-  .widget--reminders li {
-    display: flex;
-    gap: 8px;
-  }
-  .rem__ring {
-    flex: none;
-    width: 14px;
-    height: 14px;
-    margin-top: 1px;
-    border-radius: 50%;
-    border: 1.5px solid #8e8e93;
-  }
-
   .widget--note {
-    grid-area: note;
+    position: absolute;
+    top: clamp(20px, 4vh, 40px);
+    left: var(--gutter);
+    width: min(360px, calc(100% - 2 * var(--gutter)));
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -508,8 +381,27 @@ const dock = [
       transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
       box-shadow 0.35s;
   }
-  .widget--yes-card { grid-area: yes; }
-  .widget--moody-pod { grid-area: moody; }
+  .widget--project {
+    position: absolute;
+    left: var(--px, 50%);
+    top: var(--py, 50%);
+  }
+  .widget--yes-card {
+    --px: 34%;
+    --py: 22%;
+    width: clamp(200px, 17vw, 250px);
+    aspect-ratio: 3 / 4;
+  }
+  .widget--moody-pod {
+    --px: 54%;
+    --py: 30%;
+    width: clamp(240px, 22vw, 330px);
+    aspect-ratio: 5 / 4;
+  }
+  /* Keep widgets hidden until the script has scattered them, so they never jump. */
+  .screen.is-scattering .widget--project {
+    visibility: hidden;
+  }
   .widget--project img {
     position: absolute;
     inset: 0;
@@ -916,16 +808,12 @@ const dock = [
 
   /* Desktop "wakes up": widgets pop in one after another once the lock screen lifts. */
   .screen.is-locked .desk > *,
-  .screen.is-locked .dock,
-  .screen.is-locked .menubar {
+  .screen.is-locked .dock {
     opacity: 0;
   }
   .screen.is-awake .desk > * {
     animation: pop-in 0.6s cubic-bezier(0.2, 0.9, 0.25, 1.15) both;
     animation-delay: calc(0.15s + var(--d, 0) * 0.08s);
-  }
-  .screen.is-awake .menubar {
-    animation: fade-in 0.5s ease both;
   }
   .screen.is-awake .dock {
     animation: dock-up 0.6s cubic-bezier(0.2, 0.9, 0.25, 1.1) 0.5s both;
@@ -934,45 +822,39 @@ const dock = [
     from { opacity: 0; transform: scale(0.85) translateY(16px); }
     to { opacity: 1; transform: none; }
   }
-  @keyframes fade-in {
-    from { opacity: 0; }
-  }
   @keyframes dock-up {
     from { opacity: 0; transform: translate(-50%, 40px); }
     to { opacity: 1; transform: translate(-50%, 0); }
   }
 
   /* ---------- Smaller screens ---------- */
-  @media (max-width: 1100px) {
-    .desk {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      grid-template-rows: repeat(2, clamp(170px, 24vh, 220px));
-    }
-  }
   @media (max-width: 720px) {
     .screen {
       height: auto;
       min-height: calc(100svh - 96px);
       padding-bottom: 110px;
     }
-    .hide-sm {
-      display: none;
-    }
     .desk {
+      position: relative;
+      inset: auto;
+      display: grid;
       grid-template-columns: 1fr 1fr;
-      grid-template-rows: auto auto 220px;
-      grid-template-areas:
-        'clock rem'
-        'note  note'
-        'yes   moody';
       gap: 14px;
-      padding-top: 20px;
+      padding: 20px var(--gutter) 0;
     }
-    .menubar__right [data-clock] {
-      display: none;
+    .widget--note {
+      position: relative;
+      inset: auto;
+      width: auto;
+      grid-column: 1 / -1;
     }
-    .widget--clock {
-      gap: 16px;
+    .widget--project {
+      position: relative;
+      left: auto;
+      top: auto;
+      width: auto;
+      aspect-ratio: auto;
+      height: 220px;
     }
     /* The window becomes a bottom sheet. */
     .finder {
@@ -1014,8 +896,7 @@ const dock = [
     .finder,
     .finder.is-closing,
     .screen.is-awake .desk > *,
-    .screen.is-awake .dock,
-    .screen.is-awake .menubar {
+    .screen.is-awake .dock {
       animation: none;
     }
     .widget--project,
@@ -1043,9 +924,6 @@ const dock = [
   /* ---------- Clocks ---------- */
   const fmt = (opts: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat('en-CA', opts);
   const clocks: [string, Intl.DateTimeFormat][] = [
-    ['menubar', fmt({ weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })],
-    ['toronto', fmt({ hour: 'numeric', minute: '2-digit', hour12: false, timeZone: 'America/Toronto' })],
-    ['toronto-date', fmt({ weekday: 'long', month: 'long', day: 'numeric', timeZone: 'America/Toronto' })],
     ['lock', fmt({ hour: 'numeric', minute: '2-digit', hour12: false })],
     ['lock-date', fmt({ weekday: 'long', month: 'long', day: 'numeric' })],
   ];
@@ -1076,15 +954,67 @@ const dock = [
       lock.classList.add('is-unlocking');
       wake();
       setTimeout(() => (lock.hidden = true), 750);
-      removeEventListener('keydown', unlock);
     };
     const LEN = 8;
     for (let i = 1; i <= LEN; i++) timers.push(window.setTimeout(() => (dots.textContent = '•'.repeat(i)), 350 + i * 110));
     timers.push(window.setTimeout(() => lock.classList.add('is-entering'), 350 + LEN * 110 + 180));
     timers.push(window.setTimeout(unlock, 350 + LEN * 110 + 520));
     lock.addEventListener('click', unlock);
-    addEventListener('keydown', unlock);
+    // Any key skips; Space and arrows shouldn't also scroll the page underneath.
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') e.preventDefault();
+      unlock();
+    };
+    addEventListener('keydown', onKey, { once: true });
   }
+
+  /* ---------- Scatter the project widgets across the middle of the screen ---------- */
+  // A fresh random layout on every visit. Each widget's centre lands in the middle band of the
+  // desk, without overlapping the welcome note or another widget.
+  const desk = document.querySelector<HTMLElement>('[data-desk]')!;
+  const note = desk.querySelector<HTMLElement>('.widget--note')!;
+  type Rect = { x: number; y: number; w: number; h: number };
+  const overlaps = (a: Rect, b: Rect, pad = 24) =>
+    a.x < b.x + b.w + pad && b.x < a.x + a.w + pad && a.y < b.y + b.h + pad && b.y < a.y + a.h + pad;
+  const scatter = () => {
+    const items = [...desk.querySelectorAll<HTMLElement>('[data-project]')];
+    if (sheet.matches) {
+      items.forEach((el) => (el.style.cssText = el.style.cssText.replace(/--p[xy]:[^;]+;?/g, '')));
+      return;
+    }
+    const W = desk.clientWidth;
+    const H = desk.clientHeight;
+    const placed: Rect[] = [{ x: note.offsetLeft, y: note.offsetTop, w: note.offsetWidth, h: note.offsetHeight }];
+    for (const el of items) {
+      const w = el.offsetWidth;
+      const h = el.offsetHeight;
+      let best: Rect | null = null;
+      for (let t = 0; t < 300; t++) {
+        const cx = W * (0.3 + Math.random() * 0.4);
+        const cy = H * (0.3 + Math.random() * 0.4);
+        const r = {
+          x: Math.min(Math.max(cx - w / 2, 16), W - w - 16),
+          y: Math.min(Math.max(cy - h / 2, 16), H - h - 16),
+          w,
+          h,
+        };
+        best = r;
+        if (!placed.some((p) => overlaps(r, p))) break;
+      }
+      placed.push(best!);
+      el.style.setProperty('--px', `${best!.x}px`);
+      el.style.setProperty('--py', `${best!.y}px`);
+    }
+  };
+  scatter();
+  screen.classList.remove('is-scattering');
+  let lastW = innerWidth;
+  addEventListener('resize', () => {
+    // Re-scatter only when the width really changes (not on mobile toolbar show/hide).
+    if (Math.abs(innerWidth - lastW) < 40) return;
+    lastW = innerWidth;
+    scatter();
+  });
 
   /* ---------- Widgets open Finder-style windows ---------- */
   const widgets = document.querySelectorAll<HTMLAnchorElement>('[data-project]');
@@ -1106,12 +1036,27 @@ const dock = [
     const wh = win.offsetHeight;
     const gap = 20;
     const margin = 16;
-    // Beside the widget, on whichever side has room; the window grows out of the widget.
-    let x = w.left - s.left - gap - ww;
-    if (x < margin) x = w.right - s.left + gap;
-    if (x + ww > s.width - margin) x = (s.width - ww) / 2;
-    let y = w.top - s.top + w.height / 2 - wh / 2;
-    y = Math.max(40, Math.min(y, s.height - wh - 90));
+    const rel = (r: DOMRect) => ({ x: r.left - s.left, y: r.top - s.top, w: r.width, h: r.height });
+    const own = rel(w);
+    // Other project widgets: the window should leave them reachable, so hovering can move on.
+    const others = [...widgets].filter((el) => el !== widget).map((el) => rel(el.getBoundingClientRect()));
+    const clampY = (y: number) => Math.max(margin, Math.min(y, s.height - wh - 90));
+    const clampX = (x: number) => Math.max(margin, Math.min(x, s.width - ww - margin));
+    const midY = clampY(own.y + own.h / 2 - wh / 2);
+    const candidates = [
+      { x: own.x - gap - ww, y: midY },
+      { x: own.x + own.w + gap, y: midY },
+    ]
+      .filter((c) => c.x >= margin && c.x + ww <= s.width - margin)
+      .concat([{ x: clampX(own.x + own.w / 2 - ww / 2), y: midY }]);
+    const area = (a: { x: number; y: number; w: number; h: number }, b: { x: number; y: number; w: number; h: number }) =>
+      Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x)) * Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y));
+    // Least cover of the other widgets wins; ties go to the first (beside the widget).
+    const score = (c: { x: number; y: number }) => {
+      const r = { ...c, w: ww, h: wh };
+      return others.reduce((n, o) => n + area(r, o), 0) * 4 + area(r, own);
+    };
+    const { x, y } = candidates.reduce((best, c) => (score(c) < score(best) ? c : best));
     win.style.setProperty('--x', `${x}px`);
     win.style.setProperty('--y', `${y}px`);
     win.style.setProperty('--ox', `${w.left - s.left + w.width / 2 - x}px`);
