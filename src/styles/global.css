@@ -33,7 +33,7 @@
   --frame: 24px;
   --gutter: clamp(16px, 4vw, 48px);
   --radius: 4px;
-  --max: 1280px;
+  --max: 1520px;
 }
 
 /* Dark theme, set on <html data-mode="dark"> by the header switch (or the OS preference on first visit).
