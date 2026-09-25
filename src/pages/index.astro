@@ -34,9 +34,6 @@ const principles = [
           Product Designer at Canadian Tire. <strong>{metrics.attributedRevenue.value}+</strong> in attributed revenue
           impact through 1:1 personalization and conversion design.
         </p>
-        <div class="hero__cta">
-          <a class="cta" href="#work">The work <span class="cta__arrow" aria-hidden="true">→</span></a>
-        </div>
       </div>
     </div>
   </section>
@@ -48,11 +45,12 @@ const principles = [
         <p class="eyebrow">Selected work</p>
       </div>
 
-      <ProjectCards />
-
-      <div class="more-work">
-        <a class="cta" href="/work">See more work <span class="cta__arrow" aria-hidden="true">→</span></a>
-      </div>
+      <ProjectCards>
+        <!-- Fills the grid cell next to Nurture Seed. -->
+        <div class="more-work">
+          <a class="cta" href="/work">See more work <span class="cta__arrow" aria-hidden="true">→</span></a>
+        </div>
+      </ProjectCards>
     </div>
   </section>
 
@@ -116,16 +114,16 @@ const principles = [
   .hero__sub strong {
     color: var(--ink);
   }
-  .hero__cta {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
 
   .more-work {
     display: flex;
-    justify-content: center;
-    margin-top: 56px;
+    align-items: flex-end;
+    justify-content: flex-end;
+  }
+  @media (max-width: 800px) {
+    .more-work {
+      justify-content: flex-start;
+    }
   }
   .section-head {
     display: flex;

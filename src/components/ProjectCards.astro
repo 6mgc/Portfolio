@@ -58,6 +58,8 @@ const shown = source.filter((p) => p.slug !== exclude);
       );
     })
   }
+  <!-- Extra grid items, e.g. the homepage's "See more work" link. -->
+  <slot />
 </div>
 
 <style>
