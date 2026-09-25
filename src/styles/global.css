@@ -46,7 +46,9 @@
   --line: #2c2c2c;
   --line-strong: #f2f2f2;
   --placeholder: #1c1c1c;
-  --accent-soft: #5c2a0c; /* highlighter behind #f2f2f2 text: 10.5:1 */
+  /* Highlighter in dark mode: a bright marker, and the text under it turns #111 (11.1:1).
+     The band itself stands out 11:1 against --bg. */
+  --accent-soft: #ffb68a;
   --dash: #444444;
   --soon-bg: #1f1712;
   --soon-dot: #4a2410;

@@ -137,6 +137,23 @@ const shown = source.filter((p) => p.slug !== exclude);
   .card:focus-visible .card__hl {
     background-size: 100% 55%;
   }
+  /* Dark mode: the marker covers the full line and the text switches to dark ink, so both the
+     highlight (11:1 against the page) and the text on it (11.1:1) are clearly visible. */
+  :global([data-mode='dark']) .card__hl {
+    background-position: 0 50%;
+    transition:
+      background-size 0.5s cubic-bezier(0.2, 0.7, 0.2, 1),
+      color 0.2s ease;
+  }
+  :global([data-mode='dark']) .card:not(.card--soon):hover .card__hl,
+  :global([data-mode='dark']) .card:focus-visible .card__hl {
+    background-size: 100% 100%;
+    color: var(--accent-ink);
+  }
+  :global([data-mode='dark']) .card:not(.card--soon):hover .card__hl .card__sep,
+  :global([data-mode='dark']) .card:focus-visible .card__hl .card__sep {
+    color: var(--accent-ink);
+  }
   /* Coming soon: a warm panel with a tilted "In progress" sticker that wiggles on hover. */
   .card__soon-thumb {
     display: grid;
