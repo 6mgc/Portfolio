@@ -2,9 +2,7 @@
 import Base from '../layouts/Base.astro';
 
 /*
- * AI Playground: the experiments float around the page. Hovering one (or clicking / tapping it)
- * opens a details panel. The cards drift slowly and bounce off the edges of the field, and they
- * stop while a panel is open. Without JS, on phones, or with reduced motion, they sit still.
+ * AI Playground: each experiment in its own section, screenshots beside the details.
  */
 
 interface Experiment {
@@ -13,11 +11,11 @@ interface Experiment {
   short: string;
   description: string;
   highlights?: { heading: string; items: { label: string; text: string }[] };
-  // The card on the page (and the panel's image when there are no `shots`).
+  // The screenshot shown when there are no `shots`.
   image: Img;
-  // Screenshots shown side by side in the details panel.
+  // Screenshots shown side by side.
   shots?: Img[];
-  // What inspired it, shown small at the end of the panel.
+  // What inspired it, shown small under the details.
   inspiration?: Img;
   url: string;
 }
@@ -95,96 +93,51 @@ const experiments: Experiment[] = [
     <div class="container">
       <p class="eyebrow">AI Playground</p>
       <h1>Welcome to my AI <strong class="accent">playground</strong></h1>
-      <p class="intro__sub">
-        Small things I build with AI, just for fun.{' '}
-        <span class="hint-hover">Hover over a project to see more.</span><span class="hint-tap">Tap a project to see more.</span>
-      </p>
+      <p class="intro__sub">Small things I build with AI, just for fun.</p>
     </div>
   </section>
 
-  <section class="field-wrap">
-    <div class="container">
-      <div class="field" data-field>
-        <script is:inline>
-          // Hidden until the script places the cards, so they never jump (JS only).
-          document.currentScript.parentElement.classList.add('is-placing');
-        </script>
-        {
-          experiments.map((x, i) => (
-            <a
-              class={`float float--${x.slug}`}
-              href={x.url}
-              target="_blank"
-              rel="noopener"
-              style={`--i: ${i}`}
-              data-project={x.slug}
-              aria-haspopup="dialog"
-              aria-controls={`panel-${x.slug}`}
-              aria-label={`${x.name}: see project details`}
-            >
-              <span class="float__img">
-                <img src={x.image.src} alt="" width={x.image.width} height={x.image.height} loading="eager" decoding="async" />
-              </span>
-              <span class="float__label">
-                <span class="float__name">{x.short}</span>
-                <span class="float__kind">AI experiment</span>
-              </span>
+  {
+    experiments.map((x, i) => (
+      <section class="section">
+        <div class="container exp">
+          <div class:list={['exp__media', { 'exp__media--two': x.shots && x.shots.length > 1 }]}>
+            {(x.shots ?? [x.image]).map((sh) => (
+              <img class="shot" src={sh.src} alt={sh.alt} width={sh.width} height={sh.height} loading="lazy" decoding="async" />
+            ))}
+          </div>
+          <div class="exp__body">
+            <p class="eyebrow">
+              0{i + 1} / 0{experiments.length} · AI experiment
+            </p>
+            <h2>{x.name}</h2>
+            <p class="exp__desc">{x.description}</p>
+            {x.highlights && (
+              <div class="exp__hl">
+                <p class="eyebrow">{x.highlights.heading}</p>
+                <ul>
+                  {x.highlights.items.map((h) => (
+                    <li>
+                      <strong>{h.label}.</strong> {h.text}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <a class="cta cta--primary" href={x.url} target="_blank" rel="noopener">
+              Try it out <span class="cta__arrow" aria-hidden="true">→</span>
             </a>
-          ))
-        }
-
-        {
-          experiments.map((x) => (
-            <div class="panel" id={`panel-${x.slug}`} data-panel={x.slug} role="dialog" aria-label={x.name} hidden>
-              <div class="panel__head">
-                <p class="eyebrow">AI experiment</p>
-                <button type="button" class="panel__close" data-close aria-label="Close">
-                  <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg>
-                </button>
-              </div>
-              <div class="panel__body">
-                {x.shots ? (
-                  <div class="panel__shots">
-                    {x.shots.map((sh) => (
-                      <img src={sh.src} alt={sh.alt} width={sh.width} height={sh.height} loading="lazy" decoding="async" />
-                    ))}
-                  </div>
-                ) : (
-                  <figure class="panel__fig">
-                    <img src={x.image.src} alt={x.image.alt} width={x.image.width} height={x.image.height} loading="lazy" decoding="async" />
-                    {x.image.caption && <figcaption>{x.image.caption}</figcaption>}
-                  </figure>
-                )}
-                <h2>{x.name}</h2>
-                <a class="cta cta--primary" href={x.url} target="_blank" rel="noopener">
-                  Try it out <span class="cta__arrow" aria-hidden="true">→</span>
-                </a>
-                <p class="panel__desc">{x.description}</p>
-                {x.highlights && (
-                  <div class="panel__hl">
-                    <p class="eyebrow">{x.highlights.heading}</p>
-                    <ul>
-                      {x.highlights.items.map((h) => (
-                        <li>
-                          <strong>{h.label}.</strong> {h.text}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {x.inspiration && (
-                  <figure class="panel__inspo">
-                    <img src={x.inspiration.src} alt={x.inspiration.alt} width={x.inspiration.width} height={x.inspiration.height} loading="lazy" decoding="async" />
-                    <figcaption>{x.inspiration.caption}</figcaption>
-                  </figure>
-                )}
-              </div>
-            </div>
-          ))
-        }
-      </div>
-    </div>
-  </section>
+            {x.inspiration && (
+              <figure class="inspo">
+                <img src={x.inspiration.src} alt={x.inspiration.alt} width={x.inspiration.width} height={x.inspiration.height} loading="lazy" decoding="async" />
+                <figcaption>{x.inspiration.caption}</figcaption>
+              </figure>
+            )}
+          </div>
+        </div>
+      </section>
+    ))
+  }
 </Base>
 
 <style>
@@ -203,522 +156,78 @@ const experiments: Experiment[] = [
     font-size: clamp(17px, 1.6vw, 20px);
     color: var(--ink-muted);
   }
-  .hint-tap,
-  :global(html.touch) .hint-hover {
-    display: none;
-  }
-  :global(html.touch) .hint-tap {
-    display: inline;
-  }
 
-  /* ---------- Floating field ---------- */
-  .field-wrap {
-    padding-bottom: clamp(48px, 8vw, 96px);
+  /* Screenshots on the left, details on the right. */
+  .exp {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 40px clamp(32px, 5vw, 80px);
+    align-items: center;
   }
-  /* Lift the field above the footer so an open panel (or the phone sheet) is never covered. */
-  .field-wrap .container {
-    z-index: 3;
+  .exp__media {
+    display: grid;
+    gap: 16px;
   }
-  .field {
-    position: relative;
-    height: clamp(520px, 70vh, 760px);
+  .exp__media--two {
+    grid-template-columns: 1fr 1fr;
   }
-  .float {
-    position: absolute;
-    left: 0;
-    top: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    text-decoration: none;
-    transform: translate(var(--px, 0), var(--py, 0));
-    will-change: transform;
-  }
-  /* Before the script places them: a tidy fallback spot (and the no-JS layout). */
-  .float--yes-card { --px: 8%; --py: 40px; }
-  .float--moody-pod { --px: 45vw; --py: 120px; }
-  .field.is-placing .float {
-    visibility: hidden;
-  }
-  .float__img {
-    display: block;
-    overflow: hidden;
-    border-radius: 16px;
-    border: 1px solid var(--line);
-    background: var(--placeholder);
-    box-shadow: 0 16px 40px rgb(0 0 0 / 0.1);
-    transition:
-      transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
-      box-shadow 0.35s;
-  }
-  .float__img img {
+  .shot {
     display: block;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .float--yes-card .float__img {
-    width: clamp(200px, 17vw, 250px);
-    aspect-ratio: 4 / 5;
-  }
-  .float--moody-pod .float__img {
-    width: clamp(250px, 24vw, 340px);
-    aspect-ratio: 16 / 10;
-  }
-  .float:hover .float__img,
-  .float:focus-visible .float__img,
-  .float.is-active .float__img {
-    transform: scale(1.04) rotate(-1.5deg);
-    box-shadow: 0 22px 50px rgb(0 0 0 / 0.16);
-  }
-  .float:focus-visible {
-    outline: none;
-  }
-  .float:focus-visible .float__img {
-    outline: 3px solid var(--accent);
-    outline-offset: 3px;
-  }
-  .float__label {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-  .float__name {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 18px;
-  }
-  .float:hover .float__name,
-  .float.is-active .float__name {
-    color: var(--accent);
-  }
-  .float__kind {
-    font-size: 14px;
-    color: var(--ink-muted);
-  }
-
-  /* ---------- Details panel ---------- */
-  .panel {
-    position: absolute;
-    z-index: 5;
-    left: 0;
-    top: 0;
-    width: min(520px, 100%);
-    max-height: min(640px, 100%, calc(100svh - 120px));
-    display: flex;
-    flex-direction: column;
-    background: var(--bg);
-    color: var(--ink);
+    height: auto;
     border: 1px solid var(--line);
     border-radius: 16px;
-    box-shadow: 0 24px 64px rgb(0 0 0 / 0.16);
-    transform: translate(var(--x, 0), var(--y, 0));
-    animation: panel-in 0.3s cubic-bezier(0.2, 0.9, 0.25, 1.05) both;
   }
-  .panel[hidden] {
-    display: none;
-  }
-  .panel.is-closing {
-    animation: panel-out 0.18s ease-in both;
-  }
-  @keyframes panel-in {
-    from { opacity: 0; transform: translate(var(--x, 0), calc(var(--y, 0px) + 12px)) scale(0.96); }
-  }
-  @keyframes panel-out {
-    to { opacity: 0; transform: translate(var(--x, 0), calc(var(--y, 0px) + 8px)) scale(0.98); }
-  }
-  .panel__head {
-    flex: none;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 16px 0 24px;
-  }
-  .panel__close {
-    display: grid;
-    place-items: center;
-    width: 36px;
-    height: 36px;
-    padding: 0;
-    border: 1px solid var(--line);
-    border-radius: 50%;
-    background: transparent;
-    color: var(--ink);
-    cursor: pointer;
-    transition: border-color 0.15s, color 0.15s;
-  }
-  .panel__close:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-  .panel__close svg {
-    width: 18px;
-    height: 18px;
-  }
-  .panel__body {
-    overflow: auto;
-    overscroll-behavior: contain;
-    padding: 12px 24px 24px;
+  .exp__body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 16px;
+    gap: 20px;
   }
-  .panel__body > * {
-    flex-shrink: 0;
-  }
-  .panel__fig {
-    margin: 0;
-    width: 100%;
-  }
-  .panel__fig img {
-    display: block;
-    width: 100%;
-    height: auto;
-    max-height: 240px;
-    object-fit: cover;
-    border-radius: 10px;
-  }
-  .panel__shots {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    width: 100%;
-  }
-  .panel__shots img {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-    border: 1px solid var(--line);
-  }
-  .panel__inspo {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin: 4px 0 0;
-    padding-top: 16px;
-    width: 100%;
-    border-top: 1px solid var(--line);
-  }
-  .panel__inspo img {
-    flex: none;
-    width: 72px;
-    height: 96px;
-    object-fit: cover;
-    border-radius: 8px;
-  }
-  .panel__inspo figcaption {
-    font-size: 13px;
-    color: var(--ink-muted);
-  }
-  .panel__fig figcaption {
-    margin-top: 8px;
-    font-size: 13px;
-    color: var(--ink-muted);
-  }
-  .panel h2 {
-    font-size: clamp(24px, 2.4vw, 30px);
+  .exp__body h2 {
+    font-size: clamp(28px, 3.4vw, 40px);
     letter-spacing: -0.02em;
-    line-height: 1.15;
+    line-height: 1.1;
   }
-  .panel__desc {
-    margin: 0;
-    font-size: 15px;
+  .exp__desc {
+    max-width: 56ch;
   }
-  .panel__hl ul {
+  .exp__hl ul {
     list-style: none;
     margin: 10px 0 0;
     padding: 0;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    font-size: 14px;
     color: var(--ink-muted);
   }
-  .panel__hl strong {
+  .exp__hl strong {
     color: var(--ink);
   }
-
-  /* ---------- Phones: cards stack, the panel is a bottom sheet ---------- */
-  @media (max-width: 720px) {
-    .field {
-      height: auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      align-items: start;
-    }
-    .float {
-      position: static;
-      transform: none;
-    }
-    .float .float__img {
-      width: 100%;
-      aspect-ratio: 4 / 5;
-    }
-    .panel {
-      position: fixed;
-      left: 0;
-      right: 0;
-      top: auto;
-      bottom: 0;
-      width: 100%;
-      max-height: 85svh;
-      border-radius: 18px 18px 0 0;
-      transform: none;
-      animation-name: sheet-up;
-    }
-    .panel.is-closing {
-      animation-name: sheet-down;
-    }
-    @keyframes sheet-up {
-      from { transform: translateY(100%); }
-      to { transform: none; }
-    }
-    @keyframes sheet-down {
-      to { transform: translateY(100%); }
-    }
-    .field:has(.panel:not([hidden]))::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      z-index: 4;
-      background: rgb(0 0 0 / 0.35);
-    }
+  .inspo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 8px 0 0;
+    padding-top: 20px;
+    width: 100%;
+    border-top: 1px solid var(--line);
+  }
+  .inspo img {
+    flex: none;
+    width: 72px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  .inspo figcaption {
+    font-size: 13px;
+    color: var(--ink-muted);
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .panel,
-    .panel.is-closing {
-      animation: none;
-    }
-    .float__img {
-      transition: none;
+  @media (max-width: 900px) {
+    .exp {
+      grid-template-columns: 1fr;
     }
   }
 </style>
-
-<script>
-  const field = document.querySelector<HTMLElement>('[data-field]')!;
-  const cards = [...field.querySelectorAll<HTMLAnchorElement>('[data-project]')];
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const canHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
-  const sheet = matchMedia('(max-width: 720px)');
-  if (!canHover) document.documentElement.classList.add('touch');
-
-  /* ---------- Float: random start, slow drift, soft bounce off the edges ---------- */
-  type Body = { el: HTMLElement; x: number; y: number; vx: number; vy: number; w: number; h: number };
-  let bodies: Body[] = [];
-  let hovered: HTMLElement | null = null;
-  let open: HTMLElement | null = null;
-  let openCard: HTMLElement | null = null;
-
-  const setPos = (b: Body) => {
-    b.el.style.setProperty('--px', `${b.x}px`);
-    b.el.style.setProperty('--py', `${b.y}px`);
-  };
-  const overlaps = (a: Body, b: Body, pad = 32) =>
-    a.x < b.x + b.w + pad && b.x < a.x + a.w + pad && a.y < b.y + b.h + pad && b.y < a.y + a.h + pad;
-
-  const scatter = () => {
-    if (sheet.matches) {
-      cards.forEach((el) => el.style.removeProperty('--px') || el.style.removeProperty('--py'));
-      bodies = [];
-      return;
-    }
-    const W = field.clientWidth;
-    const H = field.clientHeight;
-    bodies = [];
-    for (const el of cards) {
-      const b: Body = { el, x: 0, y: 0, vx: 0, vy: 0, w: el.offsetWidth, h: el.offsetHeight };
-      for (let t = 0; t < 300; t++) {
-        b.x = Math.random() * Math.max(0, W - b.w);
-        b.y = Math.random() * Math.max(0, H - b.h);
-        if (!bodies.some((o) => overlaps(b, o))) break;
-      }
-      // 10 to 22 px a second, in a random direction.
-      const speed = 10 + Math.random() * 12;
-      const angle = Math.random() * Math.PI * 2;
-      b.vx = Math.cos(angle) * speed;
-      b.vy = Math.sin(angle) * speed;
-      bodies.push(b);
-      setPos(b);
-    }
-  };
-
-  let last = performance.now();
-  const step = (now: number) => {
-    const dt = Math.min(0.05, (now - last) / 1000);
-    last = now;
-    // Everything holds still while a card is hovered or a panel is open, so it's easy to read.
-    if (!hovered && !open && !document.documentElement.classList.contains('is-locked')) {
-      const W = field.clientWidth;
-      const H = field.clientHeight;
-      for (const b of bodies) {
-        b.x += b.vx * dt;
-        b.y += b.vy * dt;
-        if (b.x < 0) (b.x = 0), (b.vx = Math.abs(b.vx));
-        if (b.y < 0) (b.y = 0), (b.vy = Math.abs(b.vy));
-        if (b.x > W - b.w) (b.x = W - b.w), (b.vx = -Math.abs(b.vx));
-        if (b.y > H - b.h) (b.y = H - b.h), (b.vy = -Math.abs(b.vy));
-      }
-      // Cards that drift into each other swap directions and ease apart.
-      for (let i = 0; i < bodies.length; i++) {
-        for (let j = i + 1; j < bodies.length; j++) {
-          const a = bodies[i];
-          const c = bodies[j];
-          if (!overlaps(a, c, 8)) continue;
-          [a.vx, c.vx] = [c.vx, a.vx];
-          [a.vy, c.vy] = [c.vy, a.vy];
-          const push = (a.x + a.w / 2 < c.x + c.w / 2 ? -1 : 1) * 0.6;
-          a.x += push;
-          c.x -= push;
-        }
-      }
-      bodies.forEach(setPos);
-    }
-    requestAnimationFrame(step);
-  };
-
-  scatter();
-  field.classList.remove('is-placing');
-  if (!reduce) requestAnimationFrame(step);
-  let lastW = innerWidth;
-  addEventListener('resize', () => {
-    if (Math.abs(innerWidth - lastW) < 40) return;
-    lastW = innerWidth;
-    scatter();
-  });
-
-  /* ---------- Details panel ---------- */
-  let pinned = false;
-  let closeTimer = 0;
-  let openTimer = 0;
-
-  const place = (panel: HTMLElement, card: HTMLElement) => {
-    if (sheet.matches) return;
-    const f = field.getBoundingClientRect();
-    const c = card.getBoundingClientRect();
-    const pw = panel.offsetWidth;
-    const ph = panel.offsetHeight;
-    const gap = 24;
-    const own = { x: c.left - f.left, y: c.top - f.top, w: c.width, h: c.height };
-    const others = cards
-      .filter((el) => el !== card)
-      .map((el) => {
-        const r = el.getBoundingClientRect();
-        return { x: r.left - f.left, y: r.top - f.top, w: r.width, h: r.height };
-      });
-    const y = Math.max(0, Math.min(own.y + own.h / 2 - ph / 2, f.height - ph));
-    const candidates = [
-      { x: own.x + own.w + gap, y },
-      { x: own.x - gap - pw, y },
-    ]
-      .filter((p) => p.x >= 0 && p.x + pw <= f.width)
-      .concat([{ x: Math.max(0, Math.min(own.x + own.w / 2 - pw / 2, f.width - pw)), y }]);
-    type R = { x: number; y: number; w: number; h: number };
-    const area = (a: R, b: R) =>
-      Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x)) * Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y));
-    // Least cover of the other cards wins, so hovering can move straight on to the next one.
-    const score = (p: { x: number; y: number }) => {
-      const r = { ...p, w: pw, h: ph };
-      return others.reduce((n, o) => n + area(r, o), 0) * 4 + area(r, own);
-    };
-    const best = candidates.reduce((a, b) => (score(b) < score(a) ? b : a));
-    panel.style.setProperty('--x', `${best.x}px`);
-    panel.style.setProperty('--y', `${best.y}px`);
-  };
-
-  const show = (card: HTMLElement, pin: boolean) => {
-    clearTimeout(closeTimer);
-    const panel = document.getElementById(card.getAttribute('aria-controls')!)!;
-    if (open && open !== panel) hide(true);
-    pinned = pinned || pin;
-    if (open === panel) return;
-    open = panel;
-    openCard = card;
-    card.classList.add('is-active');
-    card.setAttribute('aria-expanded', 'true');
-    panel.classList.remove('is-closing');
-    panel.hidden = false;
-    place(panel, card);
-    if (pin) panel.querySelector<HTMLElement>('[data-close]')?.focus({ preventScroll: true });
-  };
-
-  const hide = (instant = false) => {
-    if (!open) return;
-    const panel = open;
-    const card = openCard;
-    open = null;
-    openCard = null;
-    pinned = false;
-    card?.classList.remove('is-active');
-    card?.setAttribute('aria-expanded', 'false');
-    if (instant || reduce) {
-      panel.hidden = true;
-      return;
-    }
-    panel.classList.add('is-closing');
-    panel.addEventListener(
-      'animationend',
-      () => {
-        if (panel.classList.contains('is-closing')) {
-          panel.hidden = true;
-          panel.classList.remove('is-closing');
-        }
-      },
-      { once: true },
-    );
-  };
-
-  const scheduleClose = () => {
-    clearTimeout(openTimer);
-    if (pinned) return;
-    clearTimeout(closeTimer);
-    closeTimer = window.setTimeout(() => hide(), 350);
-  };
-
-  cards.forEach((card) => {
-    card.setAttribute('aria-expanded', 'false');
-    card.addEventListener('pointerenter', () => (hovered = card));
-    card.addEventListener('pointerleave', () => hovered === card && (hovered = null));
-    if (canHover) {
-      card.addEventListener('pointerenter', () => {
-        clearTimeout(closeTimer);
-        clearTimeout(openTimer);
-        openTimer = window.setTimeout(() => show(card, false), open ? 0 : 120);
-      });
-      card.addEventListener('pointerleave', scheduleClose);
-    }
-    // Click, tap, or Enter pins the panel open. "Try it out" inside the panel links out.
-    card.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (open && openCard === card && pinned) return hide();
-      show(card, true);
-    });
-  });
-
-  document.querySelectorAll<HTMLElement>('[data-panel]').forEach((panel) => {
-    panel.addEventListener('pointerenter', () => clearTimeout(closeTimer));
-    panel.addEventListener('pointerleave', scheduleClose);
-    panel.addEventListener('pointerdown', () => (pinned = true));
-    panel.querySelector('[data-close]')?.addEventListener('click', () => {
-      const c = openCard;
-      hide();
-      c?.focus({ preventScroll: true });
-    });
-  });
-
-  addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && open) {
-      const c = openCard;
-      hide();
-      c?.focus({ preventScroll: true });
-    }
-  });
-  document.addEventListener('pointerdown', (e) => {
-    if (open && !(e.target as Element).closest('[data-panel], [data-project]')) hide();
-  });
-  addEventListener('resize', () => open && openCard && place(open, openCard));
-</script>
