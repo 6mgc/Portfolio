@@ -13,8 +13,20 @@ interface Experiment {
   short: string;
   description: string;
   highlights?: { heading: string; items: { label: string; text: string }[] };
-  image: { src: string; alt: string; width: number; height: number; caption?: string };
+  // The card on the page (and the panel's image when there are no `shots`).
+  image: Img;
+  // Screenshots shown side by side in the details panel.
+  shots?: Img[];
+  // What inspired it, shown small at the end of the panel.
+  inspiration?: Img;
   url: string;
+}
+interface Img {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  caption?: string;
 }
 
 const experiments: Experiment[] = [
@@ -33,6 +45,26 @@ const experiments: Experiment[] = [
       ],
     },
     image: {
+      src: '/images/yes-card-app.webp',
+      alt: 'Daily YES! Card: a red vending machine with a yellow knob and a "轉轉佢!" button.',
+      width: 800,
+      height: 1000,
+    },
+    shots: [
+      {
+        src: '/images/yes-card-app.webp',
+        alt: 'The machine: a red Daily YES! Card vending machine. Its screen says "撳落去，睇下今日有咩錦囊傍身！" above a yellow knob and a "轉轉佢!" button.',
+        width: 800,
+        height: 1000,
+      },
+      {
+        src: '/images/yes-card-reveal.webp',
+        alt: 'The card reveal: a shimmering card with the TVB quote "「一家人，齊齊整整先係最重要。」" from 《真情》, with download, "再抽一張" and share buttons.',
+        width: 800,
+        height: 1000,
+      },
+    ],
+    inspiration: {
       src: '/images/yes-card-machine.webp',
       alt: 'An orange YES! Card vending machine in a Hong Kong shop, with a coin slot, a white turning knob, and a big yellow pointing hand.',
       width: 360,
@@ -111,10 +143,18 @@ const experiments: Experiment[] = [
                 </button>
               </div>
               <div class="panel__body">
-                <figure class="panel__fig">
-                  <img src={x.image.src} alt={x.image.alt} width={x.image.width} height={x.image.height} loading="lazy" decoding="async" />
-                  {x.image.caption && <figcaption>{x.image.caption}</figcaption>}
-                </figure>
+                {x.shots ? (
+                  <div class="panel__shots">
+                    {x.shots.map((sh) => (
+                      <img src={sh.src} alt={sh.alt} width={sh.width} height={sh.height} loading="lazy" decoding="async" />
+                    ))}
+                  </div>
+                ) : (
+                  <figure class="panel__fig">
+                    <img src={x.image.src} alt={x.image.alt} width={x.image.width} height={x.image.height} loading="lazy" decoding="async" />
+                    {x.image.caption && <figcaption>{x.image.caption}</figcaption>}
+                  </figure>
+                )}
                 <h2>{x.name}</h2>
                 <a class="cta cta--primary" href={x.url} target="_blank" rel="noopener">
                   Try it out <span class="cta__arrow" aria-hidden="true">→</span>
@@ -131,6 +171,12 @@ const experiments: Experiment[] = [
                       ))}
                     </ul>
                   </div>
+                )}
+                {x.inspiration && (
+                  <figure class="panel__inspo">
+                    <img src={x.inspiration.src} alt={x.inspiration.alt} width={x.inspiration.width} height={x.inspiration.height} loading="lazy" decoding="async" />
+                    <figcaption>{x.inspiration.caption}</figcaption>
+                  </figure>
                 )}
               </div>
             </div>
@@ -212,8 +258,8 @@ const experiments: Experiment[] = [
     object-fit: cover;
   }
   .float--yes-card .float__img {
-    width: clamp(190px, 16vw, 240px);
-    aspect-ratio: 3 / 4;
+    width: clamp(200px, 17vw, 250px);
+    aspect-ratio: 4 / 5;
   }
   .float--moody-pod .float__img {
     width: clamp(250px, 24vw, 340px);
@@ -333,8 +379,38 @@ const experiments: Experiment[] = [
     object-fit: cover;
     border-radius: 10px;
   }
-  [data-panel='yes-card'] .panel__fig img {
-    object-position: 50% 30%;
+  .panel__shots {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 100%;
+  }
+  .panel__shots img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+  }
+  .panel__inspo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 4px 0 0;
+    padding-top: 16px;
+    width: 100%;
+    border-top: 1px solid var(--line);
+  }
+  .panel__inspo img {
+    flex: none;
+    width: 72px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  .panel__inspo figcaption {
+    font-size: 13px;
+    color: var(--ink-muted);
   }
   .panel__fig figcaption {
     margin-top: 8px;
