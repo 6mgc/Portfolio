@@ -2,7 +2,8 @@
 import Base from '../layouts/Base.astro';
 
 /*
- * AI Playground: each experiment in its own section: title, screenshots, then the details.
+ * AI Playground: each experiment reads top to bottom: title, description, highlights,
+ * "Try it Out", then large screenshots (and the inspiration photo, where there is one).
  */
 
 interface Experiment {
@@ -45,21 +46,21 @@ const experiments: Experiment[] = [
     image: {
       src: '/images/yes-card-app.webp',
       alt: 'Daily YES! Card: a red vending machine with a yellow knob and a "轉轉佢!" button.',
-      width: 800,
-      height: 1000,
+      width: 1000,
+      height: 970,
     },
     shots: [
       {
         src: '/images/yes-card-app.webp',
         alt: 'The machine: a red Daily YES! Card vending machine. Its screen says "撳落去，睇下今日有咩錦囊傍身！" above a yellow knob and a "轉轉佢!" button.',
-        width: 800,
-        height: 1000,
+        width: 1000,
+        height: 970,
       },
       {
         src: '/images/yes-card-reveal.webp',
         alt: 'The card reveal: a shimmering card with the TVB quote "「一家人，齊齊整整先係最重要。」" from 《真情》, with download, "再抽一張" and share buttons.',
-        width: 800,
-        height: 1000,
+        width: 1000,
+        height: 970,
       },
     ],
     inspiration: {
@@ -91,51 +92,44 @@ const experiments: Experiment[] = [
 <Base title="AI Playground" description="Small AI experiments by Megan Cheng: Daily YES! Card and Moody Pod.">
   <section class="intro">
     <div class="container">
-      <p class="eyebrow">AI Playground</p>
-      <h1>Welcome to my AI <strong class="accent">playground</strong></h1>
-      <p class="intro__sub">Small things I build with AI, just for fun.</p>
+      <h1>
+        Welcome to my AI <strong class="accent">playground</strong><span class="sparkle" aria-hidden="true">✦</span>
+      </h1>
     </div>
   </section>
 
   {
-    experiments.map((x, i) => (
-      <section class="section">
+    experiments.map((x) => (
+      <section class="exp-section">
         <div class="container exp">
-          <div class="exp__head">
-            <p class="eyebrow">
-              0{i + 1} / 0{experiments.length} · AI experiment
-            </p>
-            <h2>{x.name}</h2>
-          </div>
+          <h2>{x.name}</h2>
+          <p class="exp__desc">{x.description}</p>
+          {x.highlights && (
+            <div class="exp__hl">
+              <p class="exp__hl-head">{x.highlights.heading}</p>
+              <ul>
+                {x.highlights.items.map((h) => (
+                  <li>
+                    {h.label}: {h.text}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <a class="cta" href={x.url} target="_blank" rel="noopener">
+            Try it Out <span class="cta__arrow" aria-hidden="true">↗</span>
+          </a>
           <div class:list={['exp__media', { 'exp__media--two': x.shots && x.shots.length > 1 }]}>
             {(x.shots ?? [x.image]).map((sh) => (
               <img class="shot" src={sh.src} alt={sh.alt} width={sh.width} height={sh.height} loading="lazy" decoding="async" />
             ))}
           </div>
-          <div class="exp__body">
-            <p class="exp__desc">{x.description}</p>
-            {x.highlights && (
-              <div class="exp__hl">
-                <p class="eyebrow">{x.highlights.heading}</p>
-                <ul>
-                  {x.highlights.items.map((h) => (
-                    <li>
-                      <strong>{h.label}.</strong> {h.text}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            <a class="cta cta--primary" href={x.url} target="_blank" rel="noopener">
-              Try it out <span class="cta__arrow" aria-hidden="true">→</span>
-            </a>
-            {x.inspiration && (
-              <figure class="inspo">
-                <img src={x.inspiration.src} alt={x.inspiration.alt} width={x.inspiration.width} height={x.inspiration.height} loading="lazy" decoding="async" />
-                <figcaption>{x.inspiration.caption}</figcaption>
-              </figure>
-            )}
-          </div>
+          {x.inspiration && (
+            <figure class="inspo">
+              <img src={x.inspiration.src} alt={x.inspiration.alt} width={x.inspiration.width} height={x.inspiration.height} loading="lazy" decoding="async" />
+              <figcaption>{x.inspiration.caption}</figcaption>
+            </figure>
+          )}
         </div>
       </section>
     ))
@@ -144,37 +138,64 @@ const experiments: Experiment[] = [
 
 <style>
   .intro {
-    padding: clamp(64px, 12vw, 160px) 0 clamp(24px, 4vw, 48px);
+    padding: clamp(48px, 8vw, 96px) 0 0;
   }
   h1 {
-    font-size: clamp(44px, 8vw, 96px);
+    font-size: clamp(36px, 5vw, 60px);
     letter-spacing: -0.03em;
-    margin: 20px 0 0;
-    max-width: 14ch;
+    line-height: 1.1;
   }
-  .intro__sub {
-    margin: 24px 0 0;
-    max-width: 46ch;
-    font-size: clamp(17px, 1.6vw, 20px);
-    color: var(--ink-muted);
+  .sparkle {
+    display: inline-block;
+    margin-left: 0.15em;
+    font-size: 0.7em;
+    color: var(--accent);
+    vertical-align: 0.15em;
   }
 
-  /* One column: title, then screenshots, then the details. */
+  .exp-section {
+    padding: clamp(56px, 8vw, 96px) 0 0;
+  }
+  .exp-section:last-of-type {
+    padding-bottom: clamp(64px, 10vw, 120px);
+  }
   .exp {
     display: flex;
     flex-direction: column;
-    gap: clamp(24px, 3vw, 40px);
+    align-items: flex-start;
   }
-  .exp__head {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+  .exp h2 {
+    font-size: clamp(30px, 3.4vw, 42px);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .exp__desc {
+    margin-top: 16px;
+    max-width: 90ch;
+    color: var(--ink-muted);
+  }
+  .exp__hl {
+    margin-top: 24px;
+  }
+  .exp__hl-head {
+    font-weight: 700;
+    font-style: italic;
+    color: var(--ink);
+  }
+  .exp__hl ul {
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 0;
+    color: var(--ink-muted);
+  }
+  .exp .cta {
+    margin-top: 24px;
   }
   .exp__media {
     display: grid;
-    gap: 16px;
+    gap: 12px;
     width: 100%;
-    max-width: 880px;
+    margin-top: 24px;
   }
   .exp__media--two {
     grid-template-columns: 1fr 1fr;
@@ -183,45 +204,13 @@ const experiments: Experiment[] = [
     display: block;
     width: 100%;
     height: auto;
-    border: 1px solid var(--line);
-    border-radius: 16px;
-  }
-  .exp__body {
-    max-width: 880px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 20px;
-  }
-  .exp__head h2 {
-    font-size: clamp(28px, 3.4vw, 40px);
-    letter-spacing: -0.02em;
-    line-height: 1.1;
-  }
-  .exp__desc {
-    max-width: 62ch;
-  }
-  .exp__hl ul {
-    list-style: none;
-    margin: 10px 0 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    color: var(--ink-muted);
-  }
-  .exp__hl strong {
-    color: var(--ink);
+    border-radius: 20px;
   }
   .inspo {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
     gap: 10px;
-    margin: 8px 0 0;
-    padding-top: 20px;
-    width: 100%;
-    border-top: 1px solid var(--line);
+    margin: 24px 0 0;
   }
   .inspo img {
     width: min(280px, 100%);
@@ -233,4 +222,9 @@ const experiments: Experiment[] = [
     color: var(--ink-muted);
   }
 
+  @media (max-width: 720px) {
+    .exp__media--two {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>
