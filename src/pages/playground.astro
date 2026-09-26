@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 
 /*
- * AI Playground: each experiment in its own section, screenshots beside the details.
+ * AI Playground: each experiment in its own section: title, screenshots, then the details.
  */
 
 interface Experiment {
@@ -101,16 +101,18 @@ const experiments: Experiment[] = [
     experiments.map((x, i) => (
       <section class="section">
         <div class="container exp">
+          <div class="exp__head">
+            <p class="eyebrow">
+              0{i + 1} / 0{experiments.length} · AI experiment
+            </p>
+            <h2>{x.name}</h2>
+          </div>
           <div class:list={['exp__media', { 'exp__media--two': x.shots && x.shots.length > 1 }]}>
             {(x.shots ?? [x.image]).map((sh) => (
               <img class="shot" src={sh.src} alt={sh.alt} width={sh.width} height={sh.height} loading="lazy" decoding="async" />
             ))}
           </div>
           <div class="exp__body">
-            <p class="eyebrow">
-              0{i + 1} / 0{experiments.length} · AI experiment
-            </p>
-            <h2>{x.name}</h2>
             <p class="exp__desc">{x.description}</p>
             {x.highlights && (
               <div class="exp__hl">
@@ -157,16 +159,22 @@ const experiments: Experiment[] = [
     color: var(--ink-muted);
   }
 
-  /* Screenshots on the left, details on the right. */
+  /* One column: title, then screenshots, then the details. */
   .exp {
-    display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-    gap: 40px clamp(32px, 5vw, 80px);
-    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(24px, 3vw, 40px);
+  }
+  .exp__head {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
   .exp__media {
     display: grid;
     gap: 16px;
+    width: 100%;
+    max-width: 880px;
   }
   .exp__media--two {
     grid-template-columns: 1fr 1fr;
@@ -179,18 +187,19 @@ const experiments: Experiment[] = [
     border-radius: 16px;
   }
   .exp__body {
+    max-width: 880px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 20px;
   }
-  .exp__body h2 {
+  .exp__head h2 {
     font-size: clamp(28px, 3.4vw, 40px);
     letter-spacing: -0.02em;
     line-height: 1.1;
   }
   .exp__desc {
-    max-width: 56ch;
+    max-width: 62ch;
   }
   .exp__hl ul {
     list-style: none;
@@ -225,9 +234,4 @@ const experiments: Experiment[] = [
     color: var(--ink-muted);
   }
 
-  @media (max-width: 900px) {
-    .exp {
-      grid-template-columns: 1fr;
-    }
-  }
 </style>
