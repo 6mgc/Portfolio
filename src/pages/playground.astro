@@ -104,7 +104,9 @@ const experiments: Experiment[] = [
         <div class="container exp">
           <h2>{x.name}</h2>
           <p class="exp__desc">{x.description}</p>
-          {x.highlights && (
+          {(x.highlights || x.inspiration) && (
+            <div class="exp__row">
+              {x.highlights && (
             <div class="exp__hl">
               <p class="eyebrow">{x.highlights.heading}</p>
               <ul>
@@ -115,6 +117,14 @@ const experiments: Experiment[] = [
                 ))}
               </ul>
             </div>
+              )}
+              {x.inspiration && (
+                <figure class="inspo">
+                  <img src={x.inspiration.src} alt={x.inspiration.alt} width={x.inspiration.width} height={x.inspiration.height} loading="lazy" decoding="async" />
+                  <figcaption>{x.inspiration.caption}</figcaption>
+                </figure>
+              )}
+            </div>
           )}
           <a class="cta cta--primary" href={x.url} target="_blank" rel="noopener">
             Try it out <span class="cta__arrow" aria-hidden="true">→</span>
@@ -124,12 +134,6 @@ const experiments: Experiment[] = [
               <img class="shot" src={sh.src} alt={sh.alt} width={sh.width} height={sh.height} loading="lazy" decoding="async" />
             ))}
           </div>
-          {x.inspiration && (
-            <figure class="inspo">
-              <img src={x.inspiration.src} alt={x.inspiration.alt} width={x.inspiration.width} height={x.inspiration.height} loading="lazy" decoding="async" />
-              <figcaption>{x.inspiration.caption}</figcaption>
-            </figure>
-          )}
         </div>
       </section>
     ))
@@ -165,7 +169,11 @@ const experiments: Experiment[] = [
     margin-top: 16px;
     max-width: 62ch;
   }
-  .exp__hl {
+  /* Highlights with the inspiration photo beside them. */
+  .exp__row {
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(24px, 4vw, 56px);
     margin-top: 28px;
   }
   .exp__hl ul {
@@ -200,13 +208,15 @@ const experiments: Experiment[] = [
     border-radius: var(--radius);
   }
   .inspo {
+    flex: none;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin: 24px 0 0;
+    width: clamp(160px, 16vw, 220px);
+    margin: 0;
   }
   .inspo img {
-    width: min(280px, 100%);
+    width: 100%;
     height: auto;
     border-radius: var(--radius);
   }
@@ -216,6 +226,12 @@ const experiments: Experiment[] = [
   }
 
   @media (max-width: 720px) {
+    .exp__row {
+      flex-direction: column;
+    }
+    .inspo {
+      width: min(240px, 100%);
+    }
     .exp__media--two {
       grid-template-columns: 1fr;
     }
