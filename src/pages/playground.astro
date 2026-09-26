@@ -90,34 +90,34 @@ const experiments: Experiment[] = [
 ---
 
 <Base title="AI Playground" description="Small AI experiments by Megan Cheng: Daily YES! Card and Moody Pod.">
-  <section class="intro">
+  <section class="head">
     <div class="container">
-      <h1>
-        Welcome to my AI <strong class="accent">playground</strong><span class="sparkle" aria-hidden="true">✦</span>
-      </h1>
+      <p class="eyebrow">AI Playground</p>
+      <h1>Welcome to my AI <strong class="accent">playground</strong></h1>
+      <p class="count eyebrow">{String(experiments.length).padStart(2, '0')} experiments</p>
     </div>
   </section>
 
   {
     experiments.map((x) => (
-      <section class="exp-section">
+      <section class="section exp-section">
         <div class="container exp">
           <h2>{x.name}</h2>
           <p class="exp__desc">{x.description}</p>
           {x.highlights && (
             <div class="exp__hl">
-              <p class="exp__hl-head">{x.highlights.heading}</p>
+              <p class="eyebrow">{x.highlights.heading}</p>
               <ul>
                 {x.highlights.items.map((h) => (
                   <li>
-                    {h.label}: {h.text}
+                    <strong>{h.label}.</strong> {h.text}
                   </li>
                 ))}
               </ul>
             </div>
           )}
-          <a class="cta" href={x.url} target="_blank" rel="noopener">
-            Try it Out <span class="cta__arrow" aria-hidden="true">↗</span>
+          <a class="cta cta--primary" href={x.url} target="_blank" rel="noopener">
+            Try it out <span class="cta__arrow" aria-hidden="true">→</span>
           </a>
           <div class:list={['exp__media', { 'exp__media--two': x.shots && x.shots.length > 1 }]}>
             {(x.shots ?? [x.image]).map((sh) => (
@@ -137,27 +137,21 @@ const experiments: Experiment[] = [
 </Base>
 
 <style>
-  .intro {
-    padding: clamp(48px, 8vw, 96px) 0 0;
+  /* Same page head as the Work page. */
+  .head {
+    padding: clamp(64px, 10vw, 128px) 0 0;
   }
   h1 {
-    font-size: clamp(36px, 5vw, 60px);
+    font-size: clamp(44px, 8vw, 96px);
     letter-spacing: -0.03em;
-    line-height: 1.1;
-  }
-  .sparkle {
-    display: inline-block;
-    margin-left: 0.15em;
-    font-size: 0.7em;
-    color: var(--accent);
-    vertical-align: 0.15em;
+    line-height: 1.08;
+    margin: 20px 0 24px;
+    max-width: 14ch;
   }
 
-  .exp-section {
-    padding: clamp(56px, 8vw, 96px) 0 0;
-  }
-  .exp-section:last-of-type {
-    padding-bottom: clamp(64px, 10vw, 120px);
+  /* Each experiment, top to bottom: title, description, highlights, button, screenshots. */
+  .exp-section + .exp-section {
+    padding-top: 0;
   }
   .exp {
     display: flex;
@@ -165,37 +159,36 @@ const experiments: Experiment[] = [
     align-items: flex-start;
   }
   .exp h2 {
-    font-size: clamp(30px, 3.4vw, 42px);
-    letter-spacing: -0.02em;
-    line-height: 1.1;
+    font-size: clamp(28px, 3.4vw, 40px);
   }
   .exp__desc {
     margin-top: 16px;
-    max-width: 90ch;
-    color: var(--ink-muted);
+    max-width: 62ch;
   }
   .exp__hl {
-    margin-top: 24px;
-  }
-  .exp__hl-head {
-    font-weight: 700;
-    font-style: italic;
-    color: var(--ink);
+    margin-top: 28px;
   }
   .exp__hl ul {
     list-style: none;
-    margin: 4px 0 0;
+    margin: 12px 0 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 72ch;
     color: var(--ink-muted);
   }
+  .exp__hl strong {
+    color: var(--ink);
+  }
   .exp .cta {
-    margin-top: 24px;
+    margin-top: 32px;
   }
   .exp__media {
     display: grid;
-    gap: 12px;
+    gap: 16px;
     width: 100%;
-    margin-top: 24px;
+    margin-top: 40px;
   }
   .exp__media--two {
     grid-template-columns: 1fr 1fr;
@@ -204,7 +197,7 @@ const experiments: Experiment[] = [
     display: block;
     width: 100%;
     height: auto;
-    border-radius: 20px;
+    border-radius: var(--radius);
   }
   .inspo {
     display: flex;
@@ -215,7 +208,7 @@ const experiments: Experiment[] = [
   .inspo img {
     width: min(280px, 100%);
     height: auto;
-    border-radius: 12px;
+    border-radius: var(--radius);
   }
   .inspo figcaption {
     font-size: 13px;
