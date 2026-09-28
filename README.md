@@ -46,7 +46,7 @@ encrypted.
 
 - Set the password as the `CASE_STUDY_PASSWORD` environment variable. On Vercel: Project → Settings →
   Environment Variables, then redeploy. To change the password, change the variable and redeploy.
-- If the variable is missing, the build still succeeds but the page ships locked with no content.
+- If the variable is missing, the build still succeeds and the page still shows the password field, but it ships with no content, so no password will unlock it.
 - Locally: `CASE_STUDY_PASSWORD=yourpassword npm run build`.
 - Once unlocked, the page stays open for the rest of that browser tab's session.
 

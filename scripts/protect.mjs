@@ -7,8 +7,8 @@
 // never shipped. Images are separate files and stay reachable by direct URL.
 //
 // The password comes from the CASE_STUDY_PASSWORD environment variable (set it in Vercel under
-// Project → Settings → Environment Variables). Without it the build still succeeds, but the page
-// ships locked with no content, so nothing leaks by accident.
+// Project → Settings → Environment Variables). Without it the build still succeeds and the page
+// still shows the password form, but it ships with no content, so nothing leaks and nothing unlocks.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { pbkdf2Sync, randomBytes, createCipheriv } from 'node:crypto';
 
@@ -36,9 +36,7 @@ const lockMarkup = (payload) => `<section class="lock" data-lock>
     <svg class="lock__icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>
     <p class="eyebrow">Case study · Canadian Tire</p>
     <h1 class="lock__title">This case study is <strong>password <span class="accent">protected</span></strong></h1>
-    ${
-      payload
-        ? `<form class="lock__form" data-lock-form novalidate>
+    <form class="lock__form" data-lock-form novalidate>
       <label class="lock__label" for="case-password">Password</label>
       <div class="lock__row">
         <input id="case-password" name="password" type="password" autocomplete="current-password" required class="lock__input" />
@@ -46,9 +44,7 @@ const lockMarkup = (payload) => `<section class="lock" data-lock>
       </div>
       <p class="lock__error" data-lock-error role="alert" aria-live="assertive"></p>
     </form>
-    <script type="application/json" data-lock-payload>${JSON.stringify(payload)}</script>`
-        : `<p class="lock__text">This case study isn't available right now.</p>`
-    }
+    ${payload ? `<script type="application/json" data-lock-payload>${JSON.stringify(payload)}</script>` : ''}
   </div>
 </section>
 <style>
@@ -75,8 +71,9 @@ const lockMarkup = (payload) => `<section class="lock" data-lock>
   const root = document.querySelector('[data-lock]');
   const main = root && root.closest('main');
   const payloadEl = root && root.querySelector('[data-lock-payload]');
-  if (!main || !payloadEl) return;
-  const p = JSON.parse(payloadEl.textContent);
+  if (!main) return;
+  // No payload means the build had no password set: the form still shows, but nothing unlocks.
+  const p = payloadEl ? JSON.parse(payloadEl.textContent) : null;
   const KEY = 'unlock:' + location.pathname.replace(/\\.html$/, '');
   const bytes = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
   const store = { get() { try { return sessionStorage.getItem(KEY); } catch { return null; } },
@@ -95,7 +92,7 @@ const lockMarkup = (payload) => `<section class="lock" data-lock>
   }
 
   // Unlocked earlier in this tab: reopen without asking again.
-  const saved = store.get();
+  const saved = p && store.get();
   if (saved) open(bytes(saved)).catch(() => {});
 
   const form = root.querySelector('[data-lock-form]');
@@ -109,6 +106,7 @@ const lockMarkup = (payload) => `<section class="lock" data-lock>
     if (!input.value) { error.textContent = 'Enter the password to continue.'; input.setAttribute('aria-invalid', 'true'); input.focus(); return; }
     btn.disabled = true;
     try {
+      if (!p) throw new Error('no payload');
       const raw = await deriveRaw(input.value);
       await open(raw);
       store.set(btoa(String.fromCharCode(...raw)));
