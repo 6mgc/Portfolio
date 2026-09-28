@@ -276,10 +276,7 @@
   }
 
   /* ---------- Hero $ count-up ---------- */
-  // On a first visit, wait for the login screen to unlock so the count is actually seen.
-  const heroCount = () => document.querySelectorAll<HTMLElement>('[data-count]').forEach(countUp);
-  if (root.classList.contains('is-locked')) addEventListener('site:unlocked', heroCount, { once: true });
-  else heroCount();
+  document.querySelectorAll<HTMLElement>('[data-count]').forEach(countUp);
 
   /* ---------- Shutter easter egg: click the name 5 times ---------- */
   const brand = document.querySelector<HTMLAnchorElement>('.nav__brand');

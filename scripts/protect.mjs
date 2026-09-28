@@ -15,7 +15,6 @@ import { pbkdf2Sync, randomBytes, createCipheriv } from 'node:crypto';
 const PROTECTED = ['dist/work/canadian-tire.html'];
 const ITERATIONS = 250_000;
 const password = process.env.CASE_STUDY_PASSWORD;
-const email = '6meganc@gmail.com';
 
 if (!password) {
   console.warn('[protect] CASE_STUDY_PASSWORD is not set: protected pages ship locked with no content.');
@@ -48,7 +47,7 @@ const lockMarkup = (payload) => `<section class="lock" data-lock>
       <p class="lock__error" data-lock-error role="alert" aria-live="assertive"></p>
     </form>
     <script type="application/json" data-lock-payload>${JSON.stringify(payload)}</script>`
-        : `<p class="lock__text">Access is being set up. Please email me for the password.</p>`
+        : `<p class="lock__text">This case study isn't available right now.</p>`
     }
   </div>
 </section>
@@ -114,7 +113,7 @@ const lockMarkup = (payload) => `<section class="lock" data-lock>
       await open(raw);
       store.set(btoa(String.fromCharCode(...raw)));
     } catch {
-      error.textContent = 'That password isn\\'t right. Check it and try again, or email me for access.';
+      error.textContent = 'That password isn\\'t right. Check it and try again.';
       input.setAttribute('aria-invalid', 'true');
       input.select();
       btn.disabled = false;
