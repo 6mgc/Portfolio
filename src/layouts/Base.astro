@@ -3,6 +3,7 @@ import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import Motion from '../components/Motion.astro';
+import PageTransition from '../components/PageTransition.astro';
 import { site } from '../data/site';
 
 interface Props {
@@ -52,12 +53,34 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : undefin
         };
       })();
     </script>
+    <script is:inline>
+      // Iris page transition (see components/PageTransition.astro): if we arrived by clicking an
+      // internal link, start this page fully covered at the clicked point, before first paint.
+      (() => {
+        try {
+          const raw = sessionStorage.getItem('iris');
+          if (!raw) return;
+          sessionStorage.removeItem('iris');
+          const d = JSON.parse(raw);
+          if (Date.now() - d.t > 5000) return; // stale, e.g. a slow or abandoned navigation
+          if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          const w = innerWidth, h = innerHeight, x = d.x * w, y = d.y * h;
+          const r = Math.ceil(Math.hypot(Math.max(x, w - x), Math.max(y, h - y))) + 2;
+          const s = document.documentElement.style;
+          s.setProperty('--iris-x', x + 'px');
+          s.setProperty('--iris-y', y + 'px');
+          s.setProperty('--iris-r', r + 'px');
+          document.documentElement.dataset.iris = 'closed';
+        } catch {}
+      })();
+    </script>
     <meta property="og:type" content="website" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     {canonical && <meta property="og:url" content={canonical} />}
   </head>
   <body>
+    <PageTransition />
     <Nav />
     <main>
       <slot />

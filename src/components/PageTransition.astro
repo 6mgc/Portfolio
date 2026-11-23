@@ -1,0 +1,143 @@
+---
+/*
+ * Iris page transition.
+ * Clicking an internal link grows a circle out from the click point until it covers the page,
+ * then the browser navigates. On the next page the circle starts fully closed over the content
+ * and shrinks back down to the same point, revealing it.
+ *
+ * - Colour follows --ink, so it is near-black in light mode and near-white in dark mode.
+ * - Skipped for: external links, new-tab / modifier clicks, downloads, same-page and #hash links,
+ *   links marked data-no-iris, and anyone with reduced motion turned on.
+ * - The "closed" state on arrival is set before first paint by the inline script in Base.astro,
+ *   so the new page never flashes before the reveal.
+ * - Timing lives in the two CSS custom properties below.
+ */
+---
+
+<div class="iris" aria-hidden="true"></div>
+
+<style is:global>
+  :root {
+    --iris-in: 520ms; /* circle growing to cover the page */
+    --iris-out: 560ms; /* circle shrinking to reveal the new page */
+    --iris-ease: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  .iris {
+    position: fixed;
+    inset: 0;
+    z-index: 98; /* under the custom cursor (100) and the easter-egg toast (99) */
+    background: var(--ink);
+    pointer-events: none;
+    visibility: hidden;
+    clip-path: circle(0px at var(--iris-x, 50%) var(--iris-y, 50%));
+    will-change: clip-path;
+  }
+  html[data-iris] .iris {
+    visibility: visible;
+    pointer-events: auto; /* swallow double-clicks while the transition runs */
+  }
+  /* Fully closed over the page: on arrival, and at the end of the grow. */
+  html[data-iris='cover'] .iris,
+  html[data-iris='closed'] .iris {
+    clip-path: circle(var(--iris-r, 150vmax) at var(--iris-x, 50%) var(--iris-y, 50%));
+  }
+  html[data-iris='cover'] .iris {
+    transition: clip-path var(--iris-in) var(--iris-ease);
+  }
+  html[data-iris='open'] .iris {
+    clip-path: circle(0px at var(--iris-x, 50%) var(--iris-y, 50%));
+    transition: clip-path var(--iris-out) var(--iris-ease);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .iris {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const root = document.documentElement;
+  const iris = document.querySelector('.iris');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Radius that reaches the farthest corner of the viewport from (x, y).
+  const coverRadius = (x, y) =>
+    Math.ceil(Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y))) + 2;
+
+  const setPoint = (x, y) => {
+    root.style.setProperty('--iris-x', `${x}px`);
+    root.style.setProperty('--iris-y', `${y}px`);
+    root.style.setProperty('--iris-r', `${coverRadius(x, y)}px`);
+  };
+
+  const finish = () => {
+    delete root.dataset.iris;
+  };
+
+  /* ---------- Arrival: shrink the circle to reveal this page ---------- */
+  if (root.dataset.iris === 'closed') {
+    const reveal = () => {
+      // Two frames so the closed state is painted before the transition starts.
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          root.dataset.iris = 'open';
+          iris?.addEventListener('transitionend', finish, { once: true });
+          setTimeout(finish, 1200); // safety net if transitionend never fires
+        }),
+      );
+    };
+    // A short hold on black, like the reference, then reveal.
+    setTimeout(reveal, 90);
+  }
+
+  // Coming back via the back/forward cache: never leave the page covered.
+  addEventListener('pageshow', (e) => {
+    if (e.persisted) finish();
+  });
+
+  /* ---------- Departure: grow the circle, then navigate ---------- */
+  document.addEventListener('click', (e) => {
+    if (reduce || e.defaultPrevented || e.button !== 0) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+    const a = e.target instanceof Element ? e.target.closest('a[href]') : null;
+    if (!a) return;
+    if ((a.target && a.target !== '_self') || a.hasAttribute('download') || 'noIris' in a.dataset) return;
+
+    const url = new URL(a.href, location.href);
+    if (url.origin !== location.origin) return;
+    if (url.pathname === location.pathname && url.search === location.search) return; // same page / #hash
+
+    e.preventDefault();
+
+    // Keyboard activation has no pointer position, so start from the link's centre.
+    let x = e.clientX;
+    let y = e.clientY;
+    if (e.detail === 0 || (x === 0 && y === 0)) {
+      const r = a.getBoundingClientRect();
+      x = r.left + r.width / 2;
+      y = r.top + r.height / 2;
+    }
+
+    setPoint(x, y);
+    try {
+      sessionStorage.setItem(
+        'iris',
+        JSON.stringify({ x: x / innerWidth, y: y / innerHeight, t: Date.now() }),
+      );
+    } catch {}
+
+    root.dataset.iris = 'start';
+    void iris?.getBoundingClientRect(); // commit the zero-radius start before growing
+    root.dataset.iris = 'cover';
+
+    let gone = false;
+    const go = () => {
+      if (gone) return;
+      gone = true;
+      location.href = url.href;
+    };
+    iris?.addEventListener('transitionend', go, { once: true });
+    setTimeout(go, 700); // safety net
+  });
+</script>
